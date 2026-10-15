@@ -5,6 +5,13 @@ import { stoneTile, tileHash } from './stone-tiles'
 import { drawStoneDoor } from './stone-doors'
 import { drawWallTorch } from './wall-torches'
 import { TILE_SIZE } from './tile-size'
+import {
+  drawCorridorWear,
+  drawRoomFinish,
+  drawStairSurround,
+  drawStoneVoid,
+  drawTorchLight,
+} from './stone-atmosphere'
 
 export { TILE_SIZE } from './tile-size'
 export type MapStyle = 'stone' | 'classic'
@@ -46,6 +53,7 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
   const size = TILE_SIZE
   const walkable = (x: number, y: number) => isWalkable(floor.tiles[y]?.[x])
   const materials = createMaterialPlan(floor)
+  drawStoneVoid(context, floor.width * size, floor.height * size)
   const torchKeys = new Set<number>()
   const torches: Position[] = []
   for (const room of floor.rooms) {
@@ -72,6 +80,8 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
       const material = materials.at(x, y)
       context.drawImage(stoneTile(material.kind, material.variant, material.condition), px, py)
       if (open) {
+        if (material.kind === 'corridor' || material.kind === 'corridor-slab')
+          drawCorridorWear(context, floor, x, y)
         for (const [dx, dy] of [
           [0, -1],
           [-1, 0],
@@ -85,24 +95,27 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
             px + (dx === 1 ? size - 9 : dx === -1 ? 9 : 0),
             py + (dy === 1 ? size - 9 : dy === -1 ? 9 : 0),
           )
-          shade.addColorStop(0, '#030807b8')
+          shade.addColorStop(0, '#040c12ce')
           shade.addColorStop(1, '#03080700')
           context.fillStyle = shade
           context.fillRect(px, py, size, size)
         }
       } else {
-        context.fillStyle = '#050a095e'
+        context.fillStyle = '#050c1455'
         context.fillRect(px, py, size, size)
         if (walkable(x, y + 1)) {
           const coping = context.createLinearGradient(px, py, px, py + 9)
-          coping.addColorStop(0, '#c5c3a84f')
-          coping.addColorStop(1, '#b1b09700')
+          coping.addColorStop(0, '#c9c4b863')
+          coping.addColorStop(1, '#b6b4a400')
           context.fillStyle = coping
           context.fillRect(px, py, size, 9)
-          context.fillStyle = '#c8c0a47a'
+          context.fillStyle = '#d2cabb8a'
           context.fillRect(px + 1, py + 1, 30, 1)
-          context.fillStyle = '#02060599'
-          context.fillRect(px, py + 27, size, 5)
+          const face = context.createLinearGradient(px, py + 22, px, py + 32)
+          face.addColorStop(0, '#02080e00')
+          face.addColorStop(1, '#02080ec9')
+          context.fillStyle = face
+          context.fillRect(px, py + 22, size, 10)
         }
         context.fillStyle = '#afa99066'
         if (walkable(x, y - 1)) context.fillRect(px, py, size, 2)
@@ -112,6 +125,7 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
       }
     }
   }
+  for (const finish of materials.rooms) drawRoomFinish(context, floor, finish)
   for (const door of floor.doors) {
     drawStoneDoor(
       context,
@@ -122,22 +136,17 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
     )
   }
   for (const stair of floor.stairs) {
+    if (
+      [-1, 0, 1].every((dy) =>
+        [-1, 0, 1].every((dx) => walkable(stair.position.x + dx, stair.position.y + dy)),
+      )
+    )
+      drawStairSurround(context, stair.position)
     drawStairs(context, stair.position.x * size, stair.position.y * size, stair.direction === 'up')
   }
   context.save()
   context.clip(visible)
-  context.globalCompositeOperation = 'screen'
-  for (const torch of torches) {
-    const x = torch.x * size + 16
-    const y = torch.y * size + 24
-    const light = context.createRadialGradient(x, y, 2, x, y, size * 3.1)
-    light.addColorStop(0, '#e69c405c')
-    light.addColorStop(0.28, '#c57a2636')
-    light.addColorStop(0.65, '#9d571514')
-    light.addColorStop(1, '#9d571500')
-    context.fillStyle = light
-    context.fillRect(x - 100, y - 100, 200, 200)
-  }
+  for (const torch of torches) drawTorchLight(context, floor, torch)
   context.restore()
   for (const torch of torches) drawWallTorch(context, torch)
   if (grid) {

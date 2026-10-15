@@ -67,7 +67,7 @@
     },
     "doors": {
       "type": "array",
-      "minItems": 2,
+      "minItems": 1,
       "maxItems": 320,
       "items": {
         "$ref": "#/definitions/door"
@@ -345,7 +345,7 @@
         },
         "doorCount": {
           "type": "integer",
-          "minimum": 2,
+          "minimum": 1,
           "maximum": 320
         },
         "connectedRoomCount": {
@@ -408,6 +408,19 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 9215
+        },
+        "generationAttempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "retryReasons": {
+          "type": "array",
+          "maxItems": 7,
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          }
         }
       }
     },

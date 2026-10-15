@@ -1,0 +1,262 @@
+{
+  "runAt": "2026-10-15T21:46:04.975Z",
+  "generatorVersion": "3.1.0",
+  "schemaVersion": 2,
+  "count": 10000,
+  "successful": 10000,
+  "failed": 0,
+  "workers": 4,
+  "wallSeconds": 78.96965730000001,
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen 7 6800H with Radeon Graphics         "
+  },
+  "generationMs": {
+    "average": 6.391084260000025,
+    "median": 3.159299999999348,
+    "p95": 22.146300000000338,
+    "worst": 73.9396999999999
+  },
+  "slowest": [
+    {
+      "index": 157,
+      "ms": 73.9396999999999,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-000157-9",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      }
+    },
+    {
+      "index": 6685,
+      "ms": 73.66770000000542,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-006685-bl",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      }
+    },
+    {
+      "index": 6917,
+      "ms": 73.21219999999448,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-006917-c0",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      }
+    },
+    {
+      "index": 3101,
+      "ms": 71.56810000000041,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-003101-5d",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 7,
+        "extraConnectionChance": 0,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      }
+    },
+    {
+      "index": 2605,
+      "ms": 71.10429999999906,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-002605-4i",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      }
+    },
+    {
+      "index": 7165,
+      "ms": 70.74440000000322,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-007165-cf",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 1,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["alcoved"],
+        "chamberBlockChance": 1
+      }
+    },
+    {
+      "index": 445,
+      "ms": 69.40030000000024,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-000445-r",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["alcoved"],
+        "chamberBlockChance": 0
+      }
+    },
+    {
+      "index": 8117,
+      "ms": 67.76490000000922,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-008117-e3",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      }
+    },
+    {
+      "index": 205,
+      "ms": 67.7474000000002,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-000205-c",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 5,
+        "extraConnectionChance": 1,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      }
+    },
+    {
+      "index": 1373,
+      "ms": 66.26970000000074,
+      "config": {
+        "width": 96,
+        "height": 96,
+        "floorNumber": 1,
+        "seed": "verification-001373-2d",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 7,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      }
+    }
+  ],
+  "coverage": {
+    "groups": 3490,
+    "secrets": 2902,
+    "shapes": {
+      "rectangle": 8445,
+      "l-shaped": 5810,
+      "t-shaped": 5446,
+      "u-shaped": 1928,
+      "alcoved": 1066,
+      "chamfered": 1940,
+      "cross-shaped": 1902
+    },
+    "dimensions": {
+      "24x24": 1250,
+      "32x32": 1250,
+      "16x16": 1250,
+      "48x48": 1250,
+      "48x32": 1250,
+      "64x64": 1250,
+      "64x48": 1250,
+      "96x96": 1250
+    },
+    "presets": {
+      "classic": 5000,
+      "compact": 5000
+    },
+    "attempts": {
+      "1": 9729,
+      "2": 183,
+      "3": 57,
+      "4": 24,
+      "5": 4,
+      "6": 1,
+      "7": 1,
+      "8": 1
+    }
+  },
+  "failures": []
+}

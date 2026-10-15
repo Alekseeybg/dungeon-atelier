@@ -1,0 +1,24 @@
+{
+  "index": 44,
+  "config": {
+    "width": 16,
+    "height": 16,
+    "floorNumber": 1,
+    "seed": "verification-000044-2",
+    "targetRoomCount": 4,
+    "minRoomSize": 3,
+    "maxRoomSize": 4,
+    "extraConnectionChance": 0,
+    "layoutStyle": "compact",
+    "roomSpacing": 1,
+    "roomShapeChance": 0.65,
+    "shortcutChance": 0,
+    "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+    "chamberBlockChance": 0
+  },
+  "failure": {
+    "name": "AssertionError",
+    "message": "/doors must NOT have fewer than 2 items",
+    "stack": "AssertionError [ERR_ASSERTION]: /doors must NOT have fewer than 2 items\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+  }
+}

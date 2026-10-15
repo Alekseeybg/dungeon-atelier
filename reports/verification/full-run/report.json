@@ -1,0 +1,92 @@
+{
+  "runAt": "2026-10-15T21:43:49.878Z",
+  "generatorVersion": "3.1.0",
+  "schemaVersion": 2,
+  "count": 10000,
+  "successful": 10000,
+  "failed": 0,
+  "workers": 4,
+  "wallSeconds": 66.7346433,
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen 7 6800H with Radeon Graphics         "
+  },
+  "generationMs": {
+    "average": 5.480392999999995,
+    "median": 2.6542999999983294,
+    "p95": 19.17199999999866,
+    "worst": 80.52030000000013
+  },
+  "slowest": [
+    {
+      "index": 157,
+      "ms": 80.52030000000013
+    },
+    {
+      "index": 205,
+      "ms": 79.82060000000001
+    },
+    {
+      "index": 7165,
+      "ms": 78.24319999999716
+    },
+    {
+      "index": 173,
+      "ms": 67.35280000000012
+    },
+    {
+      "index": 445,
+      "ms": 66.0672999999997
+    },
+    {
+      "index": 109,
+      "ms": 64.17550000000006
+    },
+    {
+      "index": 8117,
+      "ms": 61.0428000000029
+    },
+    {
+      "index": 7405,
+      "ms": 60.07459999999992
+    },
+    {
+      "index": 7149,
+      "ms": 58.51780000000144
+    },
+    {
+      "index": 203,
+      "ms": 57.734100000000126
+    }
+  ],
+  "coverage": {
+    "groups": 3490,
+    "secrets": 2902,
+    "shapes": {
+      "rectangle": 8445,
+      "l-shaped": 5810,
+      "t-shaped": 5446,
+      "u-shaped": 1928,
+      "alcoved": 1066,
+      "cross-shaped": 1902,
+      "chamfered": 1940
+    },
+    "dimensions": {
+      "32x32": 1250,
+      "24x24": 1250,
+      "16x16": 1250,
+      "48x48": 1250,
+      "64x64": 1250,
+      "48x32": 1250,
+      "64x48": 1250,
+      "96x96": 1250
+    },
+    "presets": {
+      "classic": 5000,
+      "compact": 5000
+    }
+  },
+  "failures": []
+}

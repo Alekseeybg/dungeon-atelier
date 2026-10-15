@@ -1,5 +1,5 @@
 import { isWalkable, roomCells } from '@dungeon-atelier/core'
-import type { DungeonFloor } from '@dungeon-atelier/core'
+import type { DungeonFloor, Room } from '@dungeon-atelier/core'
 import { tileHash } from './stone-tiles'
 import type { TileKind, StoneCondition } from './stone-tiles'
 
@@ -9,13 +9,34 @@ export interface TileMaterial {
   variant: number
   label: string
   rule: string
+  roomIdentity?: string | undefined
+}
+export type RoomRole =
+  'chamber' | 'hub' | 'stair' | 'secret-entry' | 'template' | 'ceremonial' | 'damp'
+export interface RoomFinish {
+  room: Room
+  cells: Set<number>
+  role: RoomRole
+  label: string
+  kind: 'room' | 'slab' | 'mosaic'
+}
+const ROOM_LABELS: Record<RoomRole, string> = {
+  chamber: 'Ordinary chamber',
+  hub: 'Junction chamber',
+  stair: 'Stair chamber',
+  'secret-entry': 'Secret-door chamber',
+  template: 'Chamber-block suite',
+  ceremonial: 'Patterned chamber',
+  damp: 'Damp chamber',
 }
 export const MATERIAL_RULES = [
-  'Each room keeps one paving family; large rooms can use slabs or rare patterned paving.',
-  'Corridors use small worn cobbles. Doors, stairs, and their approaches use fitted threshold stone.',
+  'Room finishes reflect stairs, chamber blocks, junctions, and secret entrances; rare broad rooms use patterned paving.',
+  'Corridors alternate cobbles and broad repaired stones in continuous patches, with subtle central wear.',
+  'Doors, stairs, and their approaches use clean fitted thresholds; room borders follow the actual footprint.',
   'Wall corners and door jambs use dressed masonry; other walls use staggered, rough-cut blocks.',
   'Dampness forms continuous seeded patches. Moss appears on damp walls and nearby floor edges.',
-  'Cracks cluster in weathered areas. Protected thresholds remain clean and readable.',
+  'Cracks and grime cluster in weathered areas; scattered chips stay away from protected thresholds.',
+  'Center inlays appear only where a complete footprint fits. These visual identities add no gameplay features.',
 ] as const
 
 function hashSeed(value: string) {
@@ -38,17 +59,41 @@ function noise(x: number, y: number, seed: number, scale: number) {
 
 /** Materials are derived from geometry and a separate seed; they never change walkability. */
 export function createMaterialPlan(floor: DungeonFloor) {
-  const seed = hashSeed(`${floor.seed}:${floor.floorNumber}:materials-v2`)
+  const seed = hashSeed(`${floor.seed}:${floor.floorNumber}:materials-v3`)
   const owners = new Map<number, number>()
-  const roomStyles = floor.rooms.map((room, index) => {
+  const groups = new Set(floor.roomGroups?.flatMap((group) => group.roomIds) ?? [])
+  const stairRooms = new Set(floor.stairs.map((stair) => stair.roomId))
+  const rooms: RoomFinish[] = floor.rooms.map((room, index) => {
     const cells = roomCells(room)
     for (const p of cells) owners.set(p.y * floor.width + p.x, index)
     const style = tileHash(room.x, room.y, seed ^ index)
-    return cells.length >= 49 && style % 7 === 0
-      ? 'mosaic'
-      : cells.length >= 25 && style % 3 === 0
-        ? 'slab'
-        : 'room'
+    const doors = floor.doors.filter((door) => door.roomId === room.id)
+    const role: RoomRole = stairRooms.has(room.id)
+      ? 'stair'
+      : groups.has(room.id)
+        ? 'template'
+        : doors.some((door) => door.type === 'secret')
+          ? 'secret-entry'
+          : doors.length >= 3
+            ? 'hub'
+            : cells.length >= 35 && style % 5 === 0
+              ? 'ceremonial'
+              : noise(room.x, room.y, seed ^ 0x87a13, 5) > 0.64
+                ? 'damp'
+                : 'chamber'
+    const kind =
+      role === 'ceremonial' || (role === 'template' && cells.length >= 25)
+        ? 'mosaic'
+        : role === 'stair' || role === 'hub' || (cells.length >= 25 && style % 3 === 0)
+          ? 'slab'
+          : 'room'
+    return {
+      room,
+      cells: new Set(cells.map((p) => p.y * floor.width + p.x)),
+      role,
+      label: ROOM_LABELS[role],
+      kind,
+    }
   })
   const stairs = new Set(floor.stairs.map((s) => s.position.y * floor.width + s.position.x))
   const directions = [
@@ -57,7 +102,13 @@ export function createMaterialPlan(floor: DungeonFloor) {
     [0, 1],
     [-1, 0],
   ] as const
+  const roomAt = (x: number, y: number) => {
+    const index = owners.get(y * floor.width + x)
+    return index === undefined ? undefined : rooms[index]
+  }
   return {
+    rooms,
+    roomAt,
     at(x: number, y: number): TileMaterial {
       const key = y * floor.width + x
       const tile = floor.tiles[y]?.[x]
@@ -75,6 +126,7 @@ export function createMaterialPlan(floor: DungeonFloor) {
           variant,
           label: 'Fitted threshold',
           rule: 'Doors, staircases, and adjacent approaches use clean fitted paving.',
+          roomIdentity: roomAt(x, y)?.label,
         }
       }
       if (!open) {
@@ -119,41 +171,52 @@ export function createMaterialPlan(floor: DungeonFloor) {
         }
       }
       const owner = owners.get(key)
-      const kind: TileKind = owner === undefined ? 'corridor' : roomStyles[owner]!
+      const finish = owner === undefined ? undefined : rooms[owner]
+      const kind: TileKind =
+        finish?.kind ?? (noise(x, y, seed ^ 0x331fd, 4) > 0.53 ? 'corridor-slab' : 'corridor')
       const edge = sides.some((side) => !side)
       const condition: StoneCondition =
-        edge && wet > 0.62
+        edge && (wet > 0.62 || finish?.role === 'damp')
           ? 'mossy'
           : age > 0.68 && variant % 3 === 0
             ? 'cracked'
-            : owner === undefined
-              ? 'worn'
-              : 'clean'
+            : edge && age > 0.55 && variant % 3 === 1
+              ? 'grimy'
+              : owner === undefined || finish?.role === 'hub'
+                ? 'worn'
+                : 'clean'
       const label =
         kind === 'mosaic'
           ? 'Patterned paving'
           : kind === 'slab'
             ? 'Large stone slabs'
-            : kind === 'corridor'
-              ? 'Worn cobbles'
-              : 'Flagstone'
+            : kind === 'corridor-slab'
+              ? 'Repaired passage slabs'
+              : kind === 'corridor'
+                ? 'Worn cobbles'
+                : 'Flagstone'
       return {
         kind,
         condition,
         variant,
         label,
+        roomIdentity: finish?.label,
         rule:
-          condition === 'cracked'
-            ? 'A weathering patch cracks the paving away from protected thresholds.'
-            : condition === 'mossy'
-              ? 'Damp patches allow moss along floor edges, close to walls.'
-              : kind === 'corridor'
-                ? 'Corridors use small cobbles polished by foot traffic.'
-                : kind === 'mosaic'
-                  ? 'A rare large-room finish; the paving pattern stays consistent across the room.'
-                  : kind === 'slab'
-                    ? 'This room uses broad slabs as one consistent paving family.'
-                    : 'This room uses irregular flagstones as one consistent paving family.',
+          condition === 'grimy'
+            ? 'Dirt settles in sheltered edges; tiny stone chips collect beside the paving.'
+            : condition === 'cracked'
+              ? 'A weathering patch cracks the paving away from protected thresholds.'
+              : condition === 'mossy'
+                ? 'Damp patches allow moss along floor edges, close to walls.'
+                : kind === 'corridor' || kind === 'corridor-slab'
+                  ? 'Coherent patches of cobbles and replacement slabs share a worn central path.'
+                  : kind === 'mosaic'
+                    ? finish?.role === 'template'
+                      ? 'Chamber-block rooms share fitted patterned paving.'
+                      : 'A rare broad-room finish; the paving pattern stays consistent across the room.'
+                    : kind === 'slab'
+                      ? 'This room uses broad slabs as one consistent paving family.'
+                      : 'This room uses irregular flagstones as one consistent paving family.',
       }
     },
   }

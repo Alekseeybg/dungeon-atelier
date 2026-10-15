@@ -1,5 +1,5 @@
 export const SCHEMA_VERSION = 2 as const
-export const GENERATOR_VERSION = '3.0.0'
+export const GENERATOR_VERSION = '3.1.0'
 
 export const CONFIG_LIMITS = {
   minDimension: 16,
@@ -115,6 +115,8 @@ export interface Shortcut {
   tilesSaved: number
 }
 export interface GenerationDiagnostics {
+  generationAttempts?: number
+  retryReasons?: string[]
   requestedRoomCount: number
   actualRoomCount: number
   walkableTileCount: number

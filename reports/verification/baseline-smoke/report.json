@@ -1,0 +1,765 @@
+{
+  "runAt": "2026-10-15T21:41:18.953Z",
+  "generatorVersion": "3.0.0",
+  "schemaVersion": 2,
+  "count": 1000,
+  "successful": 972,
+  "failed": 28,
+  "workers": 4,
+  "wallSeconds": 7.1422019,
+  "environment": {
+    "node": "v24.21.0",
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen 7 6800H with Radeon Graphics         "
+  },
+  "generationMs": {
+    "average": 5.933345576131686,
+    "median": 3.214600000000246,
+    "p95": 20.366699999999582,
+    "worst": 96.31709999999998
+  },
+  "slowest": [
+    {
+      "index": 173,
+      "ms": 96.31709999999998
+    },
+    {
+      "index": 157,
+      "ms": 59.582099999999855
+    },
+    {
+      "index": 205,
+      "ms": 53.64409999999998
+    },
+    {
+      "index": 445,
+      "ms": 51.21409999999969
+    },
+    {
+      "index": 709,
+      "ms": 46.24789999999939
+    },
+    {
+      "index": 941,
+      "ms": 44.04039999999986
+    },
+    {
+      "index": 661,
+      "ms": 42.41730000000007
+    },
+    {
+      "index": 109,
+      "ms": 42.17560000000003
+    },
+    {
+      "index": 85,
+      "ms": 41.02350000000001
+    },
+    {
+      "index": 429,
+      "ms": 38.05969999999979
+    }
+  ],
+  "coverage": {
+    "groups": 343,
+    "secrets": 275,
+    "shapes": {
+      "rectangle": 820,
+      "l-shaped": 562,
+      "t-shaped": 536,
+      "u-shaped": 188,
+      "alcoved": 112,
+      "chamfered": 188,
+      "cross-shaped": 176
+    },
+    "dimensions": {
+      "24x24": 125,
+      "32x32": 125,
+      "48x48": 122,
+      "16x16": 102,
+      "48x32": 124,
+      "64x64": 125,
+      "64x48": 124,
+      "96x96": 125
+    },
+    "presets": {
+      "classic": 482,
+      "compact": 490
+    }
+  },
+  "failures": [
+    {
+      "index": 4,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000004-0",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 20,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000020-1",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 44,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000044-2",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "/doors must NOT have fewer than 2 items",
+        "stack": "AssertionError [ERR_ASSERTION]: /doors must NOT have fewer than 2 items\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 84,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000084-5",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 100,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000100-6",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped"],
+        "chamberBlockChance": 1
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 164,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000164-a",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 180,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000180-b",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 212,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000212-d",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 1,
+        "roomDesigns": ["t-shaped"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 292,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000292-i",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 47,
+      "config": {
+        "width": 64,
+        "height": 48,
+        "floorNumber": 1,
+        "seed": "verification-000047-2",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 9,
+        "extraConnectionChance": 0,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.",
+        "stack": "AssertionError [ERR_ASSERTION]: Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 340,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000340-l",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 356,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000356-m",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 436,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000436-r",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["alcoved"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 468,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000468-t",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 516,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000516-w",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 532,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000532-x",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 1
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 580,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000580-10",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 612,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000612-12",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 708,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000708-18",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 1
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 724,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000724-19",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 740,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000740-1a",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 852,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000852-1h",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.25,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 1
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 900,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000900-1k",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 996,
+      "config": {
+        "width": 16,
+        "height": 16,
+        "floorNumber": 1,
+        "seed": "verification-000996-1q",
+        "targetRoomCount": 4,
+        "minRoomSize": 3,
+        "maxRoomSize": 4,
+        "extraConnectionChance": 1,
+        "layoutStyle": "classic",
+        "roomSpacing": 3,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 0,
+        "roomDesigns": ["cross-shaped"],
+        "chamberBlockChance": 1
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.",
+        "stack": "AssertionError [ERR_ASSERTION]: Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 234,
+      "config": {
+        "width": 48,
+        "height": 48,
+        "floorNumber": 1,
+        "seed": "verification-000234-e",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 9,
+        "extraConnectionChance": 1,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 0.65,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.",
+        "stack": "AssertionError [ERR_ASSERTION]: Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 382,
+      "config": {
+        "width": 48,
+        "height": 32,
+        "floorNumber": 1,
+        "seed": "verification-000382-n",
+        "targetRoomCount": 30,
+        "minRoomSize": 3,
+        "maxRoomSize": 9,
+        "extraConnectionChance": 0.2,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 1,
+        "shortcutChance": 0.15,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.",
+        "stack": "AssertionError [ERR_ASSERTION]: Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 762,
+      "config": {
+        "width": 48,
+        "height": 48,
+        "floorNumber": 1,
+        "seed": "verification-000762-1b",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 9,
+        "extraConnectionChance": 1,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 1,
+        "shortcutChance": 0,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.",
+        "stack": "AssertionError [ERR_ASSERTION]: Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    },
+    {
+      "index": 954,
+      "config": {
+        "width": 48,
+        "height": 48,
+        "floorNumber": 1,
+        "seed": "verification-000954-1n",
+        "targetRoomCount": 40,
+        "minRoomSize": 3,
+        "maxRoomSize": 9,
+        "extraConnectionChance": 0.6,
+        "layoutStyle": "compact",
+        "roomSpacing": 1,
+        "roomShapeChance": 1,
+        "shortcutChance": 1,
+        "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+        "chamberBlockChance": 0.2
+      },
+      "failure": {
+        "name": "AssertionError",
+        "message": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.",
+        "stack": "AssertionError [ERR_ASSERTION]: Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.\n    at verifyCase (file:///D:/Projects/dungeon-atelier/tests/helpers/verify-floor.mjs:44:2)\n    at file:///D:/Projects/dungeon-atelier/scripts/stress-worker.mjs:4:162\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)"
+      }
+    }
+  ]
+}

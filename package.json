@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "dungeon-atelier",
   "version": "0.1.0",
   "private": true,
@@ -14,7 +14,12 @@
     "typecheck": "npm run typecheck --workspace @dungeon-atelier/core && npm run build:core && npm run typecheck --workspace @dungeon-atelier/app",
     "lint": "prettier --write . && npm run lint --workspace @dungeon-atelier/app",
     "lint:check": "prettier --check . && npm run lint:check --workspace @dungeon-atelier/app",
-    "postinstall": "npm run build:core && npm run prepare:app --workspace @dungeon-atelier/app"
+    "postinstall": "npm run build:core && npm run prepare:app --workspace @dungeon-atelier/app",
+    "test": "npm run build:core && node --test tests/*.test.mjs",
+    "verify:stress": "npm run build:core && node scripts/stress.mjs",
+    "verify:regressions": "npm run build:core && node --test tests/regressions.test.mjs",
+    "verify:replay": "npm run build:core && node scripts/reproduce.mjs",
+    "verify:browser": "node scripts/verify-browser.mjs"
   },
   "devDependencies": {
     "prettier": "^3.8.1",

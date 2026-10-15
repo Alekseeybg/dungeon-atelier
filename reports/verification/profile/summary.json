@@ -1,0 +1,106 @@
+{
+  "samples": 3783,
+  "method": "V8 sampled self-time; 1,000 sequential generations, including startup and GC",
+  "top": [
+    {
+      "name": "findConnection",
+      "samples": 910,
+      "percent": 24.054982817869416
+    },
+    {
+      "name": "pathDistances",
+      "samples": 890,
+      "percent": 23.526301876817342
+    },
+    {
+      "name": "(anonymous)",
+      "samples": 679,
+      "percent": 17.94871794871795
+    },
+    {
+      "name": "generateAttempt",
+      "samples": 287,
+      "percent": 7.586571504097277
+    },
+    {
+      "name": "calculateRouteMetrics",
+      "samples": 219,
+      "percent": 5.789056304520222
+    },
+    {
+      "name": "generateDungeon",
+      "samples": 113,
+      "percent": 2.987047316944224
+    },
+    {
+      "name": "(garbage collector)",
+      "samples": 108,
+      "percent": 2.8548770816812055
+    },
+    {
+      "name": "portals",
+      "samples": 92,
+      "percent": 2.431932328839545
+    },
+    {
+      "name": "validateFloor",
+      "samples": 86,
+      "percent": 2.2733280465239227
+    },
+    {
+      "name": "rankDetours",
+      "samples": 59,
+      "percent": 1.5596087761036215
+    },
+    {
+      "name": "roomCells",
+      "samples": 54,
+      "percent": 1.4274385408406027
+    },
+    {
+      "name": "calculateConnectivity",
+      "samples": 32,
+      "percent": 0.8458895056833201
+    },
+    {
+      "name": "roomCenter",
+      "samples": 24,
+      "percent": 0.63441712926249
+    },
+    {
+      "name": "(program)",
+      "samples": 18,
+      "percent": 0.47581284694686754
+    },
+    {
+      "name": "refreshConnected",
+      "samples": 16,
+      "percent": 0.42294475284166005
+    },
+    {
+      "name": "integer",
+      "samples": 15,
+      "percent": 0.3965107057890563
+    },
+    {
+      "name": "addSidePassages",
+      "samples": 11,
+      "percent": 0.2907745175786413
+    },
+    {
+      "name": "validate10",
+      "samples": 9,
+      "percent": 0.23790642347343377
+    },
+    {
+      "name": "internalModuleStat",
+      "samples": 8,
+      "percent": 0.21147237642083003
+    },
+    {
+      "name": "wrapSafe",
+      "samples": 8,
+      "percent": 0.21147237642083003
+    }
+  ]
+}

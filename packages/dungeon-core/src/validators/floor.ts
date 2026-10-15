@@ -319,6 +319,29 @@ export function validateFloor(value: unknown): ValidationResult {
       errors.push(`Staircase ${stair.id} must occupy a floor tile in its referenced room.`)
     }
   }
+  const hiddenDoors = new Set(
+    doors.filter((door) => door.type === 'secret').map((door) => positionKey(door.position)),
+  )
+  if (hiddenDoors.size) {
+    const publicTiles = tiles.map((row, y) =>
+      row.map((tile, x) => (hiddenDoors.has(positionKey({ x, y })) ? ('wall' as const) : tile)),
+    )
+    const start = stairs.find((stair) => stair.direction === 'up')?.position ?? roomCenter(rooms[0])
+    const publicDistances = pathDistances(publicTiles, start)
+    if (
+      rooms.some((room) => roomCells(room).some((p) => publicDistances[p.y * width + p.x] < 0)) ||
+      stairs.some((stair) => publicDistances[stair.position.y * width + stair.position.x] < 0)
+    )
+      errors.push('Required rooms and stairs must remain reachable with every secret door closed.')
+    const recorded = new Set(
+      (floor.shortcuts ?? []).flatMap((route) => [
+        positionKey(route.path[0]),
+        positionKey(route.path[route.path.length - 1]),
+      ]),
+    )
+    if ([...hiddenDoors].some((position) => !recorded.has(position)))
+      errors.push('Every secret door must be an endpoint of a recorded shortcut.')
+  }
   const connectivity = calculateConnectivity(floor)
   if (!connectivity.ordinaryConnected)
     errors.push(
@@ -344,6 +367,11 @@ export function validateFloor(value: unknown): ValidationResult {
   ) {
     errors.push('Room placement attempts are outside the configured generation budget.')
   }
+  if (
+    diagnostics.generationAttempts !== undefined &&
+    diagnostics.generationAttempts !== (diagnostics.retryReasons?.length ?? 0) + 1
+  )
+    errors.push('Generation attempt count must match the recorded retry reasons.')
   const metrics = calculateRouteMetrics(floor)
   for (const key of [
     'corridorTileCount',
