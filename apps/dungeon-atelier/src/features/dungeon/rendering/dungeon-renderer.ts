@@ -1,0 +1,257 @@
+import { isWalkable } from '@dungeon-atelier/core'
+import type { DungeonFloor, Position } from '@dungeon-atelier/core'
+import { stoneTile, tileHash } from './stone-tiles'
+import { drawStoneDoor } from './stone-doors'
+import { drawWallTorch } from './wall-torches'
+import { TILE_SIZE } from './tile-size'
+
+export { TILE_SIZE } from './tile-size'
+export type MapStyle = 'stone' | 'classic'
+export const MAP_BACKGROUND = '#080c0d'
+
+function seedHash(seed: string) {
+  let hash = 2166136261
+  for (let i = 0; i < seed.length; i++) hash = Math.imul(hash ^ seed.charCodeAt(i), 16777619)
+  return hash >>> 0
+}
+
+function drawStairs(context: CanvasRenderingContext2D, x: number, y: number, up: boolean) {
+  context.fillStyle = '#111713'
+  context.fillRect(x + 3, y + 2, 26, 28)
+  for (let step = 0; step < 6; step++) {
+    const depth = up ? step : 5 - step
+    const tone = 43 + depth * 12
+    const inset = up ? 3 + (5 - step) : 3 + step
+    context.fillStyle = `rgb(${tone + 7} ${tone + 8} ${tone})`
+    context.fillRect(x + inset, y + 3 + step * 4, 32 - inset * 2, 4)
+    context.fillStyle = '#c1bba24d'
+    context.fillRect(x + inset, y + 3 + step * 4, 32 - inset * 2, 1)
+    context.fillStyle = '#050a0999'
+    context.fillRect(x + inset, y + 6 + step * 4, 32 - inset * 2, 1)
+  }
+  context.strokeStyle = '#888773'
+  context.lineWidth = 2
+  context.strokeRect(x + 2, y + 2, 28, 28)
+  context.fillStyle = up ? '#a7d7c4' : '#e1b574'
+  context.beginPath()
+  context.moveTo(x + 27, y + (up ? 4 : 10))
+  context.lineTo(x + 24, y + (up ? 10 : 4))
+  context.lineTo(x + 30, y + (up ? 10 : 4))
+  context.fill()
+}
+
+/** Visual dressing is deterministic and never changes the authoritative floor. */
+function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, grid: boolean) {
+  const size = TILE_SIZE
+  const seed = seedHash(floor.seed)
+  const walkable = (x: number, y: number) => isWalkable(floor.tiles[y]?.[x])
+  const roomTiles = new Set<number>()
+  const torches: Position[] = []
+  for (const room of floor.rooms) {
+    for (let y = room.y; y < room.y + room.height; y++) {
+      for (let x = room.x; x < room.x + room.width; x++) roomTiles.add(y * floor.width + x)
+    }
+    for (let x = room.x + 1; x < room.x + room.width; x += 4) {
+      if (!walkable(x, room.y - 1)) torches.push({ x, y: room.y - 1 })
+    }
+  }
+  const visible = new Path2D()
+  for (let y = 0; y < floor.height; y++) {
+    for (let x = 0; x < floor.width; x++) {
+      const px = x * size
+      const py = y * size
+      const open = walkable(x, y)
+      let nearFloor = open
+      for (let dy = -1; dy <= 1 && !nearFloor; dy++) {
+        for (let dx = -1; dx <= 1; dx++) if (walkable(x + dx, y + dy)) nearFloor = true
+      }
+      if (!nearFloor) continue
+      visible.rect(px, py, size, size)
+      const kind = open ? (roomTiles.has(y * floor.width + x) ? 'room' : 'corridor') : 'wall'
+      context.drawImage(stoneTile(kind, tileHash(x, y, seed) % 16), px, py)
+      if (open) {
+        for (const [dx, dy] of [
+          [0, -1],
+          [-1, 0],
+          [1, 0],
+          [0, 1],
+        ] as const) {
+          if (walkable(x + dx, y + dy)) continue
+          const shade = context.createLinearGradient(
+            px + (dx === 1 ? size : 0),
+            py + (dy === 1 ? size : 0),
+            px + (dx === 1 ? size - 9 : dx === -1 ? 9 : 0),
+            py + (dy === 1 ? size - 9 : dy === -1 ? 9 : 0),
+          )
+          shade.addColorStop(0, '#030807b8')
+          shade.addColorStop(1, '#03080700')
+          context.fillStyle = shade
+          context.fillRect(px, py, size, size)
+        }
+      } else {
+        context.fillStyle = '#050a095e'
+        context.fillRect(px, py, size, size)
+        if (walkable(x, y + 1)) {
+          context.drawImage(stoneTile('wall', tileHash(x, y, seed + 1) % 16), px, py, size, 12)
+          context.fillStyle = '#c8c0a47a'
+          context.fillRect(px + 1, py + 1, 30, 1)
+          context.fillStyle = '#02060599'
+          context.fillRect(px, py + 27, size, 5)
+        }
+        context.fillStyle = '#afa99066'
+        if (walkable(x, y - 1)) context.fillRect(px, py, size, 2)
+        if (walkable(x - 1, y)) context.fillRect(px, py, 2, size)
+        context.fillStyle = '#030807b0'
+        if (walkable(x + 1, y)) context.fillRect(px + 30, py, 2, size)
+      }
+    }
+  }
+  for (const door of floor.doors) {
+    drawStoneDoor(context, door.position.x * size, door.position.y * size, door.orientation)
+  }
+  for (const stair of floor.stairs) {
+    drawStairs(context, stair.position.x * size, stair.position.y * size, stair.direction === 'up')
+  }
+  context.save()
+  context.clip(visible)
+  context.globalCompositeOperation = 'screen'
+  for (const torch of torches) {
+    const x = torch.x * size + 16
+    const y = torch.y * size + 24
+    const light = context.createRadialGradient(x, y, 2, x, y, size * 3.1)
+    light.addColorStop(0, '#e69c405c')
+    light.addColorStop(0.28, '#c57a2636')
+    light.addColorStop(0.65, '#9d571514')
+    light.addColorStop(1, '#9d571500')
+    context.fillStyle = light
+    context.fillRect(x - 100, y - 100, 200, 200)
+  }
+  context.restore()
+  for (const torch of torches) drawWallTorch(context, torch)
+  if (grid) {
+    context.save()
+    context.clip(visible)
+    context.strokeStyle = '#c5c5ad22'
+    context.lineWidth = 1
+    context.beginPath()
+    for (let x = 0; x <= floor.width; x++) {
+      context.moveTo(x * size + 0.5, 0)
+      context.lineTo(x * size + 0.5, floor.height * size)
+    }
+    for (let y = 0; y <= floor.height; y++) {
+      context.moveTo(0, y * size + 0.5)
+      context.lineTo(floor.width * size, y * size + 0.5)
+    }
+    context.stroke()
+    context.restore()
+  }
+}
+
+/** Mordor-inspired automap: black interiors, pale boundary lines, and small symbols. */
+function renderClassic(context: CanvasRenderingContext2D, floor: DungeonFloor, grid: boolean) {
+  const size = TILE_SIZE
+  const seed = seedHash(floor.seed)
+  const walkable = (x: number, y: number) => isWalkable(floor.tiles[y]?.[x])
+  // Rocky olive ground makes the negative space distinct from black room interiors.
+  for (let y = 0; y < floor.height; y++) {
+    for (let x = 0; x < floor.width; x++) {
+      context.drawImage(stoneTile('rock', tileHash(x, y, seed) % 16), x * size, y * size)
+    }
+  }
+  context.fillStyle = '#30331db0'
+  context.fillRect(0, 0, floor.width * size, floor.height * size)
+  for (let y = 0; y < floor.height; y++) {
+    for (let x = 0; x < floor.width; x++) {
+      if (!walkable(x, y)) continue
+      const px = x * size
+      const py = y * size
+      context.fillStyle = '#050706'
+      context.fillRect(px, py, size, size)
+      if (grid) {
+        context.strokeStyle = '#c9cbb31c'
+        context.lineWidth = 1
+        context.strokeRect(px + 0.5, py + 0.5, size - 1, size - 1)
+      }
+      context.strokeStyle = '#e1dfca'
+      context.lineWidth = 2
+      context.beginPath()
+      if (!walkable(x, y - 1)) {
+        context.moveTo(px, py + 1)
+        context.lineTo(px + size, py + 1)
+      }
+      if (!walkable(x, y + 1)) {
+        context.moveTo(px, py + size - 1)
+        context.lineTo(px + size, py + size - 1)
+      }
+      if (!walkable(x - 1, y)) {
+        context.moveTo(px + 1, py)
+        context.lineTo(px + 1, py + size)
+      }
+      if (!walkable(x + 1, y)) {
+        context.moveTo(px + size - 1, py)
+        context.lineTo(px + size - 1, py + size)
+      }
+      context.stroke()
+    }
+  }
+  for (const door of floor.doors) {
+    context.save()
+    context.translate(door.position.x * size + 16, door.position.y * size + 16)
+    if (door.orientation === 'east-west') context.rotate(Math.PI / 2)
+    context.strokeStyle = '#e1dfca'
+    context.lineWidth = 2
+    context.beginPath()
+    context.moveTo(-16, 0)
+    context.lineTo(-8, 0)
+    context.moveTo(8, 0)
+    context.lineTo(16, 0)
+    context.stroke()
+    context.fillStyle = '#655239'
+    context.fillRect(-8, -3, 16, 6)
+    context.strokeStyle = '#cbb58a'
+    context.strokeRect(-8, -3, 16, 6)
+    context.restore()
+  }
+  for (const stair of floor.stairs) {
+    const x = stair.position.x * size
+    const y = stair.position.y * size
+    context.strokeStyle = stair.direction === 'up' ? '#87e096' : '#ef654a'
+    context.lineWidth = 2
+    context.strokeRect(x + 5, y + 5, 22, 22)
+    for (let step = 0; step < 4; step++) {
+      const width = stair.direction === 'up' ? 5 + step * 4 : 17 - step * 4
+      context.beginPath()
+      context.moveTo(x + 16 - width / 2, y + 9 + step * 5)
+      context.lineTo(x + 16 + width / 2, y + 9 + step * 5)
+      context.stroke()
+    }
+  }
+}
+
+export function renderDungeon(
+  context: CanvasRenderingContext2D,
+  floor: DungeonFloor,
+  grid: boolean,
+  style: MapStyle = 'stone',
+) {
+  context.save()
+  context.fillStyle = MAP_BACKGROUND
+  context.fillRect(0, 0, floor.width * TILE_SIZE, floor.height * TILE_SIZE)
+  if (style === 'classic') renderClassic(context, floor, grid)
+  else renderStone(context, floor, grid)
+  context.restore()
+}
+
+export function createMapCanvas(
+  floor: DungeonFloor,
+  grid: boolean,
+  style: MapStyle = 'stone',
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = floor.width * TILE_SIZE
+  canvas.height = floor.height * TILE_SIZE
+  const context = canvas.getContext('2d')
+  if (!context) throw new Error('Your browser could not create a Canvas 2D rendering context.')
+  renderDungeon(context, floor, grid, style)
+  return canvas
+}

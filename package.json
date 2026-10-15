@@ -1,47 +1,26 @@
-{
+﻿{
   "name": "dungeon-atelier",
-  "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Dungeon Atelier",
-  "author": "Aleksander.Pavlov <alekseybg@gmail.com>",
-  "type": "module",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "lint": "prettier --write \"**/*.{js,vue,css,scss,html,md,json}\" --ignore-path .gitignore && eslint --fix -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
-    "lint:check": "prettier \"**/*.{js,vue,css,scss,html,md,json}\" --ignore-path .gitignore && eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
-    "dev": "quasar dev",
-    "build": "quasar build",
-    "postinstall": "quasar prepare --silent"
-  },
-  "dependencies": {
-    "@quasar/extras": "^2.1.0",
-    "quasar": "^2.35.1",
-    "vue": "^3.5.22",
-    "vue-router": "^5.0.6"
+    "dev": "npm run build:core && npm run dev --workspace @dungeon-atelier/app",
+    "build:core": "npm run build --workspace @dungeon-atelier/core",
+    "build": "npm run build:core && npm run build --workspace @dungeon-atelier/app",
+    "typecheck": "npm run typecheck --workspace @dungeon-atelier/core && npm run build:core && npm run typecheck --workspace @dungeon-atelier/app",
+    "lint": "prettier --write . && npm run lint --workspace @dungeon-atelier/app",
+    "lint:check": "prettier --check . && npm run lint:check --workspace @dungeon-atelier/app",
+    "postinstall": "npm run build:core && npm run prepare:app --workspace @dungeon-atelier/app"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.8.0",
-    "eslint-plugin-vue": "^10.8.0",
-    "globals": "^17.4.0",
-    "vite-plugin-checker": "^0.14.5",
-    "vue-eslint-parser": "^10.4.0",
-    "@vue/eslint-config-prettier": "^10.2.0",
     "prettier": "^3.8.1",
-    "@quasar/app-vite": "^3.10.3",
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8"
+    "typescript": "^6.0.3"
   },
-  "keywords": [
-    "quasar",
-    "quasar-app",
-    "quasar-cli",
-    "quasar-app-vite",
-    "vite",
-    "vue",
-    "vuejs"
-  ],
   "engines": {
-    "node": ">= 26 || ^24 || ^22.12"
+    "node": "^22.12 || ^24 || >=26"
   }
 }

@@ -1,0 +1,70 @@
+import { defineBoot } from '#q-app'
+import {
+  matRestartAlt,
+  matEast,
+  matWest,
+  matCastle,
+  matTune,
+  matAutoAwesome,
+  matShuffle,
+  matUploadFile,
+  matDataObject,
+  matImage,
+  matClose,
+  matCheck,
+  matLayers,
+  matRemove,
+  matAdd,
+  matFitScreen,
+  matExplore,
+  matCheckCircle,
+  matNorth,
+  matSouth,
+  matMyLocation,
+  matWarningAmber,
+  matAdsClick,
+  matEdit,
+  matExpandMore,
+  matDownload,
+  matGridOn,
+  matDarkMode,
+} from '@quasar/extras/material-icons'
+
+const icons: Record<string, string> = {
+  restart_alt: matRestartAlt,
+  east: matEast,
+  west: matWest,
+  castle: matCastle,
+  tune: matTune,
+  auto_awesome: matAutoAwesome,
+  shuffle: matShuffle,
+  upload_file: matUploadFile,
+  data_object: matDataObject,
+  image: matImage,
+  close: matClose,
+  check: matCheck,
+  layers: matLayers,
+  remove: matRemove,
+  add: matAdd,
+  fit_screen: matFitScreen,
+  explore: matExplore,
+  check_circle: matCheckCircle,
+  north: matNorth,
+  south: matSouth,
+  my_location: matMyLocation,
+  warning_amber: matWarningAmber,
+  error_outline: matWarningAmber,
+  ads_click: matAdsClick,
+  edit: matEdit,
+  expand_more: matExpandMore,
+  download: matDownload,
+  grid_on: matGridOn,
+  dark_mode: matDarkMode,
+}
+
+export default defineBoot(({ app }) => {
+  app.config.globalProperties.$q.iconMapFn = (name: string) => {
+    const icon = icons[name]
+    if (icon) return { icon }
+  }
+})

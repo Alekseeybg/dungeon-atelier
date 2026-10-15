@@ -1,0 +1,24 @@
+{
+  "name": "@dungeon-atelier/core",
+  "version": "0.1.0",
+  "description": "Deterministic, framework-independent dungeon generation and validation",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema": "./dist/serialization/dungeon-floor.schema.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1"
+  }
+}

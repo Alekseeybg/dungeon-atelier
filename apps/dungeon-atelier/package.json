@@ -1,0 +1,54 @@
+{
+  "name": "@dungeon-atelier/app",
+  "version": "0.1.0",
+  "description": "A procedural dungeon generator and visual inspector",
+  "productName": "Dungeon Atelier",
+  "author": "Aleksander.Pavlov <alekseybg@gmail.com>",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --fix -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "lint:check": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "typecheck": "quasar prepare --silent && vue-tsc --noEmit",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "prepare:app": "quasar prepare --silent"
+  },
+  "dependencies": {
+    "@dungeon-atelier/core": "*",
+    "@quasar/extras": "^2.1.0",
+    "pinia": "^4.1.0",
+    "quasar": "^2.35.1",
+    "vue": "^3.5.22",
+    "vue-router": "^5.0.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@quasar/app-vite": "^3.10.3",
+    "@types/node": "^26.6.5",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^10.8.0",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.4.0",
+    "postcss": "^8.5.8",
+    "prettier": "^3.8.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2",
+    "vite-plugin-checker": "^0.14.5",
+    "vue-eslint-parser": "^10.4.0",
+    "vue-tsc": "^3.3.13"
+  },
+  "keywords": [
+    "quasar",
+    "quasar-app",
+    "quasar-cli",
+    "quasar-app-vite",
+    "vite",
+    "vue",
+    "vuejs"
+  ],
+  "engines": {
+    "node": ">= 26 || ^24 || ^22.12"
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dungeon-atelier.local/schemas/floor-v1.json",
+  "title": "Dungeon Atelier generated floor, schema version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "generatorVersion",
+    "seed",
+    "config",
+    "floorNumber",
+    "width",
+    "height",
+    "tiles",
+    "rooms",
+    "doors",
+    "stairs",
+    "diagnostics"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatorVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "seed": { "$ref": "#/definitions/seed" },
+    "config": { "$ref": "#/definitions/config" },
+    "floorNumber": { "type": "integer", "minimum": 1, "maximum": 999 },
+    "width": { "$ref": "#/definitions/dimension" },
+    "height": { "$ref": "#/definitions/dimension" },
+    "tiles": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 96,
+      "items": {
+        "type": "array",
+        "minItems": 16,
+        "maxItems": 96,
+        "items": { "enum": ["wall", "floor", "door"] }
+      }
+    },
+    "rooms": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 80,
+      "items": { "$ref": "#/definitions/room" }
+    },
+    "doors": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 320,
+      "items": { "$ref": "#/definitions/door" }
+    },
+    "stairs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/definitions/staircase" }
+    },
+    "diagnostics": { "$ref": "#/definitions/diagnostics" }
+  },
+  "definitions": {
+    "dimension": { "type": "integer", "minimum": 16, "maximum": 96 },
+    "coordinate": { "type": "integer", "minimum": 0, "maximum": 95 },
+    "id": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}$" },
+    "seed": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "$ref": "#/definitions/coordinate" },
+        "y": { "$ref": "#/definitions/coordinate" }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height",
+        "floorNumber",
+        "seed",
+        "targetRoomCount",
+        "minRoomSize",
+        "maxRoomSize",
+        "extraConnectionChance"
+      ],
+      "properties": {
+        "width": { "$ref": "#/definitions/dimension" },
+        "height": { "$ref": "#/definitions/dimension" },
+        "floorNumber": { "type": "integer", "minimum": 1, "maximum": 999 },
+        "seed": { "$ref": "#/definitions/seed" },
+        "targetRoomCount": { "type": "integer", "minimum": 2, "maximum": 80 },
+        "minRoomSize": { "type": "integer", "minimum": 3, "maximum": 16 },
+        "maxRoomSize": { "type": "integer", "minimum": 3, "maximum": 16 },
+        "extraConnectionChance": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "room": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "x", "y", "width", "height"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "x": { "$ref": "#/definitions/coordinate" },
+        "y": { "$ref": "#/definitions/coordinate" },
+        "width": { "type": "integer", "minimum": 3, "maximum": 16 },
+        "height": { "type": "integer", "minimum": 3, "maximum": 16 }
+      }
+    },
+    "door": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "position", "type", "orientation", "roomId"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "position": { "$ref": "#/definitions/position" },
+        "type": { "const": "regular" },
+        "orientation": { "enum": ["north-south", "east-west"] },
+        "roomId": { "$ref": "#/definitions/id" }
+      }
+    },
+    "staircase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "position", "direction", "roomId"],
+      "properties": {
+        "id": { "$ref": "#/definitions/id" },
+        "position": { "$ref": "#/definitions/position" },
+        "direction": { "enum": ["up", "down"] },
+        "roomId": { "$ref": "#/definitions/id" }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestedRoomCount",
+        "actualRoomCount",
+        "walkableTileCount",
+        "doorCount",
+        "connectedRoomCount",
+        "ordinaryConnected",
+        "placementAttempts",
+        "warnings"
+      ],
+      "properties": {
+        "requestedRoomCount": { "type": "integer", "minimum": 2, "maximum": 80 },
+        "actualRoomCount": { "type": "integer", "minimum": 2, "maximum": 80 },
+        "walkableTileCount": { "type": "integer", "minimum": 1, "maximum": 9216 },
+        "doorCount": { "type": "integer", "minimum": 2, "maximum": 320 },
+        "connectedRoomCount": { "type": "integer", "minimum": 2, "maximum": 80 },
+        "ordinaryConnected": { "type": "boolean" },
+        "placementAttempts": { "type": "integer", "minimum": 2, "maximum": 8000 },
+        "warnings": {
+          "type": "array",
+          "maxItems": 80,
+          "items": { "type": "string", "maxLength": 500 }
+        }
+      }
+    }
+  }
+}
