@@ -1,6 +1,6 @@
 # Generation and Stone material rules
 
-These rules describe generator **3.0.0**. Classic and Stone are two visualizations of the same floor. Layout presets are independent of the selected visualization; material rules apply to Stone only.
+These rules describe generator **3.1.0**. Classic and Stone are two visualizations of the same floor. Layout presets are independent of the selected visualization; material rules apply to Stone only.
 
 ## Layout settings
 
@@ -13,7 +13,7 @@ These rules describe generator **3.0.0**. Classic and Stone are two visualizatio
 
 Selecting a preset updates spacing and irregular-room chance. It preserves the seed, map size, room-size range, target count, and connection settings. Layout → Spacing & shapes can override spacing (1–6) and irregular-room chance (0–100%); Connections contains the rare-shortcut chance (0–100%).
 
-Spacing measures the empty gap between room bounding rectangles, independently of room size. One tile permits a shared wall. Each room still has a three-tile outer map margin. Placement is bounded by `targetRoomCount × 100` attempts.
+Spacing measures the empty gap between room bounding rectangles, independently of room size. One tile permits a shared wall. Each room still has a three-tile outer map margin. Placement is bounded by `targetRoomCount × 100` room candidates per layout. Generator 3.1.0 allows at most eight deterministic layout attempts for insufficient room placement or blocked ordinary routing. Attempt zero keeps the original stream; later room/block placement uses `<seed>:layout-retry:<attempt>`. Successful diagnostics retain every preceding reason and `generationAttempts`; exhaustion returns all reasons. Schema/invariant failures never retry.
 
 ## Room footprints and doors
 
@@ -111,21 +111,27 @@ The validator recomputes geometric route metrics during import. Generation-only 
 
 ## Stone paving families
 
-Each room receives one family from its floor area and a deterministic room hash. Variants within a family change individual stones without mixing unrelated flooring across a room.
+Materials use a separate, versioned hash (`materials-v3`). Each room keeps one base paving family, with protected thresholds overriding individual tiles. Actual footprint area determines eligibility.
 
-| Location                                     | Material selection                                                                    |
-| -------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Ordinary rooms                               | Irregular flagstones                                                                  |
-| Rooms with at least 25 floor tiles           | Large slabs when the room hash is divisible by 3; otherwise flagstones                |
-| Rooms with at least 49 floor tiles           | Patterned paving when the room hash is divisible by 7; this takes priority over slabs |
-| Corridors                                    | Small, worn cobbles                                                                   |
-| Doors, stairs, and their cardinal approaches | Clean fitted threshold stone, overriding room or corridor paving                      |
+Room identity is rendering-only, assigned in this priority order:
 
-Pattern eligibility uses actual footprint area, not the bounding rectangle's area. Patterned paving is decorative; it does not indicate traps or gameplay effects.
+| Identity            | Selection and finish                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Stair chamber       | Contains either stair; broad slabs, light perimeter trim, fitted stair surround when its full neighborhood is open       |
+| Chamber-block suite | Member of a predefined block; patterned paving at area ≥25, flagstones otherwise; warm trim and an optional center inlay |
+| Secret-door chamber | Owns a secret doorway; ordinary family with restrained perimeter trim; the doorway retains its cyan S panel              |
+| Junction chamber    | At least three owned doors; worn broad slabs, light trim, an optional navigation-style inlay                             |
+| Patterned chamber   | Remaining area ≥35 and room hash divisible by 5; patterned paving, warm trim and a center inlay                          |
+| Damp chamber        | Remaining room with sampled dampness >0.64 at its origin; moss along exposed edges                                       |
+| Ordinary chamber    | Remaining rooms; slabs at area ≥25 when hash is divisible by 3, otherwise flagstones                                     |
+
+The normal slab fallback also applies to secret-door and damp rooms. Room borders follow actual floor cells, skip walkable openings, and never bridge a missing corner. Center inlays require an entirely room-owned, plain-floor 3×3 footprint, clear of stairs. They are decorative and carry no trap, objective, or loot meaning. There is no disconnected hidden-chamber gameplay type.
+
+Corridors use darker cobbles or replacement slabs selected by a continuous four-tile field (>0.53 selects slabs), with broad faint wear following actual walkable neighbors. Door/stair tiles and cardinal approaches use clean fitted stone. Existing oak doors, metal fittings, and secret markers retain their plan-view geometry.
 
 ## Wall construction
 
-Ordinary wall runs use two staggered courses of rough-cut blocks per 32-pixel tile. Each block has a beveled/chipped outline, directional shading, mineral grain, and darker mortar.
+Ordinary wall runs use two staggered courses of rough-cut blocks per 32-pixel tile. Each block has a beveled/chipped outline, directional shading, sparse mineral grain, subtle veins, and darker mortar. Top caps are brighter while lower faces darken with a smooth depth gradient; floor contact shadows strengthen the edge without obscuring the paving.
 
 Dressed masonry reinforces exposed turns, diagonal outer corners, and wall tiles beside doorways. Reinforced blocks stay clean so structural outlines and door frames remain readable. Exposed edges receive coping highlights and contact shadows according to adjacent walkable tiles. Unexcavated space beyond the visible dungeon boundary stays hidden.
 
@@ -133,18 +139,25 @@ Dressed masonry reinforces exposed turns, diagonal outer corners, and wall tiles
 
 Dampness and age are continuous, smoothly interpolated seeded fields rather than independent per-tile coin flips.
 
-- **Damp field:** sampled on a five-tile grid. Values above `0.62` produce stained/mossy ordinary walls. Floors receive moss only beside a cardinal wall, within the same damp field.
+- **Damp field:** sampled on a five-tile grid. Values above `0.62` produce stained/mossy ordinary walls. Floors receive moss only beside a cardinal wall, within that field or in a damp-identity room.
 - **Age field:** sampled on a three-tile grid. Values above `0.68` crack ordinary walls; paving in these patches can crack when its variant is divisible by 3.
-- **Traffic wear:** corridor cobbles receive a soft central polish when neither moss nor cracks take priority.
+- **Grime:** exposed edges with age >0.55 and variant remainder 1 modulo 3 receive a soft dirt stain and a few tiny stone chips, after moss/cracks take priority.
+- **Traffic wear:** corridors and junction chambers receive a soft central polish when other conditions do not take priority.
 - **Protected stone:** thresholds and dressed structural masonry override weathering with a clean finish.
-- **Priority:** protected materials first; then moss, cracks, ordinary traffic wear, or a clean surface.
+- **Priority:** protected materials first; then moss, cracks, grime, traffic wear, or a clean surface.
 
 Moss collects near mortar joints. Cracks branch across individual stones. These conditions change artwork only; terrain, walkability, discovery, and collision remain unchanged.
+
+## Light and void
+
+Torch positions keep the existing north-facing boundary rule. Each warm light has a broad amber falloff clipped to a local connected walkable neighborhood (four cardinal steps) and its adjacent wall faces, then clipped to the visible dungeon footprint. Solid masonry blocks flood propagation; no light animates, so PNG exports stay repeatable. This is a local atmosphere approximation, not physical ray tracing or exploration visibility.
+
+A near-black blue-gray radial wash and sparse low-opacity grain give the void a restrained vignette. Fog is drawn after all artwork and hides every unexplored tile. Previously discovered tiles remain fully lit.
 
 ## Reproducibility and compatibility
 
 Layout randomness, shortcut randomness, side-passage randomness, and visual material randomness use separate seeded streams or hashes. Material selection includes the floor seed, floor number, coordinates, room identity, and a material-rule version. Rendering never consumes generator randomness.
 
-New floors use schema version 2 for layout settings, irregular footprints, shared-wall doors, and route diagnostics. Generator 3.0.0 extends it with optional footprint-family selections, chamber-block chance, and room-group records. Older files omit those extensions and still import unchanged; their editor settings default to L/T families and no chamber blocks. The importer retains a separate strict version-1 schema, so existing files still import and retain their original schema version, geometry, and fields. Version-2 files require an updated reader. Legacy editor settings use three-tile spacing, rectangular rooms, and no separately requested rare-shortcut pass until changed. Generator 2.0.0 creates different layouts from version 1.0.0; stored JSON is the way to preserve an old floor exactly.
+New floors use schema version 2 for layout settings, irregular footprints, shared-wall doors, and route diagnostics. Generator 3.0.0 extends it with optional footprint-family selections, chamber-block chance, and room-group records. Older files omit those extensions and still import unchanged; their editor settings default to L/T families and no chamber blocks. Generator 3.1.0 adds optional retry diagnostics and permits a valid two-room floor with one shared door. Older strict schema-2 readers need updating for both the new retry fields and one-door layouts. All imports now close every secret door and require every room and both stairs to remain reachable; unrecorded secret doors are rejected. Unsafe old imports may therefore fail explicitly. The importer retains a separate strict version-1 schema, so existing files still import and retain their original schema version, geometry, and fields. Version-2 files require an updated reader. Legacy editor settings use three-tile spacing, rectangular rooms, and no separately requested rare-shortcut pass until changed. Generator 2.0.0 creates different layouts from version 1.0.0; stored JSON is the way to preserve an old floor exactly.
 
 Classic's existing rendering colors, rock recipe, walls, regular doors, and staircase symbols remain unchanged; hidden doors add an S symbol. It automatically shows new geometry because both views render the same authoritative tile grid.

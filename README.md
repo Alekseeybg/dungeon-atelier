@@ -160,6 +160,9 @@ dungeon-atelier/
 │       ├── serialization/           # JSON import/export and schema
 │       ├── utilities/               # Seeded randomness and grid traversal
 │       └── validators/              # Configuration and floor invariants
+├── tests/                           # Independent verifier, fixtures, permanent regressions
+├── scripts/                         # Stress, replay, CPU profile, and browser verification
+├── reports/verification/            # Captured failures, timings, and visual evidence
 ├── package.json                     # Workspace commands
 └── package-lock.json
 ```
@@ -187,15 +190,15 @@ The maximum room side must also fit within `min(width, height) - 6`.
 
 ### Layout algorithm
 
-Generator **3.0.0** supports adjustable spacing, irregular room footprints, shared-wall doors, detour-aware regional loops, occasional side passages, a separate rare-shortcut pass, selectable room families, and paired chamber blocks. The default rare-shortcut chance is **15% per floor**, capped at one; a qualifying short link must save at least 12 steps and 35% of its old endpoint route. Secret routes use fresh hidden entrances and a sealed, unbranched corridor interior that cannot merge with ordinary passages. Ordinary routes remain connected when the secret passage is sealed.
+Generator **3.1.0** supports adjustable spacing, irregular room footprints, shared-wall doors, detour-aware regional loops, occasional side passages, a separate rare-shortcut pass, selectable room families, and paired chamber blocks. The default rare-shortcut chance is **15% per floor**, capped at one; a qualifying short link must save at least 12 steps and 35% of its old endpoint route. Secret routes use fresh hidden entrances and a sealed, unbranched corridor interior that cannot merge with ordinary passages. Ordinary routes remain connected when the secret passage is sealed.
 
 Classic Rooms defaults to a three-tile gap and 25% irregular rooms; Compact Labyrinth uses a one-tile gap and 45% irregular rooms. **Layout → Spacing & shapes** can override these settings. Both visualization modes render the same generated geometry.
 
-Seeded placement and routing are bounded, and every completed floor passes geometry, footprint, door, and connectivity validation. The floor report recomputes route metrics from the resulting grid. Expand **Room designs** in the report to see counts and inspect an example; chamber-block members count as separate rooms. Old saved floors remain importable without rewriting their layout; reproducing an old seed requires its original generator version.
+Placement/routing gets at most eight deterministic layout attempts. The public seed stays unchanged; successful floors record the attempt count and prior rejection reasons, visible in the report when a retry was needed. Exhaustion returns all reasons. Schema/invariant failures are never retried. Seeded placement and routing are bounded, and every completed floor passes geometry, footprint, door, and connectivity validation. The floor report recomputes route metrics from the resulting grid. Expand **Room designs** in the report to see counts and inspect an example; chamber-block members count as separate rooms. Old saved floors remain importable without rewriting their layout; reproducing an old seed requires its original generator version.
 
 ### Artwork and material rules
 
-Stone mode uses coherent room paving families, worn corridor cobbles, fitted doorway/stair thresholds, and dressed structural masonry. Continuous seeded dampness and age fields create clustered moss and cracks, while protected thresholds and corners stay clean. The tile inspector explains each Stone material selection.
+Stone mode gives stair rooms, chamber blocks, junctions, secret entrances, and occasional ceremonial rooms distinct paving and footprint-aware trim. Corridor cobbles alternate with coherent repaired-slab patches. Quieter mineral grain, chipped bevels, darker wall faces, contact shadows, dampness, grime, and tiny rubble enrich surfaces. Fitted thresholds stay clean. Restrained center inlays and stair surrounds avoid occupied or incomplete footprints. Warm connected-area lighting sits against a near-black blue-gray vignette. The tile inspector explains each material and room finish. All artwork is deterministic and changes no gameplay geometry.
 
 Torch placement follows actual north-facing room boundaries, including L/T-shaped rooms. It starts one tile from the room's left edge, repeats every four tiles, and skips walkable wall positions. Sconces and material conditions are decorative and do not alter exploration visibility or collision. Classic retains its existing rendering style.
 
@@ -239,6 +242,7 @@ New floors use schema version **2**, with strict support for importing existing 
 - the row-major `tiles[y][x]` grid containing `wall`, `floor`, or `door`;
 - room bounds with optional L/T footprints, door metadata, the up/down staircase pair, and diagnostics;
 - optional room-group bounds, shared corridor cells, and member references for chamber blocks;
+- optional generation-attempt count and preceding retry reasons;
 - layout settings, route metrics, and (from generator 2.1.0) ordered shortcut paths, endpoint room references, and measured savings in version 2; the importer preserves older version-1 files unchanged.
 
 Coordinates are zero-based, with the origin at the top left. Door orientation describes **travel direction** (`north-south` or `east-west`), so the drawn leaf spans the perpendicular axis. IDs are deterministic within a floor; a future multi-floor consumer must pair them with floor identity.
@@ -250,11 +254,24 @@ Import validates schema structure, references, IDs, dimensions, geometry, connec
 Before contributing, run:
 
 ```sh
+npm test
 npm run lint:check
 npm run typecheck
 npm run build
 ```
 
-An automated test framework and committed test suite are intentionally deferred. Current verification combines these checks, runtime validation on every generation/import, and browser smoke checks for movement, collisions, discovery, controls, rendering, and file operations.
+The permanent suite uses Node's built-in test runner. Run these commands from the repository root:
+
+```sh
+npm test
+npm run verify:stress -- --count 10000 --workers 4
+npm run verify:replay -- --index 4
+```
+
+The stress runner independently checks geometry and graph reachability, regenerates every seed, and round-trips every floor through JSON. Failures retain their full configuration and error in timestamped files under `reports/verification/latest/failures`. Promote any captured case into the permanent regressions with `npm run verify:replay -- path/to/failure.json --promote`.
+
+For real-browser rendering, import, walk/fog, and responsive smoke checks, start `npm run dev` in another terminal, then run `npm run verify:browser`. Chrome is required; set `CHROME_PATH` if it is not installed in the default location. This command targets the development server because it inspects Vue state and imports source modules. PNG artifacts and a JSON report are saved locally.
+
+See the [technical audit](docs/verification/technical-audit.md), [verification guide](docs/verification/README.md), [completed campaign](docs/verification/results.md), and [machine-readable final report](reports/verification/final/report.json). The completed 10,000-floor campaign covers both presets and eight dimension combinations; Classic rendering was also compared against pre-art pixel hashes.
 
 This is a dungeon generator with a walk-through preview. Hidden doors are visible generator annotations and remain traversable in the preview; there is no search or discovery interaction for doors. Manual painting, locked doors, traps, water/lava terrain, encounters, combat, persistent game saves, and travel between floors are future work. Generation is synchronous and bounded; it does not yet run in a worker.

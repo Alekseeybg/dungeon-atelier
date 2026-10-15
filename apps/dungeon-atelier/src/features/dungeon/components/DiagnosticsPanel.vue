@@ -24,6 +24,21 @@
               Generator {{ floor.generatorVersion
               }}<span v-if="floor.generatorVersion !== GENERATOR_VERSION"> · stored layout</span>
             </div>
+            <q-expansion-item
+              v-if="(floor.diagnostics.generationAttempts ?? 1) > 1"
+              dense
+              class="text-caption q-mb-sm"
+              :label="`${floor.diagnostics.generationAttempts} layout attempts`"
+              caption="Bounded deterministic retries"
+            >
+              <div
+                v-for="(reason, index) in floor.diagnostics.retryReasons"
+                :key="index"
+                class="q-px-md q-pb-sm"
+              >
+                Attempt {{ index + 1 }}: {{ reason }}
+              </div>
+            </q-expansion-item>
             <DungeonAutomap :floor="floor" :selected="selected" :walk="walk" />
           </q-card-section>
           <q-separator />
@@ -245,6 +260,10 @@
                   material.condition
                 }}</span></q-item-section
               ></q-item
+            >
+            <q-item v-if="material?.roomIdentity"
+              ><q-item-section>Stone room finish</q-item-section
+              ><q-item-section side>{{ material.roomIdentity }}</q-item-section></q-item
             >
             <q-item v-if="shortcut"
               ><q-item-section

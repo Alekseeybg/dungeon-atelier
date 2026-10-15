@@ -2,8 +2,16 @@ import { TILE_SIZE } from './tile-size'
 
 const cache = new Map<string, HTMLCanvasElement>()
 export type TileKind =
-  'room' | 'corridor' | 'slab' | 'mosaic' | 'threshold' | 'wall' | 'wall-dressed' | 'rock'
-export type StoneCondition = 'clean' | 'worn' | 'cracked' | 'mossy'
+  | 'room'
+  | 'corridor'
+  | 'corridor-slab'
+  | 'slab'
+  | 'mosaic'
+  | 'threshold'
+  | 'wall'
+  | 'wall-dressed'
+  | 'rock'
+export type StoneCondition = 'clean' | 'worn' | 'cracked' | 'mossy' | 'grimy'
 
 export function tileHash(x: number, y: number, seed: number) {
   let value = Math.imul(x + 1, 374761393) ^ Math.imul(y + 1, 668265263) ^ seed
@@ -26,9 +34,10 @@ function stone(
   height: number,
   wall: boolean,
   dressed = false,
+  toneOffset = 0,
 ) {
-  const tone = (wall ? 76 : 67) + Math.floor(random() * 19)
-  const warm = wall ? 0 : 5
+  const tone = (wall ? 67 : 78) + Math.floor(random() * 18) + toneOffset
+  const warm = wall ? 1 : 6
   const chip = dressed ? 0.6 : 1 + random()
   const shape = new Path2D()
   shape.moveTo(x + chip, y)
@@ -43,17 +52,33 @@ function stone(
   context.save()
   context.clip(shape)
   const face = context.createLinearGradient(x, y, x + width, y + height)
-  face.addColorStop(0, `rgb(${tone + warm + 16} ${tone + 15} ${tone + 3})`)
-  face.addColorStop(0.45, `rgb(${tone + warm} ${tone + 2} ${tone - 7})`)
-  face.addColorStop(1, `rgb(${tone + warm - 10} ${tone - 9} ${tone - 15})`)
+  face.addColorStop(0, `rgb(${tone + warm + 17} ${tone + 18} ${tone + 13})`)
+  face.addColorStop(0.48, `rgb(${tone + warm} ${tone + 4} ${tone + 1})`)
+  face.addColorStop(1, `rgb(${tone + warm - 12} ${tone - 10} ${tone - 12})`)
   context.fillStyle = face
   context.fillRect(x, y, width, height)
-  for (let i = 0; i < width * height * 0.65; i++) {
+  for (let i = 0; i < width * height * 0.18; i++) {
     context.fillStyle =
-      random() > 0.5 ? `rgb(205 196 164 / ${random() * 0.19})` : `rgb(14 24 17 / ${random() * 0.3})`
+      random() > 0.5
+        ? `rgb(212 208 189 / ${random() * 0.16})`
+        : `rgb(14 21 24 / ${random() * 0.24})`
     context.fillRect(x + random() * width, y + random() * height, random() > 0.85 ? 2 : 0.8, 0.8)
   }
-  context.strokeStyle = '#d2c8a96b'
+  // Broad mineral veins sit below the bevels; sparse grains keep the material quiet at map scale.
+  context.strokeStyle = '#d3d0ba12'
+  context.lineWidth = 0.7
+  context.beginPath()
+  context.moveTo(x, y + height * 0.3)
+  context.bezierCurveTo(
+    x + width * 0.3,
+    y + height * 0.1,
+    x + width * 0.5,
+    y + height * 0.8,
+    x + width,
+    y + height * 0.6,
+  )
+  context.stroke()
+  context.strokeStyle = wall ? '#d0cbbb7b' : '#d2c8b364'
   context.lineWidth = 0.8
   context.beginPath()
   context.moveTo(x + chip, y + 0.5)
@@ -61,9 +86,16 @@ function stone(
   context.moveTo(x + 0.5, y + chip)
   context.lineTo(x + 0.5, y + height - chip)
   context.stroke()
-  context.fillStyle = '#101b13a0'
+  context.fillStyle = '#0b1216b8'
   context.fillRect(x, y + height - 1.2, width, 1.2)
   context.fillRect(x + width - 1, y, 1, height)
+  if (!dressed && random() > 0.45) {
+    const nick = x + 2 + random() * Math.max(1, width - 5)
+    context.fillStyle = '#152022b0'
+    context.fillRect(nick, y, 2.5, 1.4)
+    context.fillStyle = '#c1b9a24d'
+    context.fillRect(nick, y + 1.5, 2, 0.7)
+  }
   context.restore()
 }
 
@@ -98,7 +130,7 @@ export function stoneTile(kind: TileKind, variant: number, condition: StoneCondi
     return canvas
   }
   if (kind === 'wall' || kind === 'wall-dressed') {
-    context.fillStyle = '#151f18'
+    context.fillStyle = '#10191d'
     context.fillRect(0, 0, 32, 32)
     for (let row = 0; row < 2; row++) {
       const offset = row % 2 ? -8 : 0
@@ -122,14 +154,28 @@ export function stoneTile(kind: TileKind, variant: number, condition: StoneCondi
   } else if (kind === 'corridor') {
     for (let row = 0; row < 4; row++)
       for (let col = -1; col < 4; col++) {
-        stone(context, random, col * 9 + (row % 2 ? 4 : 0) + 0.5, row * 8 + 0.5, 8, 7, false)
+        stone(
+          context,
+          random,
+          col * 9 + (row % 2 ? 4 : 0) + 0.5,
+          row * 8 + 0.5,
+          8,
+          7,
+          false,
+          false,
+          -10,
+        )
       }
+  } else if (kind === 'corridor-slab') {
+    stone(context, random, 0.5, 0.5, 15, 31, false, false, -9)
+    stone(context, random, 16.5, 0.5, 15, 15, false, false, -9)
+    stone(context, random, 16.5, 16.5, 15, 15, false, false, -9)
   } else if (kind === 'mosaic') {
     stone(context, random, 0.5, 0.5, 31, 31, false, true)
-    context.strokeStyle = '#b0a17c7a'
+    context.strokeStyle = '#aa9b7770'
     context.lineWidth = 1
     context.strokeRect(3.5, 3.5, 25, 25)
-    context.strokeStyle = '#202d23c0'
+    context.strokeStyle = '#203037b0'
     context.beginPath()
     context.moveTo(16, 7)
     context.lineTo(25, 16)
@@ -191,15 +237,31 @@ export function stoneTile(kind: TileKind, variant: number, condition: StoneCondi
     context.stroke()
   }
   if (condition === 'mossy') {
-    context.fillStyle = '#30492b30'
+    context.fillStyle = '#27444124'
     context.fillRect(0, 0, 32, 32)
     for (let i = 0; i < 105; i++) {
       const x = random() * 32,
         y = random() * 32
       const inJoint = x % 16 < 5 || y % 16 < 4
       if (!inJoint && random() > 0.15) continue
-      context.fillStyle = random() > 0.5 ? '#71804b78' : '#354b2c99'
+      context.fillStyle = random() > 0.5 ? '#75815b65' : '#354c3899'
       context.fillRect(x, y, 1 + random() * 2, 0.7 + random())
+    }
+  }
+  if (condition === 'grimy') {
+    const stain = context.createRadialGradient(8 + random() * 16, 20, 1, 16, 20, 23)
+    stain.addColorStop(0, '#25221cb0')
+    stain.addColorStop(0.6, '#302e2438')
+    stain.addColorStop(1, '#302e2400')
+    context.fillStyle = stain
+    context.fillRect(0, 0, 32, 32)
+    for (let i = 0; i < 6; i++) {
+      const x = random() * 30,
+        y = 24 + random() * 7
+      context.fillStyle = '#0b121873'
+      context.fillRect(x, y + 0.6, 1.6, 1)
+      context.fillStyle = '#b8ac8c66'
+      context.fillRect(x, y, 1.3, 0.7)
     }
   }
   cache.set(key, canvas)

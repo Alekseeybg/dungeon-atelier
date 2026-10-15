@@ -1,0 +1,562 @@
+[
+  {
+    "id": "stress-4",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000004-0",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-20",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000020-1",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-44",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000044-2",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "/doors must NOT have fewer than 2 items"
+  },
+  {
+    "id": "stress-84",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000084-5",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-100",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000100-6",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped"],
+      "chamberBlockChance": 1
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-164",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000164-a",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.6,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-180",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000180-b",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.6,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 1,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-212",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000212-d",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 1,
+      "roomDesigns": ["t-shaped"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-292",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000292-i",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-47",
+    "config": {
+      "width": 64,
+      "height": 48,
+      "floorNumber": 1,
+      "seed": "verification-000047-2",
+      "targetRoomCount": 40,
+      "minRoomSize": 3,
+      "maxRoomSize": 9,
+      "extraConnectionChance": 0,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes."
+  },
+  {
+    "id": "stress-340",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000340-l",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-356",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000356-m",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-436",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000436-r",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.6,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 1,
+      "shortcutChance": 1,
+      "roomDesigns": ["alcoved"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-468",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000468-t",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-516",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000516-w",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-532",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000532-x",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 1
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-580",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000580-10",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-612",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000612-12",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-708",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000708-18",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 1
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-724",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000724-19",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-740",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000740-1a",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-852",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000852-1h",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.25,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 1
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-900",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000900-1k",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 0.6,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-996",
+    "config": {
+      "width": 16,
+      "height": 16,
+      "floorNumber": 1,
+      "seed": "verification-000996-1q",
+      "targetRoomCount": 4,
+      "minRoomSize": 3,
+      "maxRoomSize": 4,
+      "extraConnectionChance": 1,
+      "layoutStyle": "classic",
+      "roomSpacing": 3,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 0,
+      "roomDesigns": ["cross-shaped"],
+      "chamberBlockChance": 1
+    },
+    "originalFailure": "Only 1 room could be placed after 400 attempts. At least two rooms are required. Increase the map size or reduce room dimensions."
+  },
+  {
+    "id": "stress-234",
+    "config": {
+      "width": 48,
+      "height": 48,
+      "floorNumber": 1,
+      "seed": "verification-000234-e",
+      "targetRoomCount": 40,
+      "minRoomSize": 3,
+      "maxRoomSize": 9,
+      "extraConnectionChance": 1,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 0.65,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes."
+  },
+  {
+    "id": "stress-382",
+    "config": {
+      "width": 48,
+      "height": 32,
+      "floorNumber": 1,
+      "seed": "verification-000382-n",
+      "targetRoomCount": 30,
+      "minRoomSize": 3,
+      "maxRoomSize": 9,
+      "extraConnectionChance": 0.2,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 1,
+      "shortcutChance": 0.15,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes."
+  },
+  {
+    "id": "stress-762",
+    "config": {
+      "width": 48,
+      "height": 48,
+      "floorNumber": 1,
+      "seed": "verification-000762-1b",
+      "targetRoomCount": 40,
+      "minRoomSize": 3,
+      "maxRoomSize": 9,
+      "extraConnectionChance": 1,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 1,
+      "shortcutChance": 0,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0
+    },
+    "originalFailure": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes."
+  },
+  {
+    "id": "stress-954",
+    "config": {
+      "width": 48,
+      "height": 48,
+      "floorNumber": 1,
+      "seed": "verification-000954-1n",
+      "targetRoomCount": 40,
+      "minRoomSize": 3,
+      "maxRoomSize": 9,
+      "extraConnectionChance": 0.6,
+      "layoutStyle": "compact",
+      "roomSpacing": 1,
+      "roomShapeChance": 1,
+      "shortcutChance": 1,
+      "roomDesigns": ["l-shaped", "t-shaped", "cross-shaped", "alcoved", "u-shaped", "chamfered"],
+      "chamberBlockChance": 0.2
+    },
+    "originalFailure": "Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes."
+  }
+]

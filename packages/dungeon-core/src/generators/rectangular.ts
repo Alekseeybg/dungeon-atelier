@@ -281,7 +281,9 @@ function addSidePassages(
   }
 }
 
-export function generateDungeon(configuration: GenerationConfig): FloorResult {
+type AttemptResult = FloorResult | { ok: false; errors: string[]; retryable: true }
+
+function generateAttempt(configuration: GenerationConfig, attempt: number): AttemptResult {
   const validation = validateConfig(configuration)
   if (!validation.valid) return { ok: false, errors: validation.errors }
   const style = configuration.layoutStyle ?? 'classic'
@@ -294,7 +296,8 @@ export function generateDungeon(configuration: GenerationConfig): FloorResult {
     roomDesigns: configuration.roomDesigns ?? (['l-shaped', 't-shaped'] as RoomDesign[]),
     chamberBlockChance: configuration.chamberBlockChance ?? 0,
   }
-  const random = createSeededRandom(config.seed),
+  const layoutSeed = attempt === 0 ? config.seed : `${config.seed}:layout-retry:${attempt}`
+  const random = createSeededRandom(layoutSeed),
     rooms: Room[] = []
   const budget = config.targetRoomCount * CONFIG_LIMITS.placementAttemptsPerRoom
   let attempts = 0
@@ -302,7 +305,7 @@ export function generateDungeon(configuration: GenerationConfig): FloorResult {
   const prebuiltDoors: Door[] = []
   const occupied: { x: number; y: number; width: number; height: number }[] = []
   const designWarnings: string[] = []
-  const blockRandom = createSeededRandom(`${config.seed}:chamber-blocks`)
+  const blockRandom = createSeededRandom(`${layoutSeed}:chamber-blocks`)
   if (blockRandom.next() < config.chamberBlockChance) {
     const blueprint = chamberBlueprint(config, blockRandom)
     if (blueprint) {
@@ -375,6 +378,7 @@ export function generateDungeon(configuration: GenerationConfig): FloorResult {
   if (rooms.length < CONFIG_LIMITS.minRoomCount)
     return {
       ok: false,
+      retryable: true,
       errors: [
         `Only ${rooms.length} room could be placed after ${attempts} attempts. At least two rooms are required. Increase the map size or reduce room dimensions.`,
       ],
@@ -439,6 +443,7 @@ export function generateDungeon(configuration: GenerationConfig): FloorResult {
     if (!routed)
       return {
         ok: false,
+        retryable: true,
         errors: [
           'Room geometry leaves no valid route connecting all rooms. Increase spacing or map size, or reduce room sizes.',
         ],
@@ -562,4 +567,25 @@ export function generateDungeon(configuration: GenerationConfig): FloorResult {
   }
   const completed = validateFloor(floor)
   return completed.valid ? { ok: true, floor } : { ok: false, errors: completed.errors }
+}
+
+/** Bounded layout retries preserve the public seed and record every rejected attempt. */
+export function generateDungeon(configuration: GenerationConfig): FloorResult {
+  const configCheck = validateConfig(configuration)
+  if (!configCheck.valid) return { ok: false, errors: configCheck.errors }
+  const reasons: string[] = []
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const result = generateAttempt(configuration, attempt)
+    if (result.ok) {
+      result.floor.diagnostics.generationAttempts = attempt + 1
+      result.floor.diagnostics.retryReasons = reasons
+      return result
+    }
+    if (!('retryable' in result)) return result
+    reasons.push(('Layout attempt ' + (attempt + 1) + ': ' + result.errors.join(' ')).slice(0, 500))
+  }
+  return {
+    ok: false,
+    errors: ['Generation exhausted 8 deterministic layout attempts.', ...reasons],
+  }
 }
