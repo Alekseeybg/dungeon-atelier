@@ -108,12 +108,12 @@ function adjust(amount: number) {
   display: block;
   margin-bottom: 7px;
   color: #bdc5cf;
-  font-size: 11px;
+  font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.15px;
 }
 .number-stepper :deep(.q-field__control) {
-  height: 44px;
+  height: 3rem;
   padding: 0 7px;
   border-radius: 9px;
   background: #12171d;
@@ -126,13 +126,13 @@ function adjust(amount: number) {
 }
 .number-stepper :deep(.q-field__prepend),
 .number-stepper :deep(.q-field__append) {
-  height: 44px;
+  height: 3rem;
   padding: 0;
 }
 .number-stepper :deep(.number-stepper__input) {
   padding: 0 3px;
   text-align: center;
-  font-size: 17px;
+  font-size: 1.1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: #e8dcc5;
@@ -147,10 +147,10 @@ function adjust(amount: number) {
 .number-stepper__button {
   background: #28313b;
   color: #b8c4d1;
-  width: 26px;
-  min-width: 26px;
-  height: 26px;
-  min-height: 26px;
+  width: 1.9rem;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  min-height: 1.9rem;
 }
 .number-stepper__button:not(.disabled):hover {
   background: #4a4030;

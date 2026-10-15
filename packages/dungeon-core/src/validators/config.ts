@@ -1,4 +1,4 @@
-import { CONFIG_LIMITS as limits } from '../models/dungeon.js'
+import { CONFIG_LIMITS as limits, ROOM_DESIGNS } from '../models/dungeon.js'
 import type { GenerationConfig, ValidationResult } from '../models/dungeon.js'
 
 export function validateConfig(config: GenerationConfig): ValidationResult {
@@ -37,5 +37,23 @@ export function validateConfig(config: GenerationConfig): ValidationResult {
   ) {
     errors.push('Extra connection chance must be between 0 and 1.')
   }
+  if (config.layoutStyle !== undefined && !['classic', 'compact'].includes(config.layoutStyle))
+    errors.push('Layout style must be classic or compact.')
+  if (config.roomSpacing !== undefined) integer('Room spacing', config.roomSpacing, 1, 6)
+  for (const [label, value] of [
+    ['Room shape chance', config.roomShapeChance],
+    ['Shortcut chance', config.shortcutChance],
+    ['Chamber block chance', config.chamberBlockChance],
+  ] as const) {
+    if (value !== undefined && (!Number.isFinite(value) || value < 0 || value > 1))
+      errors.push(label + ' must be between 0 and 1.')
+  }
+  if (
+    config.roomDesigns !== undefined &&
+    (!Array.isArray(config.roomDesigns) ||
+      new Set(config.roomDesigns).size !== config.roomDesigns.length ||
+      config.roomDesigns.some((shape) => !ROOM_DESIGNS.some((design) => design.value === shape)))
+  )
+    errors.push('Room designs must be a unique list of supported footprint families.')
   return { valid: errors.length === 0, errors }
 }

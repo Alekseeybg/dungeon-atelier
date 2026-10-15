@@ -6,11 +6,12 @@ The project combines a browser-based editor with a separate TypeScript generatio
 
 ## Features
 
-- **Deterministic generation:** rectangular rooms, orthogonal corridors, optional extra connections, stable feature IDs, and one up/down staircase pair.
+- **Deterministic generation:** Classic Rooms and Compact Labyrinth presets, rectangular, L/T/cross/U-shaped rooms, alcoved halls, chamfered chambers, paired chamber blocks, orthogonal corridors, regional loops, rare useful shortcuts, stable IDs, and one up/down staircase pair.
 - **Validated layouts:** checks for geometry, connectivity, door placement, staircase placement, and agreement between the floor and its diagnostics.
 - **Two map styles:** a Stone view with weathered flagstones, masonry, detailed top-down doors, wall sconces, and warm lighting; and a Classic view inspired by old dungeon automaps.
-- **Dark Quasar interface:** responsive panels, native tabs and menus, SVG icons, and custom number steppers with direct typing, keyboard input, and bounded minus/plus buttons.
+- **Dark Quasar interface:** task-based settings tabs, pinned generation actions, grouped reports, an overlays menu, SVG icons, and custom number steppers. Fluid typography and proportional controls grow on larger displays, with saved Auto/Standard/Large text preferences. Smaller windows switch between Dungeon, Settings, and Report.
 - **Map inspection:** drag to pan, zoom around the cursor, fit to the viewport, toggle the grid, inspect individual tiles, and review floor statistics and staircase coordinates.
+- **Visible secret passages:** hidden shortcut doors carry an S symbol in both map styles and PNG exports. Locate shortcut centers the route, with an optional cyan highlight for inspection.
 - **Walk mode:** a directional player arrow, keyboard and on-screen movement controls, wall collisions, a step counter, and a fog-aware automap.
 - **Persistent discovery during a playtest:** the player's surrounding 3×3 area is revealed, and previously discovered tiles remain fully visible.
 - **Portable files:** validated JSON import/export and full-map PNG export in the selected visual style.
@@ -48,7 +49,7 @@ npm ci
 npm run dev
 ```
 
-Installation builds the core package and prepares the Quasar app. Development prints the local URL in the terminal. A global Quasar CLI installation is unnecessary.
+Installation builds the core package and prepares the Quasar app. Development prints the local URL in the terminal. The app uses the workspace generator directly, and rebuilding the core automatically restarts the development server and its type checker so cached code or declarations cannot persist. The server does not open new browser windows automatically. A global Quasar CLI installation is unnecessary.
 
 Use `npm install` when intentionally changing dependencies; commit the resulting lockfile.
 
@@ -69,10 +70,12 @@ Production files are written to `apps/dungeon-atelier/dist/spa`. Serve that dire
 
 ### Generate a floor
 
-1. Choose a square preset or enter independent width and height values.
-2. Set the floor number, seed, target room count, room-size range, and extra-connection chance.
+1. Choose a square size or enter independent width and height values. Select Classic Rooms or Compact Labyrinth as the layout preset.
+2. Use **Layout** for dimensions, room count, and room-size range; expand **Spacing & shapes** for finer tuning. **Room designs** selects footprint families and the chamber-block chance. **Connections** holds regional loops and secret-shortcut probability. **Details** holds the seed, floor number, and appearance-rule reference.
 3. Select **Generate dungeon** to reuse the seed, or **New seed & generate** to create a fresh seed and floor.
-4. Review the floor report for connectivity, actual room count, warnings, and staircase locations.
+4. Review the report for connectivity, room count, staircase travel distance, rare shortcuts, and warnings. Expand **Route statistics** for loops, dead ends, corridor share, and shared-wall doors.
+
+The preset selector and generation actions stay accessible while the active settings tab scrolls. A customized indicator appears when spacing or room-shape chance differs from the selected preset.
 
 Changing settings leaves the displayed floor intact until generation succeeds. Failed generation or import keeps the previous map. A target room count is a request: when fewer rooms fit, the report explains the shortfall.
 
@@ -90,9 +93,19 @@ Select **Stone** or **Classic** in the map toolbar. Both styles show the same fl
 | Arrow keys                    | Pan with the canvas focused              |
 | `+` / `-`                     | Zoom in / out                            |
 | `F`                           | Fit the map to the viewport              |
-| Grid toggle                   | Show or hide tile boundaries             |
+| Overlays → Tile grid          | Show or hide tile boundaries             |
 
-The camera supports device pixel ratio and viewport resizing. Selecting a staircase or an off-screen tile brings it into view.
+The camera supports device pixel ratio and viewport resizing. Fitted maps refit as the viewport changes; manually zoomed views keep their scale. Selecting a staircase or an off-screen tile brings it into view.
+
+Use **Overlays** for the tile grid and optional shortcut-route highlight. **Locate shortcut** in the floor report centers the passage.
+
+### Display and smaller screens
+
+**Display → Interface text size** offers **Auto** (16–20 px base, scaling with window width), **Standard** (16 px), and **Large** (20 px). The preference is saved locally; panel widths, controls, and spacing scale with it. Browser zoom remains available.
+
+Desktop windows at least 1200 CSS pixels wide show settings, dungeon, and report together. Smaller windows use **Dungeon / Settings / Report** tabs, keeping each panel usable at full width. Generating a floor or locating a shortcut opens the dungeon; clicking a tile opens its inspector. Settings and playtest state remain intact when switching panels. Short windows allow page scrolling to preserve usable control and map areas.
+
+See [UI layout and sizing](docs/ui-layout.md) for the organization and responsive sizing rules.
 
 ### Walk through the dungeon
 
@@ -174,18 +187,19 @@ The maximum room side must also fit within `min(width, height) - 6`.
 
 ### Layout algorithm
 
-- FNV-1a hashes the seed and initializes a Mulberry32 PRNG. The same configuration and generator version reproduce the same layout and IDs.
-- Room width and height are sampled independently. Placement leaves a three-tile outer margin and at least three tiles between room floor rectangles, with a bounded attempt budget of `targetRoomCount × 100`.
-- A Prim-style spanning tree connects rooms. Breadth-first corridor routing respects protected room perimeters and joins rooms through side-center doorways.
-- Nearby non-tree room pairs can receive additional corridors. A 100% chance attempts every candidate; geometric constraints can still prevent a route.
-- A two-sweep search selects distinct rooms for the up and down stairs, favoring separation by traversable distance.
-- Final validation requires ordinary connectivity across every walkable tile, room, door, and staircase. Floors and regular doors are walkable; walls are blocked.
+Generator **3.0.0** supports adjustable spacing, irregular room footprints, shared-wall doors, detour-aware regional loops, occasional side passages, a separate rare-shortcut pass, selectable room families, and paired chamber blocks. The default rare-shortcut chance is **15% per floor**, capped at one; a qualifying short link must save at least 12 steps and 35% of its old endpoint route. Secret routes use fresh hidden entrances and a sealed, unbranched corridor interior that cannot merge with ordinary passages. Ordinary routes remain connected when the secret passage is sealed.
 
-### Artwork and lighting
+Classic Rooms defaults to a three-tile gap and 25% irregular rooms; Compact Labyrinth uses a one-tile gap and 45% irregular rooms. **Layout → Spacing & shapes** can override these settings. Both visualization modes render the same generated geometry.
 
-Stone textures use cached procedural variants with randomness separate from generation. Both door orientations use the same top-down design, placed across the passage's travel axis. Classic doors use compact rectangular symbols.
+Seeded placement and routing are bounded, and every completed floor passes geometry, footprint, door, and connectivity validation. The floor report recomputes route metrics from the resulting grid. Expand **Room designs** in the report to see counts and inspect an example; chamber-block members count as separate rooms. Old saved floors remain importable without rewriting their layout; reproducing an old seed requires its original generator version.
 
-Torches sit on each room's north wall at `y = room.y - 1`, starting at `x = room.x + 1` and repeating every four tiles. Walkable positions, including doorways, are skipped. Corridors do not receive torches. Sconces and warm light are decorative and do not alter the authoritative floor or fog rules.
+### Artwork and material rules
+
+Stone mode uses coherent room paving families, worn corridor cobbles, fitted doorway/stair thresholds, and dressed structural masonry. Continuous seeded dampness and age fields create clustered moss and cracks, while protected thresholds and corners stay clean. The tile inspector explains each Stone material selection.
+
+Torch placement follows actual north-facing room boundaries, including L/T-shaped rooms. It starts one tile from the room's left edge, repeats every four tiles, and skips walkable wall positions. Sconces and material conditions are decorative and do not alter exploration visibility or collision. Classic retains its existing rendering style.
+
+See [Generation and Stone material rules](docs/generation-and-materials.md) for the exact placement, probability, texture-selection, weathering, shortcut, and compatibility rules.
 
 ## Using the core package
 
@@ -214,16 +228,18 @@ if (!restored.ok) throw new Error(restored.errors.join('\n'))
 console.log(restored.floor.rooms, restored.floor.diagnostics)
 ```
 
-Other exports include `validateConfig`, `validateFloor`, grid helpers, configuration limits, and TypeScript types. The JSON Schema is available as `@dungeon-atelier/core/schema`.
+Other exports include `validateConfig`, `validateFloor`, grid helpers, configuration limits, and TypeScript types. The current JSON Schema is available as `@dungeon-atelier/core/schema`; the legacy schema is available as `@dungeon-atelier/core/schema/v1`.
 
 ### Floor format
 
-Schema version **1** stores:
+New floors use schema version **2**, with strict support for importing existing version-1 files. The format stores:
 
 - `schemaVersion` and `generatorVersion`;
 - `seed`, `config`, `floorNumber`, `width`, and `height`;
 - the row-major `tiles[y][x]` grid containing `wall`, `floor`, or `door`;
-- room rectangles, door metadata, the up/down staircase pair, and diagnostics.
+- room bounds with optional L/T footprints, door metadata, the up/down staircase pair, and diagnostics;
+- optional room-group bounds, shared corridor cells, and member references for chamber blocks;
+- layout settings, route metrics, and (from generator 2.1.0) ordered shortcut paths, endpoint room references, and measured savings in version 2; the importer preserves older version-1 files unchanged.
 
 Coordinates are zero-based, with the origin at the top left. Door orientation describes **travel direction** (`north-south` or `east-west`), so the drawn leaf spans the perpendicular axis. IDs are deterministic within a floor; a future multi-floor consumer must pair them with floor identity.
 
@@ -241,4 +257,4 @@ npm run build
 
 An automated test framework and committed test suite are intentionally deferred. Current verification combines these checks, runtime validation on every generation/import, and browser smoke checks for movement, collisions, discovery, controls, rendering, and file operations.
 
-This is a dungeon-generation and exploration prototype. Manual painting, secret or locked doors, traps, water/lava terrain, encounters, combat, persistent game saves, and travel between floors are future work. Generation is synchronous and bounded; it does not yet run in a worker.
+This is a dungeon generator with a walk-through preview. Hidden doors are visible generator annotations and remain traversable in the preview; there is no search or discovery interaction for doors. Manual painting, locked doors, traps, water/lava terrain, encounters, combat, persistent game saves, and travel between floors are future work. Generation is synchronous and bounded; it does not yet run in a worker.

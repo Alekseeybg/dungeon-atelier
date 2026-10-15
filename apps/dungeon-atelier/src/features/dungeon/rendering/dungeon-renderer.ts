@@ -1,4 +1,5 @@
-import { isWalkable } from '@dungeon-atelier/core'
+import { isWalkable, roomCells } from '@dungeon-atelier/core'
+import { createMaterialPlan } from './material-rules'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
 import { stoneTile, tileHash } from './stone-tiles'
 import { drawStoneDoor } from './stone-doors'
@@ -43,16 +44,17 @@ function drawStairs(context: CanvasRenderingContext2D, x: number, y: number, up:
 /** Visual dressing is deterministic and never changes the authoritative floor. */
 function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, grid: boolean) {
   const size = TILE_SIZE
-  const seed = seedHash(floor.seed)
   const walkable = (x: number, y: number) => isWalkable(floor.tiles[y]?.[x])
-  const roomTiles = new Set<number>()
+  const materials = createMaterialPlan(floor)
+  const torchKeys = new Set<number>()
   const torches: Position[] = []
   for (const room of floor.rooms) {
-    for (let y = room.y; y < room.y + room.height; y++) {
-      for (let x = room.x; x < room.x + room.width; x++) roomTiles.add(y * floor.width + x)
-    }
-    for (let x = room.x + 1; x < room.x + room.width; x += 4) {
-      if (!walkable(x, room.y - 1)) torches.push({ x, y: room.y - 1 })
+    for (const p of roomCells(room)) {
+      if ((p.x - room.x) % 4 !== 1 || walkable(p.x, p.y - 1)) continue
+      const key = (p.y - 1) * floor.width + p.x
+      if (torchKeys.has(key)) continue
+      torches.push({ x: p.x, y: p.y - 1 })
+      torchKeys.add(key)
     }
   }
   const visible = new Path2D()
@@ -67,8 +69,8 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
       }
       if (!nearFloor) continue
       visible.rect(px, py, size, size)
-      const kind = open ? (roomTiles.has(y * floor.width + x) ? 'room' : 'corridor') : 'wall'
-      context.drawImage(stoneTile(kind, tileHash(x, y, seed) % 16), px, py)
+      const material = materials.at(x, y)
+      context.drawImage(stoneTile(material.kind, material.variant, material.condition), px, py)
       if (open) {
         for (const [dx, dy] of [
           [0, -1],
@@ -92,7 +94,11 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
         context.fillStyle = '#050a095e'
         context.fillRect(px, py, size, size)
         if (walkable(x, y + 1)) {
-          context.drawImage(stoneTile('wall', tileHash(x, y, seed + 1) % 16), px, py, size, 12)
+          const coping = context.createLinearGradient(px, py, px, py + 9)
+          coping.addColorStop(0, '#c5c3a84f')
+          coping.addColorStop(1, '#b1b09700')
+          context.fillStyle = coping
+          context.fillRect(px, py, size, 9)
           context.fillStyle = '#c8c0a47a'
           context.fillRect(px + 1, py + 1, 30, 1)
           context.fillStyle = '#02060599'
@@ -107,7 +113,13 @@ function renderStone(context: CanvasRenderingContext2D, floor: DungeonFloor, gri
     }
   }
   for (const door of floor.doors) {
-    drawStoneDoor(context, door.position.x * size, door.position.y * size, door.orientation)
+    drawStoneDoor(
+      context,
+      door.position.x * size,
+      door.position.y * size,
+      door.orientation,
+      door.type === 'secret',
+    )
   }
   for (const stair of floor.stairs) {
     drawStairs(context, stair.position.x * size, stair.position.y * size, stair.direction === 'up')
@@ -206,10 +218,28 @@ function renderClassic(context: CanvasRenderingContext2D, floor: DungeonFloor, g
     context.moveTo(8, 0)
     context.lineTo(16, 0)
     context.stroke()
-    context.fillStyle = '#655239'
-    context.fillRect(-8, -3, 16, 6)
-    context.strokeStyle = '#cbb58a'
-    context.strokeRect(-8, -3, 16, 6)
+    if (door.type === 'secret') {
+      context.fillStyle = '#142f2b'
+      context.fillRect(-9, -5, 18, 10)
+      context.strokeStyle = '#81e2d8'
+      context.lineWidth = 1
+      context.setLineDash([3, 2])
+      context.strokeRect(-9, -5, 18, 10)
+      context.setLineDash([])
+      if (door.orientation === 'east-west') context.rotate(-Math.PI / 2)
+      context.fillStyle = '#142f2b'
+      context.fillRect(-5, -7, 10, 14)
+      context.font = 'bold 12px monospace'
+      context.textAlign = 'center'
+      context.textBaseline = 'middle'
+      context.fillStyle = '#a4f4eb'
+      context.fillText('S', 0, 0.5)
+    } else {
+      context.fillStyle = '#655239'
+      context.fillRect(-8, -3, 16, 6)
+      context.strokeStyle = '#cbb58a'
+      context.strokeRect(-8, -3, 16, 6)
+    }
     context.restore()
   }
   for (const stair of floor.stairs) {

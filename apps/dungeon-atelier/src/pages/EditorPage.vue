@@ -11,6 +11,37 @@
           class="q-ml-sm"
         />
       </q-toolbar-title>
+      <q-btn-dropdown
+        flat
+        no-caps
+        icon="tune"
+        :label="$q.screen.lt.sm ? undefined : 'Display'"
+        class="display-menu-button"
+        aria-label="Display preferences"
+      >
+        <q-list class="display-menu">
+          <q-item-label header>Interface text size</q-item-label>
+          <q-item
+            v-for="option in textSizes"
+            :key="option.value"
+            clickable
+            v-close-popup
+            @click="setTextSize(option.value)"
+            :active="textSize === option.value"
+            active-class="text-primary"
+            :aria-label="option.label + ' text size'"
+            :aria-pressed="textSize === option.value"
+          >
+            <q-item-section
+              ><q-item-label>{{ option.label }}</q-item-label
+              ><q-item-label caption>{{ option.caption }}</q-item-label></q-item-section
+            >
+            <q-item-section side
+              ><q-icon v-if="textSize === option.value" name="check"
+            /></q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
       <input
         ref="fileInput"
         type="file"
@@ -71,14 +102,29 @@
           @click="store.errors = []"
       /></template>
     </q-banner>
-    <div class="editor-workbench">
-      <GeneratorPanel />
-      <div class="center-panel">
+    <q-tabs
+      v-model="workspaceTab"
+      dense
+      no-caps
+      active-color="primary"
+      indicator-color="primary"
+      class="workspace-tabs"
+      aria-label="Workspace panels"
+      align="justify"
+    >
+      <q-tab name="map" label="Dungeon" icon="layers" />
+      <q-tab name="settings" label="Settings" icon="tune" />
+      <q-tab name="report" label="Report" icon="data_object" />
+    </q-tabs>
+    <div class="editor-workbench" :class="'workspace-view--' + workspaceTab">
+      <GeneratorPanel class="workbench-settings" />
+      <div class="center-panel workbench-map">
         <DungeonCanvas
           :floor="store.floor"
           :selected="selected"
           :walk="walker.state"
-          @inspect="selected = $event"
+          :shortcut-focus="shortcutFocus"
+          @inspect="inspectTile"
           @error="store.reportError"
           @grid="showGrid = $event"
           @style="mapStyle = $event"
@@ -91,17 +137,20 @@
         </div>
       </div>
       <DiagnosticsPanel
+        class="workbench-report"
         :floor="store.floor"
         :selected="selected"
         :walk="walker.state"
         @inspect="selected = $event"
+        @locate-shortcut="locateShortcut"
       />
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import { useDungeonWalk } from '@/features/dungeon/exploration/useDungeonWalk'
 import type { Position } from '@dungeon-atelier/core'
 import type { MapStyle } from '@/features/dungeon/rendering/dungeon-renderer'
@@ -112,8 +161,41 @@ import DiagnosticsPanel from '@/features/dungeon/components/DiagnosticsPanel.vue
 import { downloadJson, downloadPng, readJsonFile } from '@/features/dungeon/files'
 
 const store = useDungeonStore()
+const quasar = useQuasar()
+const workspaceTab = ref('map')
+const textSize = ref('auto')
+const textSizes = [
+  { value: 'auto', label: 'Auto', caption: 'Scales with the window size' },
+  { value: 'standard', label: 'Standard', caption: 'Consistent 16 px base text' },
+  { value: 'large', label: 'Large', caption: 'Comfortable 20 px base text' },
+]
+function setTextSize(value: string) {
+  textSize.value = value
+  document.documentElement.dataset.uiScale = value
+  try {
+    localStorage.setItem('dungeon-atelier:ui-scale', value)
+  } catch {
+    /* Storage may be unavailable. */
+  }
+}
+function inspectTile(position: Position | null) {
+  selected.value = position
+  if (position && quasar.screen.width < 1200) workspaceTab.value = 'report'
+}
+watch(
+  () => store.floor,
+  () => {
+    if (quasar.screen.width < 1200) workspaceTab.value = 'map'
+  },
+)
 const walker = useDungeonWalk(() => store.floor)
 const selected = ref<Position | null>(null)
+const shortcutFocus = ref(0)
+function locateShortcut() {
+  workspaceTab.value = 'map'
+  if (walker.state.active) walker.command('toggle')
+  shortcutFocus.value++
+}
 const showGrid = ref(false)
 const mapStyle = ref<MapStyle>('stone')
 const fileInput = ref<HTMLInputElement>()
@@ -158,6 +240,12 @@ async function exportPng() {
   }
 }
 onMounted(() => {
+  try {
+    const saved = localStorage.getItem('dungeon-atelier:ui-scale')
+    if (saved && textSizes.some((option) => option.value === saved)) setTextSize(saved)
+  } catch {
+    /* Keep automatic sizing when storage is unavailable. */
+  }
   if (!store.floor) void store.generate()
 })
 </script>

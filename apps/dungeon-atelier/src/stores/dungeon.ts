@@ -9,14 +9,29 @@ function newSeed() {
 }
 
 export const useDungeonStore = defineStore('dungeon', () => {
-  const config = reactive({ ...DEFAULT_CONFIG })
+  const config = reactive({
+    ...DEFAULT_CONFIG,
+    roomDesigns: [...(DEFAULT_CONFIG.roomDesigns ?? [])],
+  })
   const floor = shallowRef<DungeonFloor | null>(null)
   const busy = ref(false)
   const errors = ref<string[]>([])
   const message = ref('')
   const source = ref<'generated' | 'imported'>('generated')
+  const effectiveConfig = (stored: DungeonFloor['config']) => ({
+    ...DEFAULT_CONFIG,
+    layoutStyle: 'classic' as const,
+    roomSpacing: 3,
+    roomShapeChance: 0,
+    shortcutChance: 0,
+    roomDesigns: ['l-shaped', 't-shaped'],
+    chamberBlockChance: 0,
+    ...stored,
+  })
   const hasPendingChanges = computed(
-    () => floor.value !== null && JSON.stringify(config) !== JSON.stringify(floor.value.config),
+    () =>
+      floor.value !== null &&
+      JSON.stringify(config) !== JSON.stringify(effectiveConfig(floor.value.config)),
   )
 
   function reportError(error: unknown) {
@@ -29,7 +44,7 @@ export const useDungeonStore = defineStore('dungeon', () => {
   async function generate(useNewSeed = false) {
     if (busy.value) return
     if (useNewSeed) config.seed = newSeed()
-    const snapshot = { ...config }
+    const snapshot = { ...config, roomDesigns: [...config.roomDesigns] }
     busy.value = true
     errors.value = []
     message.value = ''
@@ -59,7 +74,7 @@ export const useDungeonStore = defineStore('dungeon', () => {
         return
       }
       floor.value = result.floor
-      Object.assign(config, result.floor.config)
+      Object.assign(config, effectiveConfig(result.floor.config))
       source.value = 'imported'
       errors.value = []
       message.value = 'Stored floor imported and validated. Its layout was preserved.'

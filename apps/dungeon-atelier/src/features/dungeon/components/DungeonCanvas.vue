@@ -37,14 +37,46 @@
         :color="walk.active ? 'primary' : 'grey-5'"
         :text-color="walk.active ? 'dark' : undefined"
         icon="explore"
-        :label="walk.active ? 'Exit walk' : 'Walk mode'"
+        :label="$q.screen.lt.sm ? undefined : walk.active ? 'Exit walk' : 'Walk mode'"
         :disable="!floor"
         :aria-pressed="walk.active"
         :aria-label="walk.active ? 'Exit walk mode' : 'Enter walk mode'"
         @click="walkAction('toggle')"
         class="walk-mode-button q-mr-sm"
       />
-      <q-toggle v-model="showGrid" dense size="sm" label="Grid" color="primary" />
+      <q-btn-dropdown
+        flat
+        dense
+        no-caps
+        :icon="$q.screen.lt.sm ? undefined : 'layers'"
+        label="Overlays"
+        :disable="!floor"
+        aria-label="Map overlays"
+      >
+        <q-list class="overlay-menu">
+          <q-item tag="label">
+            <q-item-section>Tile grid</q-item-section>
+            <q-item-section side
+              ><q-toggle v-model="showGrid" color="primary" aria-label="Show tile grid"
+            /></q-item-section>
+          </q-item>
+          <q-item v-if="floor?.shortcuts?.length" tag="label">
+            <q-item-section
+              ><q-item-label>Shortcut route</q-item-label
+              ><q-item-label v-if="walk.active" caption
+                >Available outside walk mode</q-item-label
+              ></q-item-section
+            >
+            <q-item-section side
+              ><q-toggle
+                v-model="showShortcut"
+                color="cyan-4"
+                :disable="walk.active"
+                aria-label="Highlight generated shortcut"
+            /></q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
       <q-space />
       <q-btn
         flat
@@ -138,6 +170,9 @@
     </div>
     <div class="map-status" aria-live="polite">
       <span v-if="walk.active">{{ walk.message }}</span>
+      <span v-else-if="showShortcut && floor?.shortcuts?.length" class="text-cyan-3"
+        >S: hidden door · Cyan: shortcut · saves {{ floor.shortcuts[0]!.tilesSaved }} steps</span
+      >
       <span v-else>Drag to pan · Scroll to zoom · Click to inspect</span>
       <span class="coordinate-readout">{{
         walk.active && walk.position
@@ -158,11 +193,13 @@ import type { MapStyle } from '../rendering/dungeon-renderer'
 import { HEADING_NAMES } from '../exploration/useDungeonWalk'
 import type { WalkState, WalkAction } from '../exploration/useDungeonWalk'
 import { renderWalkFog } from '../rendering/walk-fog'
+import { drawShortcutHighlight } from '../rendering/shortcut-highlight'
 
 const props = defineProps<{
   floor: DungeonFloor | null
   selected: Position | null
   walk: WalkState
+  shortcutFocus: number
 }>()
 const emit = defineEmits<{
   inspect: [position: Position | null]
@@ -184,11 +221,14 @@ function followPlayer() {
 const viewport = ref<HTMLDivElement>()
 const canvas = ref<HTMLCanvasElement>()
 const showGrid = ref(false)
+const showShortcut = ref(false)
 const mapStyle = ref<MapStyle>('stone')
 const hover = ref<Position | null>(null)
 const camera = reactive({ x: 0, y: 0, scale: 1 })
 let mapCanvas: HTMLCanvasElement | undefined
 let observer: ResizeObserver | undefined
+let resizeFrame: number | undefined
+let autoFit = true
 let viewWidth = 0
 let viewHeight = 0
 let drag:
@@ -219,6 +259,13 @@ function paint() {
     context.restore()
     return
   }
+  if (showShortcut.value && props.floor.shortcuts?.length) {
+    context.save()
+    context.translate(camera.x, camera.y)
+    context.scale(camera.scale, camera.scale)
+    drawShortcutHighlight(context, props.floor.shortcuts, camera.scale)
+    context.restore()
+  }
   const cell = TILE_SIZE * camera.scale
   for (const [position, color] of [
     [hover.value, '#ede1c44d'],
@@ -237,6 +284,7 @@ function paint() {
 }
 
 function fit() {
+  autoFit = true
   if (!mapCanvas || !viewWidth || !viewHeight) return
   camera.scale = Math.max(
     0.05,
@@ -250,6 +298,7 @@ function fit() {
 
 function zoomAt(x: number, y: number, factor: number) {
   if (!mapCanvas) return
+  autoFit = false
   const scale = Math.max(0.05, Math.min(4, camera.scale * factor))
   const ratio = scale / camera.scale
   camera.x = x - (x - camera.x) * ratio
@@ -294,6 +343,7 @@ function onPointerDown(event: PointerEvent) {
 function onPointerMove(event: PointerEvent) {
   if (drag && event.pointerId === drag.id) {
     if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 3) drag.moved = true
+    if (drag.moved) autoFit = false
     camera.x += event.clientX - drag.lastX
     camera.y += event.clientY - drag.lastY
     drag.lastX = event.clientX
@@ -354,6 +404,7 @@ function onKeyDown(event: KeyboardEvent) {
   }
   if (offsets[event.key]) {
     event.preventDefault()
+    autoFit = false
     camera.x += offsets[event.key]!.x
     camera.y += offsets[event.key]!.y
     hover.value = null
@@ -382,6 +433,7 @@ watch(
     drag = undefined
     hover.value = null
     emit('inspect', null)
+    showShortcut.value = false
     rebuild()
     await nextTick()
     if (props.walk.active) followPlayer()
@@ -392,6 +444,34 @@ watch(showGrid, (value) => {
   emit('grid', value)
   rebuild()
 })
+watch(showShortcut, paint)
+watch(
+  () => props.shortcutFocus,
+  async () => {
+    await nextTick()
+    const path = props.floor?.shortcuts?.[0]?.path
+    if (!path?.length) return
+    autoFit = false
+    showShortcut.value = true
+    const minX = Math.min(...path.map((p) => p.x)),
+      maxX = Math.max(...path.map((p) => p.x))
+    const minY = Math.min(...path.map((p) => p.y)),
+      maxY = Math.max(...path.map((p) => p.y))
+    camera.scale = Math.max(
+      0.05,
+      Math.min(
+        2,
+        (viewWidth - 80) / ((maxX - minX + 3) * TILE_SIZE),
+        (viewHeight - 80) / ((maxY - minY + 3) * TILE_SIZE),
+      ),
+    )
+    camera.x = viewWidth / 2 - ((minX + maxX + 1) / 2) * TILE_SIZE * camera.scale
+    camera.y = viewHeight / 2 - ((minY + maxY + 1) / 2) * TILE_SIZE * camera.scale
+    hover.value = null
+    paint()
+  },
+  { flush: 'post' },
+)
 watch(mapStyle, (value) => {
   emit('style', value)
   rebuild()
@@ -404,6 +484,7 @@ watch(
       const x = camera.x + (position.x + 0.5) * cell
       const y = camera.y + (position.y + 0.5) * cell
       if (x < cell || y < cell || x > viewWidth - cell || y > viewHeight - cell) {
+        autoFit = false
         camera.x = viewWidth / 2 - (position.x + 0.5) * cell
         camera.y = viewHeight / 2 - (position.y + 0.5) * cell
       }
@@ -438,22 +519,29 @@ onMounted(() => {
   rebuild()
   observer = new ResizeObserver((entries) => {
     const bounds = entries[0]?.contentRect
-    if (!bounds || !canvas.value) return
-    const firstSize = viewWidth === 0 || viewHeight === 0
-    camera.x += (bounds.width - viewWidth) / 2
-    camera.y += (bounds.height - viewHeight) / 2
-    viewWidth = bounds.width
-    viewHeight = bounds.height
-    const ratio = window.devicePixelRatio || 1
-    canvas.value.width = Math.max(1, Math.round(viewWidth * ratio))
-    canvas.value.height = Math.max(1, Math.round(viewHeight * ratio))
-    if (firstSize) {
+    if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
+    if (!bounds || bounds.width <= 0 || bounds.height <= 0) return
+    // Resize canvas and reactive zoom labels after the current layout notification cycle.
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = undefined
+      if (!canvas.value) return
+      const firstSize = viewWidth === 0 || viewHeight === 0
+      camera.x += (bounds.width - viewWidth) / 2
+      camera.y += (bounds.height - viewHeight) / 2
+      viewWidth = bounds.width
+      viewHeight = bounds.height
+      const ratio = window.devicePixelRatio || 1
+      canvas.value.width = Math.max(1, Math.round(viewWidth * ratio))
+      canvas.value.height = Math.max(1, Math.round(viewHeight * ratio))
       if (props.walk.active) followPlayer()
-      else fit()
-    }
-    paint()
+      else if (firstSize || autoFit) fit()
+      paint()
+    })
   })
   if (viewport.value) observer.observe(viewport.value)
 })
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
+})
 </script>

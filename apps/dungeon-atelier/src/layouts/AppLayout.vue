@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header bordered class="app-header">
-      <q-toolbar class="q-px-lg" style="min-height: 64px">
+      <q-toolbar class="q-px-lg">
         <q-avatar rounded color="primary" text-color="dark" icon="castle" size="36px" />
         <q-toolbar-title class="q-ml-sm">
           <span class="text-weight-medium">Dungeon Atelier</span>

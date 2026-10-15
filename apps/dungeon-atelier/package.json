@@ -10,7 +10,7 @@
     "lint": "eslint --fix -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "lint:check": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "typecheck": "quasar prepare --silent && vue-tsc --noEmit",
-    "dev": "quasar dev",
+    "dev": "node scripts/dev.mjs",
     "build": "quasar build",
     "prepare:app": "quasar prepare --silent"
   },

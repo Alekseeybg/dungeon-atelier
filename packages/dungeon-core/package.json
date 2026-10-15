@@ -12,7 +12,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./schema": "./dist/serialization/dungeon-floor.schema.json"
+    "./schema": "./dist/serialization/dungeon-floor.schema.json",
+    "./schema/v1": "./dist/serialization/dungeon-floor.v1.schema.json"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

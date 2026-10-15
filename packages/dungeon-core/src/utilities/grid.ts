@@ -7,15 +7,29 @@ export const DIRECTIONS: readonly Position[] = [
   { x: -1, y: 0 },
 ]
 export const positionKey = ({ x, y }: Position) => `${x},${y}`
-export const roomCenter = (room: Room): Position => ({
-  x: room.x + Math.floor(room.width / 2),
-  y: room.y + Math.floor(room.height / 2),
-})
+export function roomCells(room: Room): Position[] {
+  if (room.floorCells) return room.floorCells.map((p) => ({ x: room.x + p.x, y: room.y + p.y }))
+  return Array.from({ length: room.height }, (_, y) =>
+    Array.from({ length: room.width }, (_, x) => ({ x: room.x + x, y: room.y + y })),
+  ).flat()
+}
 export const containsPosition = (room: Room, position: Position) =>
   position.x >= room.x &&
-  position.x < room.x + room.width &&
   position.y >= room.y &&
-  position.y < room.y + room.height
+  position.x < room.x + room.width &&
+  position.y < room.y + room.height &&
+  (!room.floorCells ||
+    room.floorCells.some((p) => p.x === position.x - room.x && p.y === position.y - room.y))
+export function roomCenter(room: Room): Position {
+  const center = { x: room.x + Math.floor(room.width / 2), y: room.y + Math.floor(room.height / 2) }
+  if (containsPosition(room, center)) return center
+  return roomCells(room).reduce((best, p) =>
+    Math.abs(p.x - center.x) + Math.abs(p.y - center.y) <
+    Math.abs(best.x - center.x) + Math.abs(best.y - center.y)
+      ? p
+      : best,
+  )
+}
 export const isWalkable = (tile: Terrain | undefined) => tile === 'floor' || tile === 'door'
 
 /** -1 means blocked or unreachable. The queue is bounded by the number of tiles. */
@@ -55,9 +69,10 @@ export function calculateConnectivity(
     0,
   )
   const reachableTileCount = distances.filter((distance) => distance >= 0).length
-  const connectedRoomCount = floor.rooms.filter(
-    (room) => distances[room.y * floor.width + room.x] >= 0,
-  ).length
+  const connectedRoomCount = floor.rooms.filter((room) => {
+    const center = roomCenter(room)
+    return distances[center.y * floor.width + center.x] >= 0
+  }).length
   return {
     walkableTileCount,
     connectedRoomCount,
