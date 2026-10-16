@@ -1,0 +1,54 @@
+{
+  "references": [
+    {
+      "size": 32,
+      "seed": "production-32-classic-amber",
+      "file": "recommended-32.png",
+      "zooms": [0.5, 1, 2],
+      "pan": {
+        "averageMs": 0.012499998013178507,
+        "maxMs": 0.10000002384185791
+      },
+      "interactionCaptureMs": 461
+    },
+    {
+      "size": 64,
+      "seed": "production-64-classic-amber",
+      "file": "recommended-64.png",
+      "zooms": [0.5, 1, 2],
+      "pan": {
+        "averageMs": 2.5583333373069763,
+        "maxMs": 3.3000000715255737
+      },
+      "interactionCaptureMs": 642
+    },
+    {
+      "size": 96,
+      "seed": "production-96-classic-amber",
+      "file": "recommended-96.png",
+      "zooms": [0.5, 1, 2],
+      "pan": {
+        "averageMs": 3.2708333283662796,
+        "maxMs": 3.6999999284744263
+      },
+      "interactionCaptureMs": 729
+    }
+  ],
+  "checks": {
+    "concealedEqualsUntouchedRock": true,
+    "secretRevealControl": true,
+    "projectedGrid": true,
+    "automapNavigation": true,
+    "wallCollision": true,
+    "projectedFog": {
+      "unknown": 1015,
+      "hidden": 1015,
+      "playerVisible": true
+    }
+  },
+  "resources": {
+    "live": 1,
+    "bytes": 15597568
+  },
+  "runtimeErrors": []
+}

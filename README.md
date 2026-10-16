@@ -1,6 +1,6 @@
 # Dungeon Atelier
 
-A procedural dungeon studio for generating, inspecting, and walking through reproducible dungeon floors. Build a layout from a seed, switch between textured stone and classic automap views, explore it with fog of war, and export the result as JSON or PNG.
+A procedural dungeon studio for generating, inspecting, and walking through reproducible dungeon floors. Build a layout from a seed, use the approved dimensional dungeon artwork or switch to legacy stone and classic automap views, explore it with fog of war, and export the result as JSON or PNG.
 
 The project combines a browser-based editor with a separate TypeScript generation library, so the same dungeon definitions can be used by a future game without depending on the editor.
 
@@ -8,15 +8,15 @@ The project combines a browser-based editor with a separate TypeScript generatio
 
 - **Deterministic generation:** Classic Rooms and Compact Labyrinth presets, rectangular, L/T/cross/U-shaped rooms, alcoved halls, chamfered chambers, paired chamber blocks, orthogonal corridors, regional loops, rare useful shortcuts, stable IDs, and one up/down staircase pair.
 - **Validated layouts:** checks for geometry, connectivity, door placement, staircase placement, and agreement between the floor and its diagnostics.
-- **Two map styles:** a Stone view with weathered flagstones, masonry, detailed top-down doors, wall sconces, and warm lighting; and a Classic view inspired by old dungeon automaps.
+- **Approved dimensional artwork:** Ancient Ruined Dungeon is the default, with seven floor materials, three wall families, five cap/coping assemblies, integrated doorways, dimensional stairs with adjacent level symbols, mounted torches and restrained lighting. Stone, Classic and the earlier Dimensional Stone remain selectable fallbacks.
 - **Dark Quasar interface:** task-based settings tabs, pinned generation actions, grouped reports, an overlays menu, SVG icons, and custom number steppers. Fluid typography and proportional controls grow on larger displays, with saved Auto/Standard/Large text preferences. Smaller windows switch between Dungeon, Settings, and Report.
 - **Map inspection:** drag to pan, zoom around the cursor, fit to the viewport, toggle the grid, inspect individual tiles, and review floor statistics and staircase coordinates.
-- **Visible secret passages:** hidden shortcut doors carry an S symbol in both map styles and PNG exports. Locate shortcut centers the route, with an optional cyan highlight for inspection.
+- **Secret-passage inspection:** reveal hidden architecture in Ancient/Dimensional views; revealed panels carry an S annotation. Locate shortcut centers the route with an optional cyan highlight. Concealed architecture contributes no route, torch or light clues.
 - **Walk mode:** a directional player arrow, keyboard and on-screen movement controls, wall collisions, a step counter, and a fog-aware automap.
 - **Persistent discovery during a playtest:** the player's surrounding 3×3 area is revealed, and previously discovered tiles remain fully visible.
 - **Portable files:** validated JSON import/export and full-map PNG export in the selected visual style.
 
-The app runs in the browser. It does not require a backend, database, account, or remote image service. Stone, door, and torch artwork is drawn procedurally with Canvas 2D.
+The app runs in the browser. It does not require a backend, database, account, or remote image service. The approved raster artwork ships with the app and is assembled with Canvas 2D; legacy Stone artwork remains procedural. No remote image generation runs in the editor.
 
 ## Technology stack
 
@@ -83,7 +83,7 @@ Number fields support minus/plus buttons, direct typing, and up/down arrow keys.
 
 ### Inspect the map
 
-Select **Stone** or **Classic** in the map toolbar. Both styles show the same floor and coordinates. The report's automap provides a compact Classic overview.
+The map starts in **Ancient Ruined Dungeon**. Open **Materials** to select floors, wall families, cap profiles and details. Appearance is saved locally, separately from generation settings. Stone, Classic and Dimensional Stone remain available in the appearance selector. Every view uses the same logical cells; the Classic automap stays square and can locate a cell in the projected view. See [production visual integration](docs/production-visual-integration.md) for usage rules and the full option inventory.
 
 | Input                         | Editor behavior                          |
 | ----------------------------- | ---------------------------------------- |
@@ -130,7 +130,7 @@ Exiting and re-entering Walk mode resumes the current playtest. Resetting explor
 
 - **Import:** load a dungeon JSON file. The stored layout is validated and preserved, rather than regenerated from its seed.
 - **Export → Dungeon JSON:** save the authoritative floor, settings, IDs, versions, feature metadata, and diagnostics.
-- **Export → PNG image:** render the complete map at 32 pixels per tile using the selected Stone/Classic style and grid setting. Camera position, zoom, selection, and exploration fog do not affect the exported image.
+- **Export → PNG image:** render the complete map using the committed appearance and grid settings. Ancient uses its approved 32×26 ground stride and native 2× artwork; legacy styles retain their original dimensions. Camera position, zoom, selection, and exploration fog do not affect the exported image.
 
 There is no automatic map persistence. Export JSON before closing or refreshing the page. Browser imports are limited to 5 MiB, and the core also bounds JSON text length before parsing.
 
@@ -146,7 +146,7 @@ dungeon-atelier/
 │   │   ├── features/dungeon/
 │   │   │   ├── components/          # Controls, canvas, automap, and inspection
 │   │   │   ├── exploration/         # Temporary player and discovery state
-│   │   │   ├── rendering/           # Stone/Classic renderers, artwork, and fog
+│   │   │   ├── rendering/           # Shared architecture, themes, projection, artwork, and fog
 │   │   │   └── files.ts             # Browser import and download support
 │   │   ├── layouts/                 # Quasar application shell
 │   │   ├── pages/                   # Editor and not-found pages
@@ -192,17 +192,31 @@ The maximum room side must also fit within `min(width, height) - 6`.
 
 Generator **3.1.0** supports adjustable spacing, irregular room footprints, shared-wall doors, detour-aware regional loops, occasional side passages, a separate rare-shortcut pass, selectable room families, and paired chamber blocks. The default rare-shortcut chance is **15% per floor**, capped at one; a qualifying short link must save at least 12 steps and 35% of its old endpoint route. Secret routes use fresh hidden entrances and a sealed, unbranched corridor interior that cannot merge with ordinary passages. Ordinary routes remain connected when the secret passage is sealed.
 
-Classic Rooms defaults to a three-tile gap and 25% irregular rooms; Compact Labyrinth uses a one-tile gap and 45% irregular rooms. **Layout → Spacing & shapes** can override these settings. Both visualization modes render the same generated geometry.
+Classic Rooms defaults to a three-tile gap and 25% irregular rooms; Compact Labyrinth uses a one-tile gap and 45% irregular rooms. **Layout → Spacing & shapes** can override these settings. All visualization modes render the same generated geometry.
 
 Placement/routing gets at most eight deterministic layout attempts. The public seed stays unchanged; successful floors record the attempt count and prior rejection reasons, visible in the report when a retry was needed. Exhaustion returns all reasons. Schema/invariant failures are never retried. Seeded placement and routing are bounded, and every completed floor passes geometry, footprint, door, and connectivity validation. The floor report recomputes route metrics from the resulting grid. Expand **Room designs** in the report to see counts and inspect an example; chamber-block members count as separate rooms. Old saved floors remain importable without rewriting their layout; reproducing an old seed requires its original generator version.
 
 ### Artwork and material rules
+
+The approved Ancient renderer is integrated into the editor, with coherent whole-room material assignments and preserved source art. See [the production integration summary](docs/production-visual-integration.md), [real-map gallery](reports/production/index.html), and [measured validation report](reports/production/report.json). The following rules describe the retained **Stone fallback**.
 
 Stone mode gives stair rooms, chamber blocks, junctions, secret entrances, and occasional ceremonial rooms distinct paving and footprint-aware trim. Corridor cobbles alternate with coherent repaired-slab patches. Quieter mineral grain, chipped bevels, darker wall faces, contact shadows, dampness, grime, and tiny rubble enrich surfaces. Fitted thresholds stay clean. Restrained center inlays and stair surrounds avoid occupied or incomplete footprints. Warm connected-area lighting sits against a near-black blue-gray vignette. The tile inspector explains each material and room finish. All artwork is deterministic and changes no gameplay geometry.
 
 Torch placement follows actual north-facing room boundaries, including L/T-shaped rooms. It starts one tile from the room's left edge, repeats every four tiles, and skips walkable wall positions. Sconces and material conditions are decorative and do not alter exploration visibility or collision. Classic retains its existing rendering style.
 
 See [Generation and Stone material rules](docs/generation-and-materials.md) for the exact placement, probability, texture-selection, weathering, shortcut, and compatibility rules.
+
+### Visual foundation reference scenes
+
+An isolated four-door artwork demonstration is available at `/#/visual-foundation` while the app is running. It compares the existing Dimensional Stone view with a candidate using new painted flagstones, coping, masonry, and architectural frames. Review closed/open doorways, unlit materials, corners, secret concealment, and PNG exports there. These historical comparisons remain available; the approved result now drives the real Ancient theme.
+
+See [the projection, artwork, screenshots, and remaining limitations](docs/visual-foundation.md). With the development server running, `npm run verify:foundation` captures the demonstration and exercises its controls.
+
+The same room now includes [Ancient Ruined Dungeon and Medieval Fortress masonry treatments](docs/masonry-review.md), with A/B comparison and the previous prototype retained. `npm run verify:masonry` captures both materials and checks their directional doors, shared floor pixels, concealment, and responsive review controls. The retained families are also selectable in the real generator; this scene provides a controlled reference.
+
+[Structural separation](docs/plane-separation.md) adds common cap/face value rules and contact at the visible wall/floor boundary. Use `npm run verify:readability` to capture east-wall and south-east corner details, before/after comparisons, and a neutral gray-floor diagnostic.
+
+The current [realistic floor refinement](docs/realistic-floor-review.md) adds calmer worn flagstones and gentle floor-edge grading to the benchmark. Floor study offers all seven existing materials; Compare floors lets you select and swap any pair under the same room conditions. `npm run verify:floors` captures their details and checks that architectural pixels remain unchanged. Comic-book styling remains a future alternate direction.
 
 ## Using the core package
 
@@ -271,6 +285,10 @@ npm run verify:replay -- --index 4
 The stress runner independently checks geometry and graph reachability, regenerates every seed, and round-trips every floor through JSON. Failures retain their full configuration and error in timestamped files under `reports/verification/latest/failures`. Promote any captured case into the permanent regressions with `npm run verify:replay -- path/to/failure.json --promote`.
 
 For real-browser rendering, import, walk/fog, and responsive smoke checks, start `npm run dev` in another terminal, then run `npm run verify:browser`. Chrome is required; set `CHROME_PATH` if it is not installed in the default location. This command targets the development server because it inspects Vue state and imports source modules. PNG artifacts and a JSON report are saved locally.
+
+The isolated `/#/visual-foundation` review includes seven floor studies and reversible wall-cap effects. See the [generated floor audit](docs/generated-floor-review.md), [screenshot gallery](reports/visual-foundation/generated-floors/index.html), and [cap before/after review](docs/wall-cap-polish.md). Reproduce with `npm run verify:generated-floors` and `npm run verify:cap-polish` while the dev server is running. These reviews preserve the production editor's themes and generation rules.
+
+The current final-detail review is at `/#/visual-foundation/final-polish`: three stone stair presentations, three adjacent up/down symbol materials, front/side mounted iron sconces, normal/detail views, stair and north-torch comparisons and PNG export. The approved architecture is recorded in `FINAL_FOUNDATION` and shared with the production renderer. See the [stair direction comparison](docs/stair-direction-review.md), [production rollout plan](docs/visual-production-rollout.md) and [generated-map staging gallery](reports/visual-foundation/staging/index.html). Reproduce with `npm run verify:final-polish`, `npm run verify:stair-direction` and `npm run verify:foundation-staging`. The older staging gallery records the pre-integration matrix. Current editor integration, export, interaction and resource evidence lives in the [production gallery](reports/production/index.html). Reproduce it with `npm run verify:production-visuals`, `npm run verify:production-details` and `npm run verify:production-placements`.
 
 See the [technical audit](docs/verification/technical-audit.md), [verification guide](docs/verification/README.md), [completed campaign](docs/verification/results.md), and [machine-readable final report](reports/verification/final/report.json). The completed 10,000-floor campaign covers both presets and eight dimension combinations; Classic rendering was also compared against pre-art pixel hashes.
 

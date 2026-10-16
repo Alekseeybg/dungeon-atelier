@@ -1,0 +1,65 @@
+{
+  "families": {
+    "ruins": {
+      "innerAndOuterContours": true,
+      "facetsStayInsideCap": true,
+      "baseline": "711a992d",
+      "chamfered": "f0481d58",
+      "facetCount": 88,
+      "normals": ["0,-1", "-1,0", "0,1", "1,0"],
+      "profile": { "width": 7.5, "drop": 1.5, "wallHeight": 24 },
+      "floorContactIdentical": true,
+      "floorInteriorIdentical": true,
+      "fixtureUnchanged": true,
+      "projection": {
+        "tile": 32,
+        "depth": 0.8125,
+        "rise": 24,
+        "side": 6,
+        "density": 2,
+        "padding": 32
+      },
+      "connections": {
+        "shapes": ["inner-corner", "horizontal", "vertical", "end", "cross"],
+        "fixtureUnchanged": true
+      }
+    },
+    "fortress": {
+      "innerAndOuterContours": true,
+      "facetsStayInsideCap": true,
+      "baseline": "25e45802",
+      "chamfered": "ed6c73cc",
+      "facetCount": 88,
+      "normals": ["0,-1", "-1,0", "0,1", "1,0"],
+      "profile": { "width": 7.5, "drop": 1.5, "wallHeight": 24 },
+      "floorContactIdentical": true,
+      "floorInteriorIdentical": true,
+      "fixtureUnchanged": true,
+      "projection": {
+        "tile": 32,
+        "depth": 0.8125,
+        "rise": 24,
+        "side": 6,
+        "density": 2,
+        "padding": 32
+      },
+      "connections": {
+        "shapes": ["inner-corner", "horizontal", "vertical", "end", "cross"],
+        "fixtureUnchanged": true
+      }
+    }
+  },
+  "ui": {
+    "soft": { "cssWidth": 400, "width": 800 },
+    "cut": { "cssWidth": 400, "width": 800 },
+    "prominentEntry": true,
+    "samePageSharedUrl": true,
+    "exportContainsBothPanels": true
+  },
+  "layouts": [
+    { "width": 1920, "scrollWidth": 1905, "overlays": [], "height": 1080, "dpr": 1 },
+    { "width": 2560, "scrollWidth": 2545, "overlays": [], "height": 1440, "dpr": 1 },
+    { "width": 390, "scrollWidth": 390, "overlays": [], "height": 844, "dpr": 2 }
+  ],
+  "runtimeErrors": []
+}

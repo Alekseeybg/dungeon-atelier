@@ -1,0 +1,63 @@
+{
+  "provider": "Existing built-in image_gen results; no new generation in this change",
+  "scope": "Four-door review only; all studies remain candidates",
+  "commonSampling": {
+    "worldSize": [384, 384],
+    "phase": [160, 160],
+    "projection": "Unchanged",
+    "lighting": "Shared controls for both comparison panels"
+  },
+  "studies": [
+    {
+      "value": "refined",
+      "file": "flagstone-realistic-v3.png",
+      "exposure": 0.8,
+      "prompt": "floor-prompts-v3.json: selectedGenerationPrompt + selectedEditPrompt"
+    },
+    {
+      "value": "previous",
+      "file": "flagstone-field-v1.png",
+      "exposure": 1,
+      "prompt": "prompts.json"
+    },
+    {
+      "value": "study-weathered",
+      "file": "floor-study-weathered.png",
+      "source": "exec-494b4a92-7dab-47f2-92f2-c9fae57d1ec2.png",
+      "exposure": 1,
+      "prompt": "floor-prompts-v3.json: rejectedStudies[0]"
+    },
+    {
+      "value": "study-irregular",
+      "file": "floor-study-irregular.png",
+      "source": "exec-1e4d392c-2683-484f-9c8c-fd8a8dec7415.png",
+      "exposure": 1,
+      "prompt": "floor-prompts-v3.json: rejectedStudies[1]"
+    },
+    {
+      "value": "study-broad",
+      "file": "floor-study-broad.png",
+      "source": "exec-3d281397-4c7a-439a-b356-22953017a925.png",
+      "exposure": 0.8,
+      "prompt": "floor-prompts-v3.json: selectedGenerationPrompt"
+    },
+    {
+      "value": "study-blended",
+      "file": "floor-study-blended.png",
+      "source": "exec-d78b1a60-3873-4b88-88b4-1a6881bd4639.png",
+      "exposure": 1,
+      "prompt": "Two material inputs, exact roles:\nIMAGE 1 is the EDIT TARGET: the existing irregular dark-fantasy floor. Preserve its stone layout, size variation, deep mortar network, and worn chipped silhouettes. IMAGE 2 is a MATERIAL-QUALITY REFERENCE ONLY: use its natural photographic worn matte stone faces, not its rectangular paving layout.\n\nRefine IMAGE 1 into the realistic ancient ruined floor direction. Keep its fitted irregular rounded/polygonal flagstones and earth-filled joints, and its muted slate gray / umber / restrained olive stone palette. Replace the overly etched looping-white-vein/scratch patterns ON THE STONE INTERIORS with realistic gently abraded stone faces inspired by image 2. Retain subtle cloudy mineral grain and a few shallow pores rather than making them blank smooth. Preserve the target's strong narrow dark recessed joints and natural chipped edges. Keep selective dark, warm, and cool slabs so individual stones have coherent different tones. Remove the big chalky crust/moss patch in the lower-right, replacing it with ordinary gently aged stones. Only a few selected mortar pockets get muted olive dampness.\n\nThe central area should feel slightly cleaner and more traffic-worn, with age concentrated gently toward edge zones and joints, no uniform vignette or hard border. Aim realistic hand-crafted heavy ancient stone, NOT modern rectangular paving, NOT comic-book outlines. Maintain mid-value readability, rich but restrained detail and naturally aged surfaces; no all-over grain/noise or white vein mesh. Do not add props, symbols, rubble, bright moss, walls, doors, text, perspective, shadows from torches, or a room frame.\n\nOutput one opaque square overhead FLOOR TEXTURE, full bleed, same approximate field coverage as image 1, flat neutral diffuse lighting. The new mockup's REALISTIC dark-fantasy side is the artistic direction; no illustrated/comic-book treatment."
+    },
+    {
+      "value": "study-early",
+      "file": "flagstone-large-v1.png",
+      "exposure": 1,
+      "prompt": "prompts.json"
+    }
+  ],
+  "notes": [
+    "The photographic sources use their existing 0.8 exposure calibration; other sources retain 1.0.",
+    "Studies share the subtle floor-edge grade. Previous flagstones retains the earlier ungraded appearance.",
+    "Earlier prompt records describe the original selection process; those alternatives are now accessible in the review UI."
+  ]
+}

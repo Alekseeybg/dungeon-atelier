@@ -1,0 +1,422 @@
+[
+  {
+    "seed": "production-32-classic-amber",
+    "size": 32,
+    "layout": "classic",
+    "material": "refined",
+    "wall": "ruins",
+    "cap": "cut",
+    "regional": false,
+    "file": "32-classic-amber-refined-cut.png",
+    "hash": "8bb61f0c",
+    "raster": [2176, 1792],
+    "renderMs": 211,
+    "editorReadyMs": 1040,
+    "torches": 8,
+    "front": 2,
+    "side": 6,
+    "geometry": [6, 10, 12, 5, 3, 14, 9, 7, 13, 15, 11],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 15597568
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-32-classic-slate",
+    "size": 32,
+    "layout": "classic",
+    "material": "previous",
+    "wall": "fortress",
+    "cap": "chamfer",
+    "regional": false,
+    "file": "32-classic-slate-previous-chamfer.png",
+    "hash": "6ee10edb",
+    "raster": [2176, 1792],
+    "renderMs": 288,
+    "editorReadyMs": 1692,
+    "torches": 13,
+    "front": 6,
+    "side": 7,
+    "geometry": [6, 10, 12, 5, 14, 13, 11, 7, 9, 3, 15],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 15597568
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-32-compact-amber",
+    "size": 32,
+    "layout": "compact",
+    "material": "study-weathered",
+    "wall": "original",
+    "cap": "hewn",
+    "regional": false,
+    "file": "32-compact-amber-study-weathered-hewn.png",
+    "hash": "293974a9",
+    "raster": [2176, 1792],
+    "renderMs": 423,
+    "editorReadyMs": 1813,
+    "torches": 10,
+    "front": 5,
+    "side": 5,
+    "geometry": [6, 10, 12, 14, 13, 5, 7, 11, 9, 15, 3],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "wall",
+        "color": [200, 180, 131, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 15597568
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-32-compact-slate",
+    "size": 32,
+    "layout": "compact",
+    "material": "study-irregular",
+    "wall": "ruins",
+    "cap": "fitted",
+    "regional": true,
+    "file": "32-compact-slate-study-irregular-fitted.png",
+    "hash": "37650906",
+    "raster": [2176, 1792],
+    "renderMs": 203,
+    "editorReadyMs": 1888,
+    "torches": 14,
+    "front": 7,
+    "side": 7,
+    "geometry": [6, 10, 14, 12, 5, 7, 13, 15, 11, 9, 3],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 15597568
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-64-classic-amber",
+    "size": 64,
+    "layout": "classic",
+    "material": "study-broad",
+    "wall": "fortress",
+    "cap": "broken",
+    "regional": false,
+    "file": "64-classic-amber-study-broad-broken.png",
+    "hash": "95cf8a59",
+    "raster": [4224, 3456],
+    "renderMs": 1771,
+    "editorReadyMs": 4871,
+    "torches": 50,
+    "front": 25,
+    "side": 25,
+    "geometry": [6, 10, 12, 5, 7, 13, 3, 9, 14, 11, 15],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [200, 180, 131, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 58392576
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-64-classic-slate",
+    "size": 64,
+    "layout": "classic",
+    "material": "study-blended",
+    "wall": "original",
+    "cap": "cut",
+    "regional": false,
+    "file": "64-classic-slate-study-blended-cut.png",
+    "hash": "230d8113",
+    "raster": [4224, 3456],
+    "renderMs": 1182,
+    "editorReadyMs": 3287,
+    "torches": 50,
+    "front": 22,
+    "side": 28,
+    "geometry": [6, 10, 12, 5, 3, 7, 13, 11, 14, 9, 15],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [203, 182, 132, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 58392576
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-64-compact-amber",
+    "size": 64,
+    "layout": "compact",
+    "material": "study-early",
+    "wall": "ruins",
+    "cap": "chamfer",
+    "regional": false,
+    "file": "64-compact-amber-study-early-chamfer.png",
+    "hash": "5feb09a8",
+    "raster": [4224, 3456],
+    "renderMs": 1280,
+    "editorReadyMs": 3566,
+    "torches": 52,
+    "front": 22,
+    "side": 30,
+    "geometry": [6, 10, 12, 5, 9, 3, 13, 7, 14, 11, 15, 1],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [200, 180, 131, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 58392576
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-64-compact-slate",
+    "size": 64,
+    "layout": "compact",
+    "material": "refined",
+    "wall": "fortress",
+    "cap": "hewn",
+    "regional": true,
+    "file": "64-compact-slate-refined-hewn.png",
+    "hash": "48f44971",
+    "raster": [4224, 3456],
+    "renderMs": 1970,
+    "editorReadyMs": 5563,
+    "torches": 77,
+    "front": 49,
+    "side": 28,
+    "geometry": [6, 10, 12, 5, 9, 14, 11, 13, 7, 3, 15, 8, 2],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 58392576
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-96-classic-amber",
+    "size": 96,
+    "layout": "classic",
+    "material": "previous",
+    "wall": "original",
+    "cap": "fitted",
+    "regional": false,
+    "file": "96-classic-amber-previous-fitted.png",
+    "hash": "5ff4ea1a",
+    "raster": [6272, 5120],
+    "renderMs": 1217,
+    "editorReadyMs": 3548,
+    "torches": 116,
+    "front": 61,
+    "side": 55,
+    "geometry": [6, 10, 12, 5, 3, 14, 13, 7, 9, 11, 8, 2, 15],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 128450560
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-96-classic-slate",
+    "size": 96,
+    "layout": "classic",
+    "material": "study-weathered",
+    "wall": "ruins",
+    "cap": "broken",
+    "regional": false,
+    "file": "96-classic-slate-study-weathered-broken.png",
+    "hash": "74c7048",
+    "raster": [6272, 5120],
+    "renderMs": 3646,
+    "editorReadyMs": 8586,
+    "torches": 121,
+    "front": 60,
+    "side": 61,
+    "geometry": [6, 10, 12, 5, 13, 9, 3, 14, 7, 11, 15, 8, 2],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 128450560
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-96-compact-amber",
+    "size": 96,
+    "layout": "compact",
+    "material": "study-irregular",
+    "wall": "fortress",
+    "cap": "cut",
+    "regional": true,
+    "file": "96-compact-amber-study-irregular-cut.png",
+    "hash": "f2e98908",
+    "raster": [6272, 5120],
+    "renderMs": 2675,
+    "editorReadyMs": 7009,
+    "torches": 115,
+    "front": 54,
+    "side": 61,
+    "geometry": [6, 10, 12, 5, 14, 9, 3, 1, 7, 13, 4, 11, 15, 8, 2],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 128450560
+    },
+    "sourceUnchanged": true
+  },
+  {
+    "seed": "production-96-compact-slate",
+    "size": 96,
+    "layout": "compact",
+    "material": "study-broad",
+    "wall": "original",
+    "cap": "chamfer",
+    "regional": false,
+    "file": "96-compact-slate-study-broad-chamfer.png",
+    "hash": "d9d9a442",
+    "raster": [6272, 5120],
+    "renderMs": 3334,
+    "editorReadyMs": 7481,
+    "torches": 124,
+    "front": 66,
+    "side": 58,
+    "geometry": [6, 10, 12, 5, 3, 9, 7, 14, 13, 11, 15, 8, 2, 1, 4],
+    "markerPixels": [
+      {
+        "direction": "up",
+        "mount": "floor",
+        "color": [199, 179, 130, 255]
+      },
+      {
+        "direction": "down",
+        "mount": "floor",
+        "color": [200, 180, 131, 255]
+      }
+    ],
+    "resources": {
+      "live": 1,
+      "bytes": 128450560
+    },
+    "sourceUnchanged": true
+  }
+]

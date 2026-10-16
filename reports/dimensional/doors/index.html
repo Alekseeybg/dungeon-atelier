@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dungeon Atelier — projection and doorway study</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font:
+        17px/1.5 system-ui,
+        sans-serif;
+      background: #0c1115;
+      color: #ece5d5;
+    }
+    body {
+      max-width: 1500px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    h1 {
+      font-size: 1.7rem;
+    }
+    h2 {
+      font-size: 1.1rem;
+    }
+    p {
+      max-width: 85ch;
+      color: #c2c6c7;
+    }
+    label {
+      display: inline-flex;
+      gap: 0.7rem;
+      align-items: center;
+      margin: 0.5rem 1rem 0.5rem 0;
+    }
+    select {
+      font: inherit;
+      border: 1px solid #556069;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      background: #18232b;
+      color: inherit;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    figure {
+      margin: 1rem 0;
+      overflow: auto;
+      background: #080c0d;
+      border: 1px solid #39474c;
+      border-radius: 0.6rem;
+    }
+    figcaption {
+      padding: 0.7rem;
+      color: #e9cc90;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+    }
+    .zoom img {
+      width: 1376px;
+      max-width: none;
+    }
+    .detail {
+      width: 100%;
+    }
+    a {
+      color: #9cddd5;
+    }
+    @media (max-width: 900px) {
+      .pair {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <h1>One room, four doorways: projection study</h1>
+  <p>
+    The editor renderer remains available. The candidate is an isolated experiment with a 32 × 24
+    visual floor cell, a shared wall-height vector, and geometry-owned door frames. Logical cells
+    remain square and unchanged. This is a visual study, not an approved replacement tileset.
+  </p>
+  <label
+    >Door state
+    <select id="state">
+      <option value="closed">Closed</option>
+      <option value="open">Open</option>
+      <option value="secret-concealed">North secret concealed</option>
+      <option value="secret-revealed">North secret revealed</option>
+    </select></label
+  >
+  <label><input type="checkbox" id="zoom" /> Inspect full rooms at 2×</label>
+  <div class="pair" id="rooms">
+    <figure>
+      <figcaption>Baseline: existing floor projection and door treatment</figcaption>
+      <img id="baseline" src="baseline/closed.png" alt="Baseline central room with four doors" />
+    </figure>
+    <figure>
+      <figcaption>Candidate: compressed depth and shared architectural planes</figcaption>
+      <img
+        id="candidate"
+        src="candidate/closed.png"
+        alt="Projection study central room with four doors"
+      />
+    </figure>
+  </div>
+  <h2>Door details in the same fixed viewing direction</h2>
+  <p>
+    North and south occupy horizontal walls; east and west occupy vertical walls. The latter are
+    profiles, rather than quarter-turned frontal arches. A fixed camera sees the same south/east
+    masonry surfaces on opposite room boundaries.
+  </p>
+  <figure>
+    <figcaption>Baseline</figcaption>
+    <img
+      class="detail"
+      id="baseline-detail"
+      src="baseline/closed-details.png"
+      alt="Baseline north south east west details"
+    />
+  </figure>
+  <figure>
+    <figcaption>Candidate</figcaption>
+    <img
+      class="detail"
+      id="candidate-detail"
+      src="candidate/closed-details.png"
+      alt="Candidate north south east west details"
+    />
+  </figure>
+  <p>
+    Remaining visual issue: the side profiles still need stronger authored wood, hinge, and arch
+    detail at native resolution. They are not ready for a global replacement.
+    <a href="../../../docs/projection-study.md">Read the investigation.</a>
+  </p>
+  <script>
+    const state = document.querySelector('#state')
+    state.addEventListener('change', () => {
+      for (const version of ['baseline', 'candidate']) {
+        document.getElementById(version).src = version + '/' + state.value + '.png'
+        const detail = document.getElementById(version + '-detail')
+        detail.parentElement.hidden = state.value.startsWith('secret')
+        if (!detail.parentElement.hidden) detail.src = version + '/' + state.value + '-details.png'
+      }
+    })
+    document
+      .querySelector('#zoom')
+      .addEventListener('change', (event) =>
+        document.querySelector('#rooms').classList.toggle('zoom', event.target.checked),
+      )
+  </script>
+</html>

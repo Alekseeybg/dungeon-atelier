@@ -66,7 +66,7 @@
         color="primary"
         icon="download"
         label="Export"
-        :disable="!store.floor || store.busy || exporting"
+        :disable="!store.floor || store.busy || exporting || rendering || !renderReady"
         :loading="exporting"
         class="q-ml-sm"
       >
@@ -128,6 +128,10 @@
           @error="store.reportError"
           @grid="showGrid = $event"
           @style="mapStyle = $event"
+          @secrets="revealSecrets = $event"
+          @appearance="renderOptions = $event"
+          @rendering="rendering = $event"
+          @render-ready="renderReady = $event"
           @walk="walker.command"
         />
         <div class="workspace-footnote text-caption text-grey-5" role="status">
@@ -141,7 +145,10 @@
         :floor="store.floor"
         :selected="selected"
         :walk="walker.state"
-        @inspect="selected = $event"
+        :map-style="mapStyle"
+        :render-options="renderOptions"
+        :conceal-secrets="['dimensional', 'ancient'].includes(mapStyle) && !revealSecrets"
+        @inspect="locateTile"
         @locate-shortcut="locateShortcut"
       />
     </div>
@@ -153,7 +160,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useDungeonWalk } from '@/features/dungeon/exploration/useDungeonWalk'
 import type { Position } from '@dungeon-atelier/core'
-import type { MapStyle } from '@/features/dungeon/rendering/dungeon-renderer'
+import type { MapStyle, MapRenderOptions } from '@/features/dungeon/rendering/dungeon-renderer'
 import { useDungeonStore } from '@/stores/dungeon'
 import GeneratorPanel from '@/features/dungeon/components/GeneratorPanel.vue'
 import DungeonCanvas from '@/features/dungeon/components/DungeonCanvas.vue'
@@ -190,6 +197,10 @@ watch(
 )
 const walker = useDungeonWalk(() => store.floor)
 const selected = ref<Position | null>(null)
+function locateTile(position: Position | null) {
+  selected.value = position
+  workspaceTab.value = 'map'
+}
 const shortcutFocus = ref(0)
 function locateShortcut() {
   workspaceTab.value = 'map'
@@ -197,10 +208,14 @@ function locateShortcut() {
   shortcutFocus.value++
 }
 const showGrid = ref(false)
-const mapStyle = ref<MapStyle>('stone')
+const mapStyle = ref<MapStyle>('ancient')
+const renderOptions = ref<MapRenderOptions>({})
+const revealSecrets = ref(false)
 const fileInput = ref<HTMLInputElement>()
 const importing = ref(false)
 const exporting = ref(false)
+const rendering = ref(false)
+const renderReady = ref(false)
 
 async function importFile(event: Event) {
   const input = event.target as HTMLInputElement
@@ -232,7 +247,7 @@ async function exportPng() {
   if (!store.floor) return
   exporting.value = true
   try {
-    await downloadPng(store.floor, showGrid.value, mapStyle.value)
+    await downloadPng(store.floor, showGrid.value, mapStyle.value, renderOptions.value)
   } catch (error) {
     store.reportError(error)
   } finally {

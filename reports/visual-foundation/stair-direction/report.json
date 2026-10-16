@@ -1,0 +1,27 @@
+{
+  "styles": [
+    {
+      "value": "brass",
+      "label": "A · Brass level symbol · recommended"
+    },
+    {
+      "value": "stone",
+      "label": "B · Pale stone level symbol"
+    },
+    {
+      "value": "iron",
+      "label": "C · Iron level symbol"
+    }
+  ],
+  "deterministic": true,
+  "onlyAdjacentMarkerPixelsChanged": true,
+  "stairArtworkExactPixels": true,
+  "changedPixels": 2530,
+  "downWellGeometryUnchanged": true,
+  "sceneUnchanged": true,
+  "recommendation": "brass",
+  "upRisePixels": 16,
+  "uiThreeStylesAndBeforeAfter": true,
+  "runtimeErrors": [],
+  "overlays": []
+}

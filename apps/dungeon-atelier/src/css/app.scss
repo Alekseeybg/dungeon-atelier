@@ -287,6 +287,10 @@ canvas:focus-visible {
 .map-toolbar .q-btn-toggle .q-btn {
   min-width: 3.8rem;
 }
+.map-style-select {
+  width: 13rem;
+  max-width: 100%;
+}
 .map-navigation {
   min-height: 3rem;
   border-bottom: 1px solid #ffffff1f;

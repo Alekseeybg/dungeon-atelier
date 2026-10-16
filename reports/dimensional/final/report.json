@@ -1,0 +1,209 @@
+{
+  "testedAt": "2026-10-16T07:20:39.381Z",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.80",
+    "revision": "@43a195105613ac83c21d3f14de279f4a045c7da0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.23"
+  },
+  "oldThemeComparisons": [
+    {
+      "seed": "visual-verification-0",
+      "hashes": {
+        "stone-false": "b743a780",
+        "stone-true": "e61a7cb9",
+        "classic-false": "4e14c3d5",
+        "classic-true": "24120e18"
+      }
+    },
+    {
+      "seed": "visual-verification-1",
+      "hashes": {
+        "stone-false": "92943a0b",
+        "stone-true": "5ace42a3",
+        "classic-false": "109f1d8a",
+        "classic-true": "fd09615b"
+      }
+    },
+    {
+      "seed": "visual-verification-2",
+      "hashes": {
+        "stone-false": "4e0efbec",
+        "stone-true": "9eacbbf2",
+        "classic-false": "76f770eb",
+        "classic-true": "5089dba7"
+      }
+    }
+  ],
+  "architecture": {
+    "hashes": {
+      "concealed-false": "3274a96e",
+      "concealed-true": "c943d638"
+    },
+    "concealment": "Pixel-identical to independently sealed public twin",
+    "dimensions": {
+      "width": 1040,
+      "height": 808,
+      "origin": {
+        "x": 8,
+        "y": 32
+      }
+    },
+    "atlasProvenance": "generated-raster",
+    "atlasSprites": 310,
+    "materialSeams": "All repeat edges match",
+    "loadMs": 500
+  },
+  "maps": [
+    {
+      "size": 24,
+      "preset": "classic",
+      "measurements": {
+        "stone": [6.5, 2.5, 2.600000023841858],
+        "classic": [1.2000000476837158, 1.100000023841858, 1.0999999046325684],
+        "dimensional": [2.5, 2.200000047683716, 2.299999952316284]
+      }
+    },
+    {
+      "size": 24,
+      "preset": "compact",
+      "measurements": {
+        "stone": [4, 2.399999976158142, 2.399999976158142],
+        "classic": [1.100000023841858, 1.100000023841858, 1],
+        "dimensional": [2.399999976158142, 2.1999999284744263, 2.200000047683716]
+      }
+    },
+    {
+      "size": 32,
+      "preset": "classic",
+      "measurements": {
+        "stone": [12, 14.199999928474426, 5.100000023841858],
+        "classic": [1.899999976158142, 2, 1.899999976158142],
+        "dimensional": [4.800000071525574, 4.199999928474426, 4.100000023841858]
+      }
+    },
+    {
+      "size": 32,
+      "preset": "compact",
+      "measurements": {
+        "stone": [12.200000047683716, 11.299999952316284, 8.200000047683716],
+        "classic": [2.600000023841858, 2.5, 2.6999999284744263],
+        "dimensional": [6.200000047683716, 8.5, 6.899999976158142]
+      }
+    },
+    {
+      "size": 48,
+      "preset": "classic",
+      "measurements": {
+        "stone": [21.700000047683716, 14.799999952316284, 21],
+        "classic": [7.799999952316284, 8.600000023841858, 10.899999976158142],
+        "dimensional": [15.5, 13.300000071525574, 13.299999952316284]
+      }
+    },
+    {
+      "size": 48,
+      "preset": "compact",
+      "measurements": {
+        "stone": [22.100000023841858, 16.799999952316284, 19.600000023841858],
+        "classic": [11.5, 8.299999952316284, 13.700000047683716],
+        "dimensional": [31.199999928474426, 15.399999976158142, 15.200000047683716]
+      }
+    },
+    {
+      "size": 64,
+      "preset": "classic",
+      "measurements": {
+        "stone": [78.5, 54.800000071525574, 44],
+        "classic": [39.39999997615814, 25.399999976158142, 30.100000023841858],
+        "dimensional": [57.699999928474426, 63.800000071525574, 49.5]
+      }
+    },
+    {
+      "size": 64,
+      "preset": "compact",
+      "measurements": {
+        "stone": [40.299999952316284, 41.199999928474426, 54.200000047683716],
+        "classic": [20, 20.899999976158142, 18.800000071525574],
+        "dimensional": [54.199999928474426, 42.700000047683716, 47.5]
+      }
+    },
+    {
+      "size": 96,
+      "preset": "classic",
+      "measurements": {
+        "stone": [97.5, 90.19999992847443, 113.39999997615814],
+        "classic": [51.10000002384186, 54.5, 41.89999997615814],
+        "dimensional": [106.10000002384186, 93, 95.20000004768372]
+      }
+    },
+    {
+      "size": 96,
+      "preset": "compact",
+      "measurements": {
+        "stone": [81.40000009536743, 88.69999992847443, 79.60000002384186],
+        "classic": [55, 40.200000047683716, 52.699999928474426],
+        "dimensional": [95.30000007152557, 109.19999992847443, 83.60000002384186]
+      }
+    }
+  ],
+  "editor": {
+    "minimapConcealed": true,
+    "camera": {
+      "x": 110.08818069306933,
+      "y": 50.66831683168317,
+      "scale": 0.833384900990099
+    },
+    "tileInspection": true,
+    "zoom": true,
+    "pan": true,
+    "fit": true,
+    "reveal": true,
+    "grid": true,
+    "walk": {
+      "steps": 4,
+      "explored": 16
+    },
+    "cutaway": {
+      "arrowVisible": true,
+      "foregroundCutaway": true,
+      "unknownCovered": true
+    },
+    "geometryUnchanged": true
+  },
+  "layouts": [
+    {
+      "width": 1920,
+      "scrollWidth": 1905,
+      "backingWidth": 1074,
+      "cssWidth": 1073.5625,
+      "dpr": 1,
+      "errors": []
+    },
+    {
+      "width": 1920,
+      "scrollWidth": 1905,
+      "backingWidth": 2147,
+      "cssWidth": 1073.5625,
+      "dpr": 2,
+      "errors": []
+    },
+    {
+      "width": 2560,
+      "scrollWidth": 2545,
+      "backingWidth": 1581,
+      "cssWidth": 1581.125,
+      "dpr": 1,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "backingWidth": 744,
+      "cssWidth": 372,
+      "dpr": 2,
+      "errors": []
+    }
+  ],
+  "runtimeErrors": []
+}

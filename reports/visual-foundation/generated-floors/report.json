@@ -1,0 +1,1393 @@
+{
+  "generator": "3.1.0",
+  "zooms": [0.5, 1, 2],
+  "zoomRegions": ["room", "corridor"],
+  "maps": [
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "size": 32,
+      "layout": "classic",
+      "rooms": 8,
+      "doors": 18,
+      "points": {
+        "room": {
+          "x": 26,
+          "y": 23
+        },
+        "corridor": {
+          "x": 4,
+          "y": 21,
+          "run": 9
+        },
+        "north-south": {
+          "x": 24,
+          "y": 20
+        },
+        "east-west": {
+          "x": 21,
+          "y": 18
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "size": 32,
+      "layout": "classic",
+      "rooms": 8,
+      "doors": 16,
+      "points": {
+        "room": {
+          "x": 10,
+          "y": 16
+        },
+        "corridor": {
+          "x": 10,
+          "y": 27,
+          "run": 6
+        },
+        "north-south": {
+          "x": 18,
+          "y": 22
+        },
+        "east-west": {
+          "x": 20,
+          "y": 20
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "size": 32,
+      "layout": "classic",
+      "rooms": 8,
+      "doors": 14,
+      "points": {
+        "room": {
+          "x": 20,
+          "y": 16
+        },
+        "corridor": {
+          "x": 8,
+          "y": 14,
+          "run": 4
+        },
+        "north-south": {
+          "x": 8,
+          "y": 13
+        },
+        "east-west": {
+          "x": 16,
+          "y": 18
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "size": 32,
+      "layout": "compact",
+      "rooms": 8,
+      "doors": 14,
+      "points": {
+        "room": {
+          "x": 5,
+          "y": 25
+        },
+        "corridor": {
+          "x": 17,
+          "y": 4,
+          "run": 11
+        },
+        "north-south": {
+          "x": 17,
+          "y": 22
+        },
+        "east-west": {
+          "x": 24,
+          "y": 8
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "size": 32,
+      "layout": "compact",
+      "rooms": 8,
+      "doors": 9,
+      "points": {
+        "room": {
+          "x": 6,
+          "y": 10
+        },
+        "corridor": {
+          "x": 15,
+          "y": 5,
+          "run": 8
+        },
+        "north-south": {
+          "x": 7,
+          "y": 6
+        },
+        "east-west": {
+          "x": 18,
+          "y": 9
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "size": 32,
+      "layout": "compact",
+      "rooms": 8,
+      "doors": 10,
+      "points": {
+        "room": {
+          "x": 23,
+          "y": 13
+        },
+        "corridor": {
+          "x": 12,
+          "y": 18,
+          "run": 11
+        },
+        "north-south": {
+          "x": 23,
+          "y": 16
+        },
+        "east-west": {
+          "x": 10,
+          "y": 9
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "size": 64,
+      "layout": "classic",
+      "rooms": 24,
+      "doors": 47,
+      "points": {
+        "room": {
+          "x": 34,
+          "y": 29
+        },
+        "corridor": {
+          "x": 20,
+          "y": 8,
+          "run": 11
+        },
+        "north-south": {
+          "x": 22,
+          "y": 6
+        },
+        "east-west": {
+          "x": 26,
+          "y": 29
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "size": 64,
+      "layout": "classic",
+      "rooms": 24,
+      "doors": 49,
+      "points": {
+        "room": {
+          "x": 39,
+          "y": 41
+        },
+        "corridor": {
+          "x": 54,
+          "y": 22,
+          "run": 8
+        },
+        "north-south": {
+          "x": 30,
+          "y": 53
+        },
+        "east-west": {
+          "x": 22,
+          "y": 58
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "size": 64,
+      "layout": "classic",
+      "rooms": 24,
+      "doors": 53,
+      "points": {
+        "room": {
+          "x": 40,
+          "y": 31
+        },
+        "corridor": {
+          "x": 25,
+          "y": 17,
+          "run": 11
+        },
+        "north-south": {
+          "x": 15,
+          "y": 43
+        },
+        "east-west": {
+          "x": 18,
+          "y": 21
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "size": 64,
+      "layout": "compact",
+      "rooms": 24,
+      "doors": 41,
+      "points": {
+        "room": {
+          "x": 54,
+          "y": 46
+        },
+        "corridor": {
+          "x": 41,
+          "y": 10,
+          "run": 11
+        },
+        "north-south": {
+          "x": 10,
+          "y": 43
+        },
+        "east-west": {
+          "x": 16,
+          "y": 32
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "size": 64,
+      "layout": "compact",
+      "rooms": 24,
+      "doors": 38,
+      "points": {
+        "room": {
+          "x": 37,
+          "y": 9
+        },
+        "corridor": {
+          "x": 24,
+          "y": 48,
+          "run": 11
+        },
+        "north-south": {
+          "x": 40,
+          "y": 32
+        },
+        "east-west": {
+          "x": 37,
+          "y": 20
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "size": 64,
+      "layout": "compact",
+      "rooms": 24,
+      "doors": 43,
+      "points": {
+        "room": {
+          "x": 22,
+          "y": 13
+        },
+        "corridor": {
+          "x": 34,
+          "y": 14,
+          "run": 11
+        },
+        "north-south": {
+          "x": 36,
+          "y": 40
+        },
+        "east-west": {
+          "x": 43,
+          "y": 26
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "size": 96,
+      "layout": "classic",
+      "rooms": 48,
+      "doors": 95,
+      "points": {
+        "room": {
+          "x": 9,
+          "y": 74
+        },
+        "corridor": {
+          "x": 32,
+          "y": 21,
+          "run": 11
+        },
+        "north-south": {
+          "x": 43,
+          "y": 19
+        },
+        "east-west": {
+          "x": 39,
+          "y": 8
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "size": 96,
+      "layout": "classic",
+      "rooms": 48,
+      "doors": 105,
+      "points": {
+        "room": {
+          "x": 15,
+          "y": 38
+        },
+        "corridor": {
+          "x": 6,
+          "y": 3,
+          "run": 11
+        },
+        "north-south": {
+          "x": 27,
+          "y": 64
+        },
+        "east-west": {
+          "x": 14,
+          "y": 54
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "size": 96,
+      "layout": "classic",
+      "rooms": 48,
+      "doors": 96,
+      "points": {
+        "room": {
+          "x": 66,
+          "y": 62
+        },
+        "corridor": {
+          "x": 73,
+          "y": 39,
+          "run": 11
+        },
+        "north-south": {
+          "x": 43,
+          "y": 42
+        },
+        "east-west": {
+          "x": 46,
+          "y": 33
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "size": 96,
+      "layout": "compact",
+      "rooms": 48,
+      "doors": 92,
+      "points": {
+        "room": {
+          "x": 69,
+          "y": 56
+        },
+        "corridor": {
+          "x": 84,
+          "y": 34,
+          "run": 11
+        },
+        "north-south": {
+          "x": 85,
+          "y": 14
+        },
+        "east-west": {
+          "x": 79,
+          "y": 14
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "size": 96,
+      "layout": "compact",
+      "rooms": 48,
+      "doors": 88,
+      "points": {
+        "room": {
+          "x": 63,
+          "y": 71
+        },
+        "corridor": {
+          "x": 18,
+          "y": 3,
+          "run": 11
+        },
+        "north-south": {
+          "x": 33,
+          "y": 63
+        },
+        "east-west": {
+          "x": 41,
+          "y": 54
+        }
+      }
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "size": 96,
+      "layout": "compact",
+      "rooms": 48,
+      "doors": 90,
+      "points": {
+        "room": {
+          "x": 51,
+          "y": 79
+        },
+        "corridor": {
+          "x": 23,
+          "y": 19,
+          "run": 11
+        },
+        "north-south": {
+          "x": 37,
+          "y": 17
+        },
+        "east-west": {
+          "x": 23,
+          "y": 22
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "f0da764d",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "69b79d19",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "99ddafb8",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "11d66cf2",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "ad168b36",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "664abc0d",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "2e51d1cd",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "8964a14a",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "bbe37eb0",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "72bb4b07",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "91456f57",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "e29ec34",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "c47da2ff",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "61c85aea",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "527e0466",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "a48371b8",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "5b16050c",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "c27fea6a",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "a4e527b2",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "6a154719",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-classic-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "7ba58ce5",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "3510bc16",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "684be502",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "7478df4e",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "3aeb29f4",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "e4e790f7",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "237f1cf0",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "306a028f",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "b54abdc7",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "be3eb76c",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "b195f9b6",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "125a7202",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "1ea0b0d3",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "9ef65615",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "b15ce34b",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "a73a160a",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "90bc51c7",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "fbc950d2",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "c52f7c74",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "9fca5e0d",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "63758b89",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-32-compact-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "28027505",
+      "dimensions": [2176, 1792]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "6217275c",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "ec68c5db",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "4a03e2af",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "c8e4704c",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "2fd624d5",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "f3449e5e",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "cf8f8185",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "c68a8f76",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "8826b928",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "bd5a929a",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "7744fbe5",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "5f5ed01b",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "a7037dd0",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "9c4c30e7",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "8e8b793a",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "8efa4baa",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "db3c770",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "2aaf6269",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "b47137af",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "6769aba3",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-classic-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "425c0ca8",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "a3d58bd7",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "cc4b7d5d",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "fb7f16f7",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "fdbd63ce",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "36e086ed",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "e6ff9c",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "322d636d",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "45c4039d",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "d6c38ced",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "2375c249",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "a87a2be6",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "7a3d6232",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "2d3f6fd",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "54b6e65",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "152bf733",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "554a7f42",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "b584d3b8",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "d4c0fa84",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "d794ebe1",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "eb8c331c",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-64-compact-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "c294e170",
+      "dimensions": [4224, 3456]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "972bf7e7",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "9e0403be",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "8cb1ecad",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "cbd01697",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "69fb7552",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "8de25483",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "48f16ea5",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "dc2f4116",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "6c1b13b3",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "779f8e0d",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "7e950f03",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "48d7b57b",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "735b97a4",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "a9992874",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "fd2aef27",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "5fc5a282",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "f6cf4a18",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "af3223df",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "9887eeaa",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "9f9bf9a5",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-classic-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "fe4daf91",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "73487151",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "be960d8d",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "e146773e",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "ee7eba1d",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "d6ba32b4",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "e455c127",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "74696970",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "2627a16f",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "f943b69c",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "280de797",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "50d7a276",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "bd07ab0",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "16de1aca",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-slate",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "52a0a081",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "refined",
+      "zooms": [0.5, 1, 2],
+      "hash": "a97594ca",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "previous",
+      "zooms": [0.5, 1, 2],
+      "hash": "c08439bd",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "study-weathered",
+      "zooms": [0.5, 1, 2],
+      "hash": "eeb98300",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "study-irregular",
+      "zooms": [0.5, 1, 2],
+      "hash": "bcf9b8fd",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "study-broad",
+      "zooms": [0.5, 1, 2],
+      "hash": "fc22f20a",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "study-blended",
+      "zooms": [0.5, 1, 2],
+      "hash": "5360b99e",
+      "dimensions": [6272, 5120]
+    },
+    {
+      "seed": "floor-audit-96-compact-moss",
+      "material": "study-early",
+      "zooms": [0.5, 1, 2],
+      "hash": "e5a30a04",
+      "dimensions": [6272, 5120]
+    }
+  ],
+  "studies": [
+    {
+      "value": "refined",
+      "label": "Refined realistic (current)"
+    },
+    {
+      "value": "previous",
+      "label": "Previous flagstones"
+    },
+    {
+      "value": "study-weathered",
+      "label": "Study 1 · Weathered flagstones"
+    },
+    {
+      "value": "study-irregular",
+      "label": "Study 2 · Irregular flagstones"
+    },
+    {
+      "value": "study-broad",
+      "label": "Study 3 · Broad natural slabs"
+    },
+    {
+      "value": "study-blended",
+      "label": "Study 4 · Blended wear"
+    },
+    {
+      "value": "study-early",
+      "label": "Early study · Large flagstones"
+    }
+  ],
+  "runtimeErrors": [],
+  "inputUnchanged": true,
+  "deterministic": true,
+  "scope": "Real generated geometry through the isolated visual-foundation renderer; not a production theme rollout. Stair metadata retained; preview has no stair artwork."
+}

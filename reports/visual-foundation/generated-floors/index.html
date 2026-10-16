@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><title>
+    Generated floor verification</title
+  ><style>
+    body {
+      background: #101619;
+      color: #e9e4d8;
+      font: 18px system-ui;
+      margin: 24px;
+    }
+    select,
+    a {
+      font: inherit;
+      color: inherit;
+      background: #273237;
+      padding: 8px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: #101619;
+      padding: 12px 0;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      margin: 16px 0;
+    }
+    section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 800px) {
+      section {
+        display: block;
+      }
+    }
+  </style>
+  <h1>Generated floor review</h1>
+  <p>
+    18 seeded dungeons · 126 material/map combinations · 50%, 100%, 200% zoom. Compare identical
+    geometry. The seven-column sheet rows show those three zooms in order.
+  </p>
+  <header>
+    <select id="size">
+      <option>32</option>
+      <option>64</option>
+      <option>96</option>
+    </select>
+    <select id="layout">
+      <option>classic</option>
+      <option>compact</option>
+    </select>
+    <select id="floor">
+      <option value="refined">Refined realistic (current)</option>
+      <option value="previous">Previous flagstones</option>
+      <option value="study-weathered">Study 1 · Weathered flagstones</option>
+      <option value="study-irregular">Study 2 · Irregular flagstones</option>
+      <option value="study-broad">Study 3 · Broad natural slabs</option>
+      <option value="study-blended">Study 4 · Blended wear</option>
+      <option value="study-early">Early study · Large flagstones</option>
+    </select>
+    <a href="report.json">Report and seeds</a>
+  </header>
+  <h2>Full map</h2>
+  <img id="map" alt="Generated full map" />
+  <h2>Room / corridor · 200%</h2>
+  <section><img id="room" alt="Room detail" /><img id="corridor" alt="Corridor detail" /></section>
+  <h2>North–south / east–west thresholds · 200%</h2>
+  <section>
+    <img id="ns" alt="North-south doorway" /><img id="ew" alt="East-west doorway" />
+  </section>
+  <h2>Seven floors × three zooms</h2>
+  <img id="zooms" alt="Seven floors at 50, 100 and 200 percent" />
+  <script>
+    const el = (id) => document.getElementById(id)
+    function update() {
+      const stem = el('size').value + '-' + el('layout').value,
+        material = stem + '-' + el('floor').value
+      for (const [id, suffix] of [
+        ['map', 'map'],
+        ['room', 'room'],
+        ['corridor', 'corridor'],
+        ['ns', 'north-south'],
+        ['ew', 'east-west'],
+      ])
+        el(id).src = material + '-' + suffix + '.png'
+      el('zooms').src = stem + '-zoom-comparison.png'
+    }
+    document.querySelectorAll('select').forEach((n) => (n.onchange = update))
+    update()
+  </script>
+</html>

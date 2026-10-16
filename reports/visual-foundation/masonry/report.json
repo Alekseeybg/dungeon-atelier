@@ -1,0 +1,78 @@
+{
+  "testedAt": "2026-10-16T09:15:05.697Z",
+  "variants": {
+    "original": {
+      "hash": "cb39999a",
+      "doorChanges": { "north": 6595, "south": 4185, "east": 838, "west": 2300 },
+      "sourceSizes": {
+        "floor": { "width": 1254, "height": 1254 },
+        "cap": { "width": 1254, "height": 1254 },
+        "wall": { "width": 2172, "height": 724 },
+        "frame": { "width": 1448, "height": 1086 },
+        "wood": { "width": 1254, "height": 1254 },
+        "torch": { "width": 1254, "height": 1254 }
+      },
+      "opening": {
+        "x": 0.2698760029175784,
+        "y": 0.30150214592274677,
+        "width": 0.45587162654996355,
+        "height": 0.6984978540772532
+      },
+      "concealment": "Identical to independently sealed twin"
+    },
+    "ruins": {
+      "hash": "45bcf9c0",
+      "doorChanges": { "north": 6078, "south": 3585, "east": 828, "west": 2429 },
+      "sourceSizes": {
+        "floor": { "width": 1254, "height": 1254 },
+        "cap": { "width": 1254, "height": 1254 },
+        "wall": { "width": 2172, "height": 724 },
+        "frame": { "width": 1697, "height": 927 },
+        "sill": { "width": 2172, "height": 724 },
+        "wood": { "width": 1254, "height": 1254 },
+        "torch": { "width": 1254, "height": 1254 }
+      },
+      "opening": {
+        "x": 0.1874125874125874,
+        "y": 0.22954822954822954,
+        "width": 0.6265734265734266,
+        "height": 0.7704517704517705
+      },
+      "concealment": "Identical to independently sealed twin"
+    },
+    "fortress": {
+      "hash": "a60b5032",
+      "doorChanges": { "north": 6119, "south": 3628, "east": 837, "west": 2443 },
+      "sourceSizes": {
+        "floor": { "width": 1254, "height": 1254 },
+        "cap": { "width": 1254, "height": 1254 },
+        "wall": { "width": 2172, "height": 724 },
+        "frame": { "width": 1697, "height": 927 },
+        "sill": { "width": 2172, "height": 724 },
+        "wood": { "width": 1254, "height": 1254 },
+        "torch": { "width": 1254, "height": 1254 }
+      },
+      "opening": {
+        "x": 0.1875,
+        "y": 0.20807833537331702,
+        "width": 0.6259765625,
+        "height": 0.791921664626683
+      },
+      "concealment": "Identical to independently sealed twin"
+    }
+  },
+  "unchangedCentralFloorHashes": {
+    "original": "efc815f8",
+    "ruins": "efc815f8",
+    "fortress": "efc815f8"
+  },
+  "projection": { "tile": 32, "depth": 0.8125, "rise": 24, "side": 6, "density": 2, "padding": 32 },
+  "fixtureUnchanged": true,
+  "layouts": [
+    { "width": 1920, "scrollWidth": 1905, "overlays": [], "height": 1080, "dpr": 1 },
+    { "width": 2560, "scrollWidth": 2545, "overlays": [], "height": 1440, "dpr": 1 },
+    { "width": 390, "scrollWidth": 390, "overlays": [], "height": 844, "dpr": 2 }
+  ],
+  "runtimeErrors": [],
+  "visualApproval": "Pending user review; isolated fixture only"
+}

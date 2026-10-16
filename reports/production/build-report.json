@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "builtArtifact": true,
+  "defaultAncient": true,
+  "materialPicker": true,
+  "persistenceAfterReload": true,
+  "loadedImages": 10,
+  "failedResources": [],
+  "runtimeErrors": []
+}

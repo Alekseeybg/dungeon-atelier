@@ -5,6 +5,14 @@ import { stoneTile, tileHash } from './stone-tiles'
 import { drawStoneDoor } from './stone-doors'
 import { drawWallTorch } from './wall-torches'
 import { TILE_SIZE } from './tile-size'
+import { dimensionalProjection } from './dimensional-model'
+import type { MapStyle, MapRenderOptions } from './map-style'
+import { MAP_BACKGROUND } from './map-style'
+import { mapProjection } from './map-projection'
+export { disposeMapCanvas } from './map-resources'
+import { renderDimensional } from './dimensional-renderer'
+import { renderAncient } from './ancient-renderer'
+import { prepareDimensionalAtlas } from './dimensional-sprites'
 import {
   drawCorridorWear,
   drawRoomFinish,
@@ -14,8 +22,30 @@ import {
 } from './stone-atmosphere'
 
 export { TILE_SIZE } from './tile-size'
-export type MapStyle = 'stone' | 'classic'
-export const MAP_BACKGROUND = '#080c0d'
+export { MAP_STYLES, MAP_BACKGROUND } from './map-style'
+export type { MapStyle, MapRenderOptions } from './map-style'
+
+/** Sprite padding is presentation space; tile (0,0) keeps its original world coordinates. */
+export function mapRenderBounds(floor: DungeonFloor, style: MapStyle) {
+  const p = mapProjection(style)
+  if (style === 'ancient')
+    return {
+      width: floor.width * p.width + p.padding * 2,
+      height: floor.height * p.height + p.padding * 2,
+      origin: { x: p.padding, y: p.padding },
+      density: p.density,
+    }
+  const padding =
+    style === 'dimensional'
+      ? dimensionalProjection(TILE_SIZE).padding
+      : { left: 0, top: 0, right: 0, bottom: 0 }
+  return {
+    width: floor.width * TILE_SIZE + padding.left + padding.right,
+    height: floor.height * TILE_SIZE + padding.top + padding.bottom,
+    origin: { x: padding.left, y: padding.top },
+    density: mapProjection(style).density,
+  }
+}
 
 function seedHash(seed: string) {
   let hash = 2166136261
@@ -272,11 +302,17 @@ export function renderDungeon(
   floor: DungeonFloor,
   grid: boolean,
   style: MapStyle = 'stone',
+  options: MapRenderOptions = {},
 ) {
+  if (style === 'ancient')
+    throw new Error('Ancient artwork loads asynchronously. Use createMapCanvasAsync.')
+  const bounds = mapRenderBounds(floor, style)
   context.save()
   context.fillStyle = MAP_BACKGROUND
-  context.fillRect(0, 0, floor.width * TILE_SIZE, floor.height * TILE_SIZE)
+  context.fillRect(0, 0, bounds.width, bounds.height)
+  context.translate(bounds.origin.x, bounds.origin.y)
   if (style === 'classic') renderClassic(context, floor, grid)
+  else if (style === 'dimensional') renderDimensional(context, floor, grid, options)
   else renderStone(context, floor, grid)
   context.restore()
 }
@@ -285,12 +321,26 @@ export function createMapCanvas(
   floor: DungeonFloor,
   grid: boolean,
   style: MapStyle = 'stone',
+  options: MapRenderOptions = {},
 ): HTMLCanvasElement {
+  const bounds = mapRenderBounds(floor, style)
   const canvas = document.createElement('canvas')
-  canvas.width = floor.width * TILE_SIZE
-  canvas.height = floor.height * TILE_SIZE
+  canvas.width = bounds.width
+  canvas.height = bounds.height
   const context = canvas.getContext('2d')
   if (!context) throw new Error('Your browser could not create a Canvas 2D rendering context.')
-  renderDungeon(context, floor, grid, style)
+  renderDungeon(context, floor, grid, style, options)
   return canvas
+}
+
+/** Shared viewport/export entry: awaits source artwork before returning a complete frame. */
+export async function createMapCanvasAsync(
+  floor: DungeonFloor,
+  grid: boolean,
+  style: MapStyle = 'ancient',
+  options: MapRenderOptions = {},
+) {
+  if (style === 'ancient') return renderAncient(floor, grid, options)
+  if (style === 'dimensional') await prepareDimensionalAtlas()
+  return createMapCanvas(floor, grid, style, options)
 }

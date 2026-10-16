@@ -1,0 +1,10 @@
+{
+  "maps": 300,
+  "stairs": 600,
+  "torches": 9936,
+  "sizes": [16, 24, 32, 64, 96],
+  "seedsPerSize": 60,
+  "missing": [],
+  "floorPlaques": 549,
+  "wallPlaques": 51
+}

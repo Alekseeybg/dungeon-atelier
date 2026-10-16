@@ -16,6 +16,12 @@ export default defineConfig(({ appPaths }) => ({
         ...(viteConf.optimizeDeps.exclude ?? []),
         '@dungeon-atelier/core',
       ]
+      // The excluded workspace library imports this CommonJS validator at runtime.
+      // Prebundle it up front so a fresh/restarted preview has a valid dependency URL.
+      viteConf.optimizeDeps.include = [
+        ...(viteConf.optimizeDeps.include ?? []),
+        '@dungeon-atelier/core > ajv',
+      ]
       viteConf.server ??= {}
       viteConf.server.fs ??= {}
       viteConf.server.fs.allow = [...(viteConf.server.fs.allow ?? [appPaths.appDir]), coreOutput]

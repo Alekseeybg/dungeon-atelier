@@ -1,0 +1,173 @@
+{
+  "families": {
+    "ruins": {
+      "current": {
+        "hash": "45bcf9c0",
+        "changedArchitecturalPixels": 0,
+        "changedCoveragePixels": 0,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "hewn": {
+        "hash": "912c3796",
+        "changedArchitecturalPixels": 363718,
+        "changedCoveragePixels": 52889,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "broken": {
+        "hash": "6a97a491",
+        "changedArchitecturalPixels": 414516,
+        "changedCoveragePixels": 82511,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "art": { "width": 1448, "height": 1086, "stoneCount": 12 },
+      "geometryIds": [
+        "wall.6.0",
+        "wall.10.0",
+        "wall.12.0",
+        "wall.5.0",
+        "wall.3.0",
+        "wall.9.0",
+        "wall.11.0",
+        "wall.13.0",
+        "wall.7.0",
+        "wall.14.0"
+      ],
+      "projection": {
+        "tile": 32,
+        "depth": 0.8125,
+        "rise": 24,
+        "side": 6,
+        "density": 2,
+        "padding": 32
+      },
+      "fixtureUnchanged": true,
+      "connections": {
+        "hewn": {
+          "connectedJoins": 141,
+          "centerBandOpaque": true,
+          "straightRunMatchesUnclippedAssembly": true,
+          "tileSlicesMatchContinuousField": true
+        },
+        "broken": {
+          "connectedJoins": 141,
+          "centerBandOpaque": true,
+          "straightRunMatchesUnclippedAssembly": true,
+          "tileSlicesMatchContinuousField": true
+        },
+        "crossIntersection": true
+      }
+    },
+    "fortress": {
+      "current": {
+        "hash": "a60b5032",
+        "changedArchitecturalPixels": 0,
+        "changedCoveragePixels": 0,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "hewn": {
+        "hash": "e887f8c1",
+        "changedArchitecturalPixels": 364126,
+        "changedCoveragePixels": 52976,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "broken": {
+        "hash": "34ebc090",
+        "changedArchitecturalPixels": 414860,
+        "changedCoveragePixels": 82604,
+        "floorInteriorIdentical": true,
+        "floorContactIdentical": true,
+        "lowerFacesAndDoorLeavesIdentical": true
+      },
+      "art": { "width": 1448, "height": 1086, "stoneCount": 12 },
+      "geometryIds": [
+        "wall.6.0",
+        "wall.10.0",
+        "wall.12.0",
+        "wall.5.0",
+        "wall.3.0",
+        "wall.9.0",
+        "wall.11.0",
+        "wall.13.0",
+        "wall.7.0",
+        "wall.14.0"
+      ],
+      "projection": {
+        "tile": 32,
+        "depth": 0.8125,
+        "rise": 24,
+        "side": 6,
+        "density": 2,
+        "padding": 32
+      },
+      "fixtureUnchanged": true,
+      "connections": {
+        "hewn": {
+          "connectedJoins": 141,
+          "centerBandOpaque": true,
+          "straightRunMatchesUnclippedAssembly": true,
+          "tileSlicesMatchContinuousField": true
+        },
+        "broken": {
+          "connectedJoins": 141,
+          "centerBandOpaque": true,
+          "straightRunMatchesUnclippedAssembly": true,
+          "tileSlicesMatchContinuousField": true
+        },
+        "crossIntersection": true
+      }
+    }
+  },
+  "floorArtwork": {
+    "floor-study-blended.png": {
+      "sha256": "5FD58042F9E1C42A69F929425FA187431A0C8B0FDB75EBC4884F41DC59B94163",
+      "unchanged": true
+    },
+    "floor-study-broad.png": {
+      "sha256": "4A8863FAB4E052BF3CC03F02C9C78A05F33AF68E744621020076127305620E8C",
+      "unchanged": true
+    },
+    "floor-study-irregular.png": {
+      "sha256": "5D5A394A323FD5CCE879CA23E2E3F75524B1BB5FB63621211F1A9C61CE75DD92",
+      "unchanged": true
+    },
+    "floor-study-weathered.png": {
+      "sha256": "706E36E5858D1D2B7418CE21C8D6F27C642515554C0C3DFF45CADE8240508A62",
+      "unchanged": true
+    },
+    "flagstone-field-v1.png": {
+      "sha256": "382EFE7C99EEC511A075E9AF9D4C3B65005387635C53188ABE0079A8FF6C4485",
+      "unchanged": true
+    },
+    "flagstone-large-v1.png": {
+      "sha256": "7E4549B573F455CF6C60D490C80614CADE9099B9DA020DDAFD1AFF6F51884E06",
+      "unchanged": true
+    },
+    "flagstone-realistic-v3.png": {
+      "sha256": "6AA0EE0FE2492FA357012A9DA97F1248F18279D3AAB1ED5944B8C8738C07D45B",
+      "unchanged": true
+    }
+  },
+  "ui": {
+    "current": { "width": 800, "cssWidth": 400 },
+    "hewn": { "width": 800, "cssWidth": 400 },
+    "broken": { "width": 800, "cssWidth": 400 }
+  },
+  "layouts": [
+    { "width": 1920, "scrollWidth": 1905, "overlays": [], "height": 1080, "dpr": 1 },
+    { "width": 2560, "scrollWidth": 2545, "overlays": [], "height": 1440, "dpr": 1 },
+    { "width": 390, "scrollWidth": 390, "overlays": [], "height": 844, "dpr": 2 }
+  ],
+  "directComparisonUrl": true,
+  "runtimeErrors": [],
+  "scope": "Four-door architectural review only. No production renderer rollout. Source floors preserved."
+}

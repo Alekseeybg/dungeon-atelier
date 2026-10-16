@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><title>
+    Dungeon Atelier · production integration</title
+  ><style>
+    body {
+      background: #101619;
+      color: #e9e4d8;
+      font: 18px system-ui;
+      margin: 24px;
+    }
+    a {
+      color: #dfc48a;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    article {
+      margin: 32px 0;
+    }
+    h2 {
+      font-size: 22px;
+    }
+  </style>
+  <h1>Production visual integration</h1>
+  <p>
+    12 generated maps, 3 sizes, 2 layouts, 2 seeds each. All seven floors, three wall families and
+    five cap assemblies run through the actual editor and its shared export renderer.
+  </p>
+  <p>
+    <a href="report.json">Validation report</a> ·
+    <a href="details-report.json">Zoom and interaction details</a> ·
+    <a href="placement-report.json">300-layout placement audit</a>
+  </p>
+  <p>
+    Recommended Ancient theme: <a href="recommended-32.png">Small</a> ·
+    <a href="recommended-64.png">Medium</a> · <a href="recommended-96.png">Large</a>
+  </p>
+  <p>
+    Architecture close-ups: <a href="detail-torch-south.png">North sconce</a> ·
+    <a href="detail-torch-east.png">Side sconce</a> ·
+    <a href="detail-door-north.png">North doorway</a> ·
+    <a href="detail-door-south.png">South doorway</a> ·
+    <a href="detail-door-east.png">East doorway</a> ·
+    <a href="detail-door-west.png">West doorway</a>
+  </p>
+  <article>
+    <h2>32×32 · classic · refined · ruins · cut</h2>
+    <p>
+      production-32-classic-amber · 8 sconces · 211 ms render ·
+      <a href="32-classic-amber-refined-cut-stairs-up.png">Up stairs</a> ·
+      <a href="32-classic-amber-refined-cut-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="32-classic-amber-refined-cut.png"
+      ><img
+        loading="lazy"
+        src="32-classic-amber-refined-cut.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>32×32 · classic · previous · fortress · chamfer</h2>
+    <p>
+      production-32-classic-slate · 13 sconces · 288 ms render ·
+      <a href="32-classic-slate-previous-chamfer-stairs-up.png">Up stairs</a> ·
+      <a href="32-classic-slate-previous-chamfer-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="32-classic-slate-previous-chamfer.png"
+      ><img
+        loading="lazy"
+        src="32-classic-slate-previous-chamfer.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>32×32 · compact · study-weathered · original · hewn</h2>
+    <p>
+      production-32-compact-amber · 10 sconces · 423 ms render ·
+      <a href="32-compact-amber-study-weathered-hewn-stairs-up.png">Up stairs</a> ·
+      <a href="32-compact-amber-study-weathered-hewn-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="32-compact-amber-study-weathered-hewn.png"
+      ><img
+        loading="lazy"
+        src="32-compact-amber-study-weathered-hewn.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>32×32 · compact · study-irregular · ruins · fitted</h2>
+    <p>
+      production-32-compact-slate · 14 sconces · 203 ms render ·
+      <a href="32-compact-slate-study-irregular-fitted-stairs-up.png">Up stairs</a> ·
+      <a href="32-compact-slate-study-irregular-fitted-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="32-compact-slate-study-irregular-fitted.png"
+      ><img
+        loading="lazy"
+        src="32-compact-slate-study-irregular-fitted.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>64×64 · classic · study-broad · fortress · broken</h2>
+    <p>
+      production-64-classic-amber · 50 sconces · 1771 ms render ·
+      <a href="64-classic-amber-study-broad-broken-stairs-up.png">Up stairs</a> ·
+      <a href="64-classic-amber-study-broad-broken-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="64-classic-amber-study-broad-broken.png"
+      ><img
+        loading="lazy"
+        src="64-classic-amber-study-broad-broken.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>64×64 · classic · study-blended · original · cut</h2>
+    <p>
+      production-64-classic-slate · 50 sconces · 1182 ms render ·
+      <a href="64-classic-slate-study-blended-cut-stairs-up.png">Up stairs</a> ·
+      <a href="64-classic-slate-study-blended-cut-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="64-classic-slate-study-blended-cut.png"
+      ><img
+        loading="lazy"
+        src="64-classic-slate-study-blended-cut.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>64×64 · compact · study-early · ruins · chamfer</h2>
+    <p>
+      production-64-compact-amber · 52 sconces · 1280 ms render ·
+      <a href="64-compact-amber-study-early-chamfer-stairs-up.png">Up stairs</a> ·
+      <a href="64-compact-amber-study-early-chamfer-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="64-compact-amber-study-early-chamfer.png"
+      ><img
+        loading="lazy"
+        src="64-compact-amber-study-early-chamfer.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>64×64 · compact · refined · fortress · hewn</h2>
+    <p>
+      production-64-compact-slate · 77 sconces · 1970 ms render ·
+      <a href="64-compact-slate-refined-hewn-stairs-up.png">Up stairs</a> ·
+      <a href="64-compact-slate-refined-hewn-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="64-compact-slate-refined-hewn.png"
+      ><img
+        loading="lazy"
+        src="64-compact-slate-refined-hewn.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>96×96 · classic · previous · original · fitted</h2>
+    <p>
+      production-96-classic-amber · 116 sconces · 1217 ms render ·
+      <a href="96-classic-amber-previous-fitted-stairs-up.png">Up stairs</a> ·
+      <a href="96-classic-amber-previous-fitted-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="96-classic-amber-previous-fitted.png"
+      ><img
+        loading="lazy"
+        src="96-classic-amber-previous-fitted.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>96×96 · classic · study-weathered · ruins · broken</h2>
+    <p>
+      production-96-classic-slate · 121 sconces · 3646 ms render ·
+      <a href="96-classic-slate-study-weathered-broken-stairs-up.png">Up stairs</a> ·
+      <a href="96-classic-slate-study-weathered-broken-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="96-classic-slate-study-weathered-broken.png"
+      ><img
+        loading="lazy"
+        src="96-classic-slate-study-weathered-broken.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>96×96 · compact · study-irregular · fortress · cut</h2>
+    <p>
+      production-96-compact-amber · 115 sconces · 2675 ms render ·
+      <a href="96-compact-amber-study-irregular-cut-stairs-up.png">Up stairs</a> ·
+      <a href="96-compact-amber-study-irregular-cut-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="96-compact-amber-study-irregular-cut.png"
+      ><img
+        loading="lazy"
+        src="96-compact-amber-study-irregular-cut.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+  <article>
+    <h2>96×96 · compact · study-broad · original · chamfer</h2>
+    <p>
+      production-96-compact-slate · 124 sconces · 3334 ms render ·
+      <a href="96-compact-slate-study-broad-chamfer-stairs-up.png">Up stairs</a> ·
+      <a href="96-compact-slate-study-broad-chamfer-stairs-down.png">Down stairs</a>
+    </p>
+    <a href="96-compact-slate-study-broad-chamfer.png"
+      ><img
+        loading="lazy"
+        src="96-compact-slate-study-broad-chamfer.png"
+        alt="Generated dungeon using production artwork"
+    /></a>
+  </article>
+</html>

@@ -1,0 +1,272 @@
+{
+  "scope": "Staging preflight, not a production rollout. Stairs and torches await visual approval.",
+  "maps": [
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "size": 32,
+      "layout": "classic",
+      "stairs": 2,
+      "torches": 9,
+      "secrets": 2
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "size": 32,
+      "layout": "compact",
+      "stairs": 2,
+      "torches": 12,
+      "secrets": 2
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "size": 64,
+      "layout": "classic",
+      "stairs": 2,
+      "torches": 39,
+      "secrets": 2
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "size": 64,
+      "layout": "compact",
+      "stairs": 2,
+      "torches": 40,
+      "secrets": 2
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "size": 96,
+      "layout": "classic",
+      "stairs": 2,
+      "torches": 87,
+      "secrets": 2
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "size": 96,
+      "layout": "compact",
+      "stairs": 2,
+      "torches": 92,
+      "secrets": 2
+    }
+  ],
+  "cases": [
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "size": 32,
+      "layout": "classic",
+      "floor": "refined",
+      "cap": "cut",
+      "hash": "c4c81b94",
+      "stairs": ["up", "down"],
+      "torches": 9,
+      "sourceUnchanged": true,
+      "file": "32-classic-refined-cut.png"
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "size": 32,
+      "layout": "classic",
+      "floor": "previous",
+      "cap": "hewn",
+      "hash": "ae3cfd88",
+      "stairs": ["up", "down"],
+      "torches": 9,
+      "sourceUnchanged": true,
+      "file": "32-classic-previous-hewn.png"
+    },
+    {
+      "seed": "floor-audit-32-classic-amber",
+      "size": 32,
+      "layout": "classic",
+      "floor": "study-weathered",
+      "cap": "fitted",
+      "hash": "91627860",
+      "stairs": ["up", "down"],
+      "torches": 9,
+      "sourceUnchanged": true,
+      "file": "32-classic-study-weathered-fitted.png"
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "size": 32,
+      "layout": "compact",
+      "floor": "study-irregular",
+      "cap": "cut",
+      "hash": "ba25b0f9",
+      "stairs": ["up", "down"],
+      "torches": 12,
+      "sourceUnchanged": true,
+      "file": "32-compact-study-irregular-cut.png"
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "size": 32,
+      "layout": "compact",
+      "floor": "study-broad",
+      "cap": "hewn",
+      "hash": "40daebc2",
+      "stairs": ["up", "down"],
+      "torches": 12,
+      "sourceUnchanged": true,
+      "file": "32-compact-study-broad-hewn.png"
+    },
+    {
+      "seed": "floor-audit-32-compact-amber",
+      "size": 32,
+      "layout": "compact",
+      "floor": "study-blended",
+      "cap": "fitted",
+      "hash": "7ea96d61",
+      "stairs": ["up", "down"],
+      "torches": 12,
+      "sourceUnchanged": true,
+      "file": "32-compact-study-blended-fitted.png"
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "size": 64,
+      "layout": "classic",
+      "floor": "study-early",
+      "cap": "cut",
+      "hash": "46d9abf3",
+      "stairs": ["up", "down"],
+      "torches": 39,
+      "sourceUnchanged": true,
+      "file": "64-classic-study-early-cut.png"
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "size": 64,
+      "layout": "classic",
+      "floor": "refined",
+      "cap": "hewn",
+      "hash": "92b22ec4",
+      "stairs": ["up", "down"],
+      "torches": 39,
+      "sourceUnchanged": true,
+      "file": "64-classic-refined-hewn.png"
+    },
+    {
+      "seed": "floor-audit-64-classic-amber",
+      "size": 64,
+      "layout": "classic",
+      "floor": "previous",
+      "cap": "fitted",
+      "hash": "a579322b",
+      "stairs": ["up", "down"],
+      "torches": 39,
+      "sourceUnchanged": true,
+      "file": "64-classic-previous-fitted.png"
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "size": 64,
+      "layout": "compact",
+      "floor": "study-weathered",
+      "cap": "cut",
+      "hash": "376c5860",
+      "stairs": ["up", "down"],
+      "torches": 40,
+      "sourceUnchanged": true,
+      "file": "64-compact-study-weathered-cut.png"
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "size": 64,
+      "layout": "compact",
+      "floor": "study-irregular",
+      "cap": "hewn",
+      "hash": "20c2bbbe",
+      "stairs": ["up", "down"],
+      "torches": 40,
+      "sourceUnchanged": true,
+      "file": "64-compact-study-irregular-hewn.png"
+    },
+    {
+      "seed": "floor-audit-64-compact-amber",
+      "size": 64,
+      "layout": "compact",
+      "floor": "study-broad",
+      "cap": "fitted",
+      "hash": "21c03807",
+      "stairs": ["up", "down"],
+      "torches": 40,
+      "sourceUnchanged": true,
+      "file": "64-compact-study-broad-fitted.png"
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "size": 96,
+      "layout": "classic",
+      "floor": "study-blended",
+      "cap": "cut",
+      "hash": "d12e7364",
+      "stairs": ["up", "down"],
+      "torches": 87,
+      "sourceUnchanged": true,
+      "file": "96-classic-study-blended-cut.png"
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "size": 96,
+      "layout": "classic",
+      "floor": "study-early",
+      "cap": "hewn",
+      "hash": "e97944bb",
+      "stairs": ["up", "down"],
+      "torches": 87,
+      "sourceUnchanged": true,
+      "file": "96-classic-study-early-hewn.png"
+    },
+    {
+      "seed": "floor-audit-96-classic-amber",
+      "size": 96,
+      "layout": "classic",
+      "floor": "refined",
+      "cap": "fitted",
+      "hash": "4e2f666",
+      "stairs": ["up", "down"],
+      "torches": 87,
+      "sourceUnchanged": true,
+      "file": "96-classic-refined-fitted.png"
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "size": 96,
+      "layout": "compact",
+      "floor": "previous",
+      "cap": "cut",
+      "hash": "e2fff42c",
+      "stairs": ["up", "down"],
+      "torches": 92,
+      "sourceUnchanged": true,
+      "file": "96-compact-previous-cut.png"
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "size": 96,
+      "layout": "compact",
+      "floor": "study-weathered",
+      "cap": "hewn",
+      "hash": "a3d3facf",
+      "stairs": ["up", "down"],
+      "torches": 92,
+      "sourceUnchanged": true,
+      "file": "96-compact-study-weathered-hewn.png"
+    },
+    {
+      "seed": "floor-audit-96-compact-amber",
+      "size": 96,
+      "layout": "compact",
+      "floor": "study-irregular",
+      "cap": "fitted",
+      "hash": "a2ab1f87",
+      "stairs": ["up", "down"],
+      "torches": 92,
+      "sourceUnchanged": true,
+      "file": "96-compact-study-irregular-fitted.png"
+    }
+  ],
+  "runtimeErrors": []
+}

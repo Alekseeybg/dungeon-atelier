@@ -1,0 +1,14 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "intent": "Perspective-specific north-wall basket and separate flame; existing artwork retained",
+  "reference": "wall-sconces-final-v2.png",
+  "file": "north-sconce-components-v1.png",
+  "dimensions": [1536, 1024],
+  "layout": {
+    "columns": 2,
+    "left": "basket with embers, no flame",
+    "right": "flame, no hardware"
+  },
+  "alpha": "Preserved generated transparency; no color key",
+  "prompt": "Use case: precise-object-edit. Asset type: two-cell transparent game-sprite component atlas for an existing realistic dark-fantasy wall sconce. Input image is style/material reference. Create a 1536x1024 transparent atlas with two isolated components, one centered in each half. LEFT HALF: only the iron fire basket from the reference, no mounting plate, no arm, no flame, no smoke, no glow. Preserve its practical broad riveted bands, five forged upright bars, aged black iron and restrained bronze edge wear, and dark charcoal coals. Show a slightly elevated orthographic three-quarter frontal view, seeing the oval upper opening and glowing ember bed; camera faces north, looks down approximately 40 degrees from horizontal, no side yaw, no isometric rotation. Basket should be close to the reference shape, not exaggerated or wider. Its top opening and lower bowl must read as a projecting solid volume. RIGHT HALF: isolated orange-gold flame only, no basket or hardware, no smoke, no halo, narrow flame rising out of a broad compact base so it can be overlaid onto the left basket. Transparent background throughout. Leave generous empty margin and no overlap across center; no text, no labels, no scenery, no shadow on ground, no extra objects. The two pieces will be separately anchored by a renderer. This is a restrained asset refinement, preserve the reference iron style."
+}

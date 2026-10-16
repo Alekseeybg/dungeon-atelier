@@ -1,0 +1,61 @@
+{
+  "testedAt": "2026-10-16T09:07:28.860Z",
+  "variants": {
+    "ruins": {
+      "meanUnlitSrgbLuminance": {
+        "floor": 79.26439908854167,
+        "cap": 102.12410312500002,
+        "face": 33.154737499999996
+      },
+      "contactAlpha": {
+        "east": 82,
+        "south": 91,
+        "west": 64,
+        "north": 66,
+        "southEast": 139,
+        "interior": 0
+      },
+      "interiorFloorPixelIdentical": true,
+      "neutralFloorProbeMean": 104.99999999999999
+    },
+    "fortress": {
+      "meanUnlitSrgbLuminance": {
+        "floor": 79.26439908854167,
+        "cap": 118.17881289062501,
+        "face": 42.627125
+      },
+      "contactAlpha": {
+        "east": 82,
+        "south": 91,
+        "west": 64,
+        "north": 66,
+        "southEast": 139,
+        "interior": 0
+      },
+      "interiorFloorPixelIdentical": true,
+      "neutralFloorProbeMean": 104.99999999999999
+    },
+    "original": {
+      "meanUnlitSrgbLuminance": {
+        "floor": 79.26439908854167,
+        "cap": 100.52267330729171,
+        "face": 28.58554583333333
+      },
+      "contactAlpha": {
+        "east": 82,
+        "south": 91,
+        "west": 64,
+        "north": 66,
+        "southEast": 139,
+        "interior": 0
+      },
+      "interiorFloorPixelIdentical": true,
+      "neutralFloorProbeMean": 104.99999999999999
+    }
+  },
+  "fixtureUnchanged": true,
+  "projection": { "tile": 32, "depth": 0.8125, "rise": 24, "side": 6, "density": 2, "padding": 32 },
+  "controls": { "separation": true, "eastWall": true, "southEastCorner": true },
+  "runtimeErrors": [],
+  "scope": "Four-door prototype only; no production-theme rollout"
+}
