@@ -7,21 +7,43 @@
     <canvas
       ref="canvas"
       class="automap-canvas"
-      role="img"
+      role="button"
+      tabindex="0"
+      @click="navigate"
+      @keydown.enter="locateEntry"
+      @keydown.space.prevent="locateEntry"
       :aria-label="`Classic overview of floor ${floor.floorNumber}, ${floor.width} by ${floor.height} tiles`"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { renderWalkFog } from '../rendering/walk-fog'
 import type { WalkState } from '../exploration/useDungeonWalk'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
-import { createMapCanvas, TILE_SIZE } from '../rendering/dungeon-renderer'
+import { createMapCanvas, disposeMapCanvas, TILE_SIZE } from '../rendering/dungeon-renderer'
+import { concealSecretArchitecture } from '../rendering/dimensional-model'
 
-const props = defineProps<{ floor: DungeonFloor; selected: Position | null; walk: WalkState }>()
+const props = defineProps<{
+  floor: DungeonFloor
+  selected: Position | null
+  walk: WalkState
+  concealSecrets?: boolean
+}>()
 const canvas = ref<HTMLCanvasElement>()
+const emit = defineEmits<{ inspect: [position: Position] }>()
+function locateEntry() {
+  const p = props.selected ?? props.floor.stairs.find((s) => s.direction === 'up')?.position
+  if (p && !props.walk.active) emit('inspect', p)
+}
+function navigate(event: MouseEvent) {
+  if (props.walk.active || !canvas.value) return
+  const bounds = canvas.value.getBoundingClientRect(),
+    x = Math.floor(((event.clientX - bounds.left) / bounds.width) * props.floor.width),
+    y = Math.floor(((event.clientY - bounds.top) / bounds.height) * props.floor.height)
+  if (x >= 0 && y >= 0 && x < props.floor.width && y < props.floor.height) emit('inspect', { x, y })
+}
 let overview: HTMLCanvasElement | undefined
 
 function paint() {
@@ -53,11 +75,19 @@ function paint() {
   }
 }
 function rebuild() {
-  overview = createMapCanvas(props.floor, false, 'classic')
+  const old = overview
+  overview = createMapCanvas(
+    props.concealSecrets ? concealSecretArchitecture(props.floor) : props.floor,
+    false,
+    'classic',
+  )
   paint()
+  disposeMapCanvas(old)
 }
+onBeforeUnmount(() => disposeMapCanvas(overview))
 onMounted(rebuild)
 watch(() => props.floor, rebuild)
+watch(() => props.concealSecrets, rebuild)
 watch(() => props.selected, paint)
 watch(() => props.walk, paint, { deep: true })
 </script>

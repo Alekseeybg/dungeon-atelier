@@ -11,19 +11,18 @@
         >
       </div>
       <q-space />
-      <q-btn-toggle
+      <AppearancePanel v-if="mapStyle === 'ancient'" />
+      <q-select
         v-model="mapStyle"
-        :options="[
-          { label: 'Stone', value: 'stone' },
-          { label: 'Classic', value: 'classic' },
-        ]"
-        unelevated
+        :loading="loadingTheme"
+        :options="MAP_STYLES"
+        emit-value
+        map-options
+        outlined
         dense
-        no-caps
-        color="grey-9"
-        text-color="grey-4"
-        toggle-color="primary"
-        toggle-text-color="dark"
+        options-dense
+        color="primary"
+        class="map-style-select"
         aria-label="Map appearance"
       />
     </q-toolbar>
@@ -73,6 +72,27 @@
                 color="cyan-4"
                 :disable="walk.active"
                 aria-label="Highlight generated shortcut"
+            /></q-item-section>
+          </q-item>
+          <q-item
+            v-if="
+              ['dimensional', 'ancient'].includes(mapStyle) &&
+              floor?.doors.some((door) => door.type === 'secret')
+            "
+            tag="label"
+          >
+            <q-item-section>
+              <q-item-label>Reveal secret architecture</q-item-label>
+              <q-item-label caption
+                >Show hidden panels and routes in this view and PNG exports.</q-item-label
+              >
+            </q-item-section>
+            <q-item-section side
+              ><q-toggle
+                v-model="revealSecrets"
+                color="cyan-4"
+                :disable="walk.active"
+                aria-label="Reveal secret architecture"
             /></q-item-section>
           </q-item>
         </q-list>
@@ -186,14 +206,27 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
-import { createMapCanvas, MAP_BACKGROUND, TILE_SIZE } from '../rendering/dungeon-renderer'
-import type { MapStyle } from '../rendering/dungeon-renderer'
+import {
+  createMapCanvasAsync,
+  disposeMapCanvas,
+  mapRenderBounds,
+  MAP_STYLES,
+  MAP_BACKGROUND,
+} from '../rendering/dungeon-renderer'
+import { drawDimensionalWalkCutaway } from '../rendering/dimensional-renderer'
+import { storeToRefs } from 'pinia'
+import { useAppearanceStore } from '../../../stores/appearance'
+import AppearancePanel from './AppearancePanel.vue'
+import { mapProjection, cellCenter, groundCell } from '../rendering/map-projection'
+import { drawAncientWalkCutaway, pickAncient } from '../rendering/ancient-renderer'
+import type { MapStyle, MapRenderOptions } from '../rendering/map-style'
 import { HEADING_NAMES } from '../exploration/useDungeonWalk'
 import type { WalkState, WalkAction } from '../exploration/useDungeonWalk'
 import { renderWalkFog } from '../rendering/walk-fog'
 import { drawShortcutHighlight } from '../rendering/shortcut-highlight'
+import { createRenderSession } from '../rendering/render-session'
 
 const props = defineProps<{
   floor: DungeonFloor | null
@@ -206,6 +239,10 @@ const emit = defineEmits<{
   error: [error: unknown]
   grid: [visible: boolean]
   style: [value: MapStyle]
+  secrets: [visible: boolean]
+  appearance: [options: MapRenderOptions]
+  rendering: [busy: boolean]
+  renderReady: [ready: boolean]
   walk: [action: WalkAction]
 }>()
 function walkAction(action: WalkAction) {
@@ -215,22 +252,50 @@ function walkAction(action: WalkAction) {
 function followPlayer() {
   const position = props.walk.position
   if (!position) return
-  camera.x = viewWidth / 2 - (position.x + 0.5) * TILE_SIZE * camera.scale
-  camera.y = viewHeight / 2 - (position.y + 0.5) * TILE_SIZE * camera.scale
+  const center = cellCenter(position, activeStyle)
+  camera.x = viewWidth / 2 - center.x * camera.scale
+  camera.y = viewHeight / 2 - center.y * camera.scale
 }
 const viewport = ref<HTMLDivElement>()
 const canvas = ref<HTMLCanvasElement>()
 const showGrid = ref(false)
 const showShortcut = ref(false)
-const mapStyle = ref<MapStyle>('stone')
+const revealSecrets = ref(false)
+const appearance = useAppearanceStore()
+const { style: mapStyle } = storeToRefs(appearance)
+const loadingTheme = ref(false)
+const renderOptions = computed(() => ({
+  revealSecrets:
+    ['dimensional', 'ancient'].includes(mapStyle.value) &&
+    ((revealSecrets.value && !props.walk.active) ||
+      (mapStyle.value === 'ancient' && props.walk.active)),
+  ancient: { ...appearance.ancient },
+}))
 const hover = ref<Position | null>(null)
 const camera = reactive({ x: 0, y: 0, scale: 1 })
 let mapCanvas: HTMLCanvasElement | undefined
+let mapOrigin = { x: 0, y: 0 }
+let activeStyle: MapStyle = 'ancient'
+let shownFloor: DungeonFloor | null = null
+let committedOptions: MapRenderOptions = {},
+  committedGrid = false
 let observer: ResizeObserver | undefined
+let pixelRatioQuery: MediaQueryList | undefined
 let resizeFrame: number | undefined
 let autoFit = true
 let viewWidth = 0
 let viewHeight = 0
+function refreshPixelRatio() {
+  pixelRatioQuery?.removeEventListener('change', refreshPixelRatio)
+  pixelRatioQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`)
+  pixelRatioQuery.addEventListener('change', refreshPixelRatio)
+  if (canvas.value) {
+    const ratio = window.devicePixelRatio || 1
+    canvas.value.width = Math.max(1, Math.round(viewWidth * ratio))
+    canvas.value.height = Math.max(1, Math.round(viewHeight * ratio))
+    paint()
+  }
+}
 let drag:
   | { id: number; startX: number; startY: number; lastX: number; lastY: number; moved: boolean }
   | undefined
@@ -243,30 +308,38 @@ function paint() {
   context.fillStyle = MAP_BACKGROUND
   context.fillRect(0, 0, viewWidth, viewHeight)
   if (!mapCanvas || !props.floor) return
-  context.imageSmoothingEnabled = false
+  context.imageSmoothingEnabled = activeStyle === 'ancient'
   context.drawImage(
     mapCanvas,
-    camera.x,
-    camera.y,
-    mapCanvas.width * camera.scale,
-    mapCanvas.height * camera.scale,
+    camera.x - mapOrigin.x * camera.scale,
+    camera.y - mapOrigin.y * camera.scale,
+    (mapCanvas.width / mapProjection(activeStyle).density) * camera.scale,
+    (mapCanvas.height / mapProjection(activeStyle).density) * camera.scale,
   )
+  if (shownFloor !== props.floor) return
   if (props.walk.active) {
     context.save()
     context.translate(camera.x, camera.y)
     context.scale(camera.scale, camera.scale)
-    renderWalkFog(context, props.floor, props.walk)
+    if (activeStyle === 'dimensional') drawDimensionalWalkCutaway(context, mapCanvas, props.walk)
+    if (activeStyle === 'ancient') drawAncientWalkCutaway(context, mapCanvas, props.walk)
+    renderWalkFog(context, props.floor, props.walk, activeStyle)
     context.restore()
     return
   }
-  if (showShortcut.value && props.floor.shortcuts?.length) {
+  if (
+    showShortcut.value &&
+    props.floor.shortcuts?.length &&
+    (!['dimensional', 'ancient'].includes(activeStyle) || renderOptions.value.revealSecrets)
+  ) {
     context.save()
     context.translate(camera.x, camera.y)
     context.scale(camera.scale, camera.scale)
-    drawShortcutHighlight(context, props.floor.shortcuts, camera.scale)
+    drawShortcutHighlight(context, props.floor.shortcuts, camera.scale, activeStyle)
     context.restore()
   }
-  const cell = TILE_SIZE * camera.scale
+  const cell = mapProjection(activeStyle).width * camera.scale
+  const cellHeight = mapProjection(activeStyle).height * camera.scale
   for (const [position, color] of [
     [hover.value, '#ede1c44d'],
     [props.selected, '#f0c985'],
@@ -276,9 +349,9 @@ function paint() {
     context.lineWidth = position === props.selected ? 2 : 1
     context.strokeRect(
       camera.x + position.x * cell + 1,
-      camera.y + position.y * cell + 1,
+      camera.y + position.y * cellHeight + 1,
       Math.max(0, cell - 2),
-      Math.max(0, cell - 2),
+      Math.max(0, cellHeight - 2),
     )
   }
 }
@@ -286,13 +359,20 @@ function paint() {
 function fit() {
   autoFit = true
   if (!mapCanvas || !viewWidth || !viewHeight) return
-  camera.scale = Math.max(
-    0.05,
-    Math.min(2, (viewWidth - 48) / mapCanvas.width, (viewHeight - 48) / mapCanvas.height),
-  )
-  camera.x = (viewWidth - mapCanvas.width * camera.scale) / 2
-  camera.y = (viewHeight - mapCanvas.height * camera.scale) / 2
+  const density = mapProjection(activeStyle).density,
+    width = mapCanvas.width / density,
+    height = mapCanvas.height / density
+  camera.scale = Math.max(0.05, Math.min(2, (viewWidth - 48) / width, (viewHeight - 48) / height))
+  camera.x = (viewWidth - width * camera.scale) / 2 + mapOrigin.x * camera.scale
+  camera.y = (viewHeight - height * camera.scale) / 2 + mapOrigin.y * camera.scale
   hover.value = null
+  paint()
+}
+function centerOnCell(position: Position) {
+  const center = cellCenter(position, activeStyle)
+  autoFit = false
+  camera.x = viewWidth / 2 - center.x * camera.scale
+  camera.y = viewHeight / 2 - center.y * camera.scale
   paint()
 }
 
@@ -316,9 +396,12 @@ function localPoint(event: MouseEvent | PointerEvent | WheelEvent) {
 }
 function tileAt(point: Position): Position | null {
   if (!props.floor) return null
-  const x = Math.floor((point.x - camera.x) / (TILE_SIZE * camera.scale))
-  const y = Math.floor((point.y - camera.y) / (TILE_SIZE * camera.scale))
-  return x >= 0 && y >= 0 && x < props.floor.width && y < props.floor.height ? { x, y } : null
+  if (loadingTheme.value || shownFloor !== props.floor) return null
+  const world = { x: (point.x - camera.x) / camera.scale, y: (point.y - camera.y) / camera.scale }
+  return (
+    (activeStyle === 'ancient' && mapCanvas ? pickAncient(mapCanvas, world) : null) ??
+    groundCell(world, props.floor, activeStyle)
+  )
 }
 function onWheel(event: WheelEvent) {
   const point = localPoint(event)
@@ -416,17 +499,64 @@ function onKeyDown(event: KeyboardEvent) {
   }
 }
 
-function rebuild() {
-  try {
-    mapCanvas = props.floor
-      ? createMapCanvas(props.floor, showGrid.value, mapStyle.value)
-      : undefined
-  } catch (error) {
-    mapCanvas = undefined
-    emit('error', error)
-  }
-  paint()
+interface RenderRequest {
+  floor: DungeonFloor | null
+  style: MapStyle
+  grid: boolean
+  options: MapRenderOptions
 }
+const renderSession = createRenderSession<RenderRequest, HTMLCanvasElement | undefined>({
+  beforeBuild: () =>
+    new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0))),
+  build: ({ floor, grid, style, options }) =>
+    floor ? createMapCanvasAsync(floor, grid, style, options) : Promise.resolve(undefined),
+  discard: disposeMapCanvas,
+  error: (error) => emit('error', error),
+  busy(value) {
+    loadingTheme.value = value
+    emit('rendering', value)
+    if (value) emit('renderReady', false)
+  },
+  commit(next, { floor, style, grid, options }) {
+    if (!floor || !next) {
+      disposeMapCanvas(mapCanvas)
+      mapCanvas = undefined
+      shownFloor = null
+      paint()
+      return
+    }
+    const changedFloor = shownFloor !== floor,
+      oldProjection = mapProjection(activeStyle),
+      nextProjection = mapProjection(style),
+      centerRow = (viewHeight / 2 - camera.y) / (oldProjection.height * camera.scale),
+      old = mapCanvas
+    mapCanvas = next
+    committedOptions = options
+    committedGrid = grid
+    shownFloor = floor
+    activeStyle = style
+    mapOrigin = mapRenderBounds(floor, style).origin
+    camera.y = viewHeight / 2 - centerRow * nextProjection.height * camera.scale
+    disposeMapCanvas(old)
+    emit('style', style)
+    emit('secrets', !!options.revealSecrets)
+    emit('appearance', options)
+    emit('grid', committedGrid)
+    emit('renderReady', true)
+    if (props.walk.active) followPlayer()
+    else if (changedFloor || autoFit) fit()
+    paint()
+  },
+})
+function rebuild() {
+  return renderSession.request({
+    floor: props.floor,
+    style: mapStyle.value,
+    grid: showGrid.value,
+    options: { ...renderOptions.value, ancient: { ...appearance.ancient } },
+  })
+}
+
 watch(
   () => props.floor,
   async () => {
@@ -434,17 +564,17 @@ watch(
     hover.value = null
     emit('inspect', null)
     showShortcut.value = false
-    rebuild()
-    await nextTick()
-    if (props.walk.active) followPlayer()
-    else fit()
+    revealSecrets.value = false
+    await rebuild()
   },
 )
-watch(showGrid, (value) => {
-  emit('grid', value)
-  rebuild()
+watch(showGrid, () => {
+  void rebuild()
 })
-watch(showShortcut, paint)
+watch(showShortcut, (visible) => {
+  if (visible && ['dimensional', 'ancient'].includes(mapStyle.value)) revealSecrets.value = true
+  paint()
+})
 watch(
   () => props.shortcutFocus,
   async () => {
@@ -453,40 +583,47 @@ watch(
     if (!path?.length) return
     autoFit = false
     showShortcut.value = true
+    if (['dimensional', 'ancient'].includes(mapStyle.value)) revealSecrets.value = true
     const minX = Math.min(...path.map((p) => p.x)),
       maxX = Math.max(...path.map((p) => p.x))
     const minY = Math.min(...path.map((p) => p.y)),
       maxY = Math.max(...path.map((p) => p.y))
+    const projection = mapProjection(activeStyle)
     camera.scale = Math.max(
       0.05,
       Math.min(
         2,
-        (viewWidth - 80) / ((maxX - minX + 3) * TILE_SIZE),
-        (viewHeight - 80) / ((maxY - minY + 3) * TILE_SIZE),
+        (viewWidth - 80) / ((maxX - minX + 3) * projection.width),
+        (viewHeight - 80) / ((maxY - minY + 3) * projection.height),
       ),
     )
-    camera.x = viewWidth / 2 - ((minX + maxX + 1) / 2) * TILE_SIZE * camera.scale
-    camera.y = viewHeight / 2 - ((minY + maxY + 1) / 2) * TILE_SIZE * camera.scale
+    camera.x = viewWidth / 2 - ((minX + maxX + 1) / 2) * projection.width * camera.scale
+    camera.y = viewHeight / 2 - ((minY + maxY + 1) / 2) * projection.height * camera.scale
     hover.value = null
     paint()
   },
   { flush: 'post' },
 )
-watch(mapStyle, (value) => {
-  emit('style', value)
-  rebuild()
-})
+watch(
+  [mapStyle, renderOptions],
+  () => {
+    void rebuild()
+  },
+  { deep: true },
+)
+
 watch(
   () => props.selected,
   (position) => {
     if (position) {
-      const cell = TILE_SIZE * camera.scale
-      const x = camera.x + (position.x + 0.5) * cell
-      const y = camera.y + (position.y + 0.5) * cell
+      const cell = mapProjection(activeStyle).width * camera.scale
+      const center = cellCenter(position, activeStyle)
+      const x = camera.x + center.x * camera.scale
+      const y = camera.y + center.y * camera.scale
       if (x < cell || y < cell || x > viewWidth - cell || y > viewHeight - cell) {
         autoFit = false
-        camera.x = viewWidth / 2 - (position.x + 0.5) * cell
-        camera.y = viewHeight / 2 - (position.y + 0.5) * cell
+        camera.x = viewWidth / 2 - center.x * camera.scale
+        camera.y = viewHeight / 2 - center.y * camera.scale
       }
     }
     paint()
@@ -516,7 +653,9 @@ watch(
 )
 
 onMounted(() => {
-  rebuild()
+  window.addEventListener('resize', refreshPixelRatio)
+  refreshPixelRatio()
+  void rebuild()
   observer = new ResizeObserver((entries) => {
     const bounds = entries[0]?.contentRect
     if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
@@ -541,7 +680,36 @@ onMounted(() => {
   if (viewport.value) observer.observe(viewport.value)
 })
 onBeforeUnmount(() => {
+  renderSession.dispose()
+  disposeMapCanvas(mapCanvas)
+  window.removeEventListener('resize', refreshPixelRatio)
+  pixelRatioQuery?.removeEventListener('change', refreshPixelRatio)
   observer?.disconnect()
   if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
+})
+/** Read-only presentation state is also useful to embedding hosts and browser validation. */
+defineExpose({
+  fit,
+  zoomAtCenter,
+  centerOnCell,
+  getRenderState: () => ({
+    seed: shownFloor?.seed,
+    style: activeStyle,
+    options: committedOptions,
+    grid: committedGrid,
+    camera: { ...camera },
+    origin: { ...mapOrigin },
+    density: mapProjection(activeStyle).density,
+    raster: { width: mapCanvas?.width ?? 0, height: mapCanvas?.height ?? 0 },
+    loading: loadingTheme.value,
+    selected: props.selected ? { ...props.selected } : null,
+    walk: {
+      active: props.walk.active,
+      position: props.walk.position ? { ...props.walk.position } : null,
+      explored: props.walk.explored.size,
+      steps: props.walk.steps,
+      heading: props.walk.heading,
+    },
+  }),
 })
 </script>

@@ -1,7 +1,7 @@
 import { exportFloorJson, MAX_IMPORT_CHARACTERS } from '@dungeon-atelier/core'
 import type { DungeonFloor } from '@dungeon-atelier/core'
-import { createMapCanvas } from './rendering/dungeon-renderer'
-import type { MapStyle } from './rendering/dungeon-renderer'
+import { createMapCanvasAsync, disposeMapCanvas } from './rendering/dungeon-renderer'
+import type { MapStyle, MapRenderOptions } from './rendering/map-style'
 
 function download(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -24,16 +24,25 @@ export function downloadJson(floor: DungeonFloor) {
   )
 }
 
-export async function downloadPng(floor: DungeonFloor, grid: boolean, style: MapStyle = 'stone') {
+export async function downloadPng(
+  floor: DungeonFloor,
+  grid: boolean,
+  style: MapStyle = 'stone',
+  options: MapRenderOptions = {},
+) {
   // Render a separate full-size canvas. Viewport transforms and selection never affect exports.
-  const canvas = createMapCanvas(floor, grid, style)
-  const blob = await new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (value) => (value ? resolve(value) : reject(new Error('PNG export failed.'))),
-      'image/png',
-    )
-  })
-  download(blob, `${filename(floor)}.png`)
+  const canvas = await createMapCanvasAsync(floor, grid, style, options)
+  try {
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (value) => (value ? resolve(value) : reject(new Error('PNG export failed.'))),
+        'image/png',
+      )
+    })
+    download(blob, `${filename(floor)}.png`)
+  } finally {
+    disposeMapCanvas(canvas)
+  }
 }
 
 export async function readJsonFile(file: File) {

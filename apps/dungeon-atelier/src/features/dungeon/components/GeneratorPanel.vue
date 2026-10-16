@@ -279,7 +279,7 @@
           </q-card-section>
           <q-separator />
           <q-card-section class="q-pb-sm">
-            <div class="text-subtitle2">Stone appearance</div>
+            <div class="text-subtitle2">Dungeon appearance</div>
             <p class="text-caption text-grey-5 q-mt-sm q-mb-none">
               Materials and torch placement follow seeded rules. These details are decorative;
               switch views and overlays in the dungeon toolbar.
@@ -288,7 +288,7 @@
           <q-expansion-item label="Wall & floor rules" header-class="text-grey-4">
             <q-card-section
               ><p
-                v-for="rule in MATERIAL_RULES"
+                v-for="rule in appearance.style === 'ancient' ? ancientRules : MATERIAL_RULES"
                 :key="rule"
                 class="text-caption text-grey-5 q-mb-sm"
               >
@@ -298,9 +298,15 @@
           </q-expansion-item>
           <q-expansion-item label="Torch placement" header-class="text-grey-4">
             <q-card-section class="text-caption text-grey-5"
-              >Torches sit on north-facing room boundaries, starting one tile from the left edge and
-              repeating every four tiles. Doorways are skipped. Their light does not change fog of
-              war.</q-card-section
+              ><template v-if="appearance.style === 'ancient'"
+                >Torches use exposed north and west room walls, with clear space around doors and
+                stairs. They are spaced at least five tiles apart; light stops at masonry and closed
+                doors.</template
+              ><template v-else
+                >Torches sit on north-facing room boundaries, starting one tile from the left edge
+                and repeating every four tiles. Doorways are skipped. Their light does not change
+                fog of war.</template
+              ></q-card-section
             >
           </q-expansion-item>
         </q-tab-panel>
@@ -343,8 +349,16 @@ import NumberStepper from './NumberStepper.vue'
 import { CONFIG_LIMITS, LAYOUT_PRESETS, ROOM_DESIGNS } from '@dungeon-atelier/core'
 import type { RoomDesign } from '@dungeon-atelier/core'
 import { useDungeonStore } from '@/stores/dungeon'
+import { useAppearanceStore } from '@/stores/appearance'
 
 const store = useDungeonStore()
+const appearance = useAppearanceStore(),
+  ancientRules = [
+    'Use Materials in the map toolbar to choose the floor, wall family and coping profile. These choices also apply to PNG exports.',
+    'The primary floor is continuous across rooms and corridors. Corridors may use their own material.',
+    'Regional variation assigns secondary stone to occasional whole rooms and rare stone to at most one large chamber.',
+    'Wall and coping families stay consistent across the floor. Materials never change the generated layout.',
+  ]
 const tab = ref('layout')
 const designOptions = ROOM_DESIGNS.map((design) => ({ label: design.label, value: design.value }))
 const roomDesigns = computed({

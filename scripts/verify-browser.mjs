@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { format, resolveConfig } from 'prettier'
 import {
   generateDungeon,
   DEFAULT_CONFIG,
@@ -123,7 +124,17 @@ try {
       for(const byte of canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data) hash = Math.imul(hash ^ byte,16777619)
       return (hash>>>0).toString(16)
     }
+    // This suite remains the legacy Stone/Classic regression; the production suite covers Ancient.
+    const appearance=(await import('/src/stores/appearance.ts')).useAppearanceStore()
+    appearance.style='stone'
   })()`)
+  await until(
+    () =>
+      evaluate(
+        `(()=>{const s=document.querySelector('.dungeon-canvas')?.__vueParentComponent?.exposed?.getRenderState();return s?.style==='stone'&&!s.loading})()`,
+      ),
+    'Legacy Stone frame',
+  )
   const legacy = []
   for (const name of ['legacy-v1.json', 'legacy-v2.json']) {
     const json = fs.readFileSync(new URL('../tests/fixtures/' + name, import.meta.url), 'utf8')
@@ -319,7 +330,14 @@ try {
     materialCases,
     classicCompared: !!baselineFile,
   }
-  fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
+  const reportFile = path.join(output, 'report.json')
+  fs.writeFileSync(
+    reportFile,
+    await format(JSON.stringify(report), {
+      ...(await resolveConfig('package.json')),
+      filepath: reportFile,
+    }),
+  )
   console.log(JSON.stringify(report, null, 2))
 } finally {
   socket?.close()

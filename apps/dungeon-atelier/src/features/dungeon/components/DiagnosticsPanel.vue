@@ -39,7 +39,13 @@
                 Attempt {{ index + 1 }}: {{ reason }}
               </div>
             </q-expansion-item>
-            <DungeonAutomap :floor="floor" :selected="selected" :walk="walk" />
+            <DungeonAutomap
+              :floor="floor"
+              :selected="selected"
+              :walk="walk"
+              :conceal-secrets="concealSecrets"
+              @inspect="emit('inspect', $event)"
+            />
           </q-card-section>
           <q-separator />
           <q-card-section>
@@ -250,7 +256,17 @@
                 }}</q-item-label></q-item-section
               ><q-item-section side>{{ roomGroup.roomIds.length }} rooms</q-item-section></q-item
             >
-            <q-item v-if="material"
+            <q-item v-if="ancientMaterial">
+              <q-item-section>{{ ancientMaterial.kind }}</q-item-section>
+              <q-item-section side class="material-value">{{
+                ancientMaterial.label
+              }}</q-item-section>
+            </q-item>
+            <q-item v-if="ancientMaterial?.kind === 'Wall family'">
+              <q-item-section>Cap profile</q-item-section>
+              <q-item-section side class="material-value">{{ ancientCap }}</q-item-section>
+            </q-item>
+            <q-item v-if="material && mapStyle !== 'ancient'"
               ><q-item-section
                 ><q-item-label>Stone material</q-item-label
                 ><q-item-label caption>{{ material.rule }}</q-item-label></q-item-section
@@ -261,7 +277,7 @@
                 }}</span></q-item-section
               ></q-item
             >
-            <q-item v-if="material?.roomIdentity"
+            <q-item v-if="material?.roomIdentity && mapStyle !== 'ancient'"
               ><q-item-section>Stone room finish</q-item-section
               ><q-item-section side>{{ material.roomIdentity }}</q-item-section></q-item
             >
@@ -317,10 +333,21 @@ import type { WalkState } from '../exploration/useDungeonWalk'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
 import DungeonAutomap from './DungeonAutomap.vue'
 import { createMaterialPlan } from '../rendering/material-rules'
+import type { MapStyle, MapRenderOptions } from '../rendering/dungeon-renderer'
+import {
+  ANCIENT_FLOORS,
+  ANCIENT_WALLS,
+  ANCIENT_CAPS,
+  normalizeAncient,
+  ancientFloorAssignments,
+} from '../rendering/ancient-settings'
 const props = defineProps<{
   floor: DungeonFloor | null
   selected: Position | null
   walk: WalkState
+  concealSecrets?: boolean
+  mapStyle?: MapStyle
+  renderOptions?: MapRenderOptions
 }>()
 const emit = defineEmits<{ inspect: [position: Position | null]; locateShortcut: [] }>()
 const tab = ref('report')
@@ -344,10 +371,42 @@ const roomGroup = computed(() =>
       props.selected.y < group.y + group.height,
   ),
 )
-const materialPlan = computed(() => (props.floor ? createMaterialPlan(props.floor) : null))
+const materialPlan = computed(() =>
+  props.floor && props.mapStyle !== 'ancient' ? createMaterialPlan(props.floor) : null,
+)
 const material = computed(() =>
   props.selected ? materialPlan.value?.at(props.selected.x, props.selected.y) : null,
 )
+const ancientAppearance = computed(() => normalizeAncient(props.renderOptions?.ancient)),
+  ancientAssignments = computed(() =>
+    props.floor && props.mapStyle === 'ancient'
+      ? ancientFloorAssignments(props.floor, ancientAppearance.value)
+      : new Map(),
+  ),
+  ancientCap = computed(
+    () => ANCIENT_CAPS.find((c) => c.value === ancientAppearance.value.cap)?.label,
+  ),
+  ancientMaterial = computed(() => {
+    if (props.mapStyle !== 'ancient' || !props.selected || !props.floor) return null
+    const { x, y } = props.selected,
+      tile = props.floor.tiles[y]?.[x]
+    return tile === 'wall' || tile === 'door'
+      ? {
+          kind: 'Wall family',
+          label: ANCIENT_WALLS.find((w) => w.value === ancientAppearance.value.wall)?.label,
+        }
+      : tile === 'floor'
+        ? {
+            kind: 'Floor material',
+            label: ANCIENT_FLOORS.find(
+              (f) =>
+                f.value ===
+                (ancientAssignments.value.get(y * props.floor!.width + x) ??
+                  ancientAppearance.value.floor),
+            )?.label,
+          }
+        : null
+  })
 function inspect(position: Position) {
   emit('inspect', position)
   tab.value = 'tile'
@@ -377,3 +436,11 @@ const stair = computed(() =>
   ),
 )
 </script>
+
+<style scoped>
+.material-value {
+  max-width: 62%;
+  white-space: normal;
+  text-align: right;
+}
+</style>

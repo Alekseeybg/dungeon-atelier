@@ -1,0 +1,25 @@
+{
+  "asset": "wall-sconces-final-v2.png",
+  "tool": "Built-in image_gen.imagegen",
+  "date": "2026-10-16",
+  "canvas": { "width": 1536, "height": 1024, "mode": "RGBA", "columns": 2 },
+  "layout": {
+    "left": "front assembly",
+    "right": "side assembly",
+    "background": "transparent alpha; no color-key extraction"
+  },
+  "runtime": {
+    "frontTrim": [387, 885],
+    "sideTrim": [427, 836],
+    "screenHeight": 23,
+    "frontWidth": 11,
+    "sideWidth": 12,
+    "anchor": "backplate foot at wall-face elevation 0.1; front horizontal anchor 0.5, side 0.12; height shear 6/24"
+  },
+  "generationReferences": [
+    "reports/visual-foundation/chamfer/ruins-room-lit.png",
+    "src/assets/dimensional/wall-sconce-v1.webp"
+  ],
+  "generationPrompt": "Create one production game sprite ATLAS with exactly TWO separate versions of the SAME wall-mounted dungeon torch, left and right columns, fully transparent background. Input 1 is ONLY an environment style reference: retain its realistic muted grey brown Ancient Ruined Dungeon aesthetic, do not reproduce a room. Input 2 is an old torch reference ONLY; replace its overly ornamental narrow design with a sturdy compact practical wrought-iron sconce. Left column: front wall-facing camera view, orthographic three-quarter overhead, looking slightly down into basket. Right column: corresponding narrow SIDE PROFILE for a perpendicular wall seen from the same fixed overhead camera; visible mounting plate edge, short projecting arm, basket side and top. Do not simply rotate the front image. Each isolated sconce: broad small riveted dark iron backplate, two convincing masonry attachment bolts, short iron support arm holding compact iron fire basket with four readable bars, coals, restrained amber flame with small cream core. Practical, heavy aged iron, realistic subtle metal highlights and fine wear, no skulls, no scrollwork, no gold trim. Flame occupies upper quarter, basket middle third, mounting lower area; strong silhouette designed to read at about 12 by 24 screen pixels. Both sprites same physical scale, each vertically centered in its own half of the atlas, all parts and flame fully in frame, generous transparent margins and a completely empty clear gutter between columns. No walls or stone slabs attached, no floor, no text, no labels, no borders, no cast shadow outside sprite, no baked bloom or large glow, no particles. Natural physically coherent shading; most detail on bracket and basket rather than flame. High quality realistic painted game environment asset, not vector, not pixel art. This is a new atlas, not an edit to the reference images.",
+  "finalEditPrompt": "Edit ONLY this two-column torch sprite atlas. Preserve the two iron torch bodies, basket construction, rivets, mounting backplates, support arm geometry, orientations, scale, layout and painted realistic material. Remove ALL exterior orange glow, haze, bloom, smoke and floating embers. The background must be fully transparent right up to the hard silhouettes of the hardware and actual flame. Make the actual flames more compact, roughly 20 percent of each complete sprite height, with restrained amber outer flame and small ivory core. No warm halo at all around the torch. Nothing else changes. Keep left front view and right corresponding side view isolated in their separate halves of the atlas. Transparent RGBA production sprite sheet, no text, no wall, no floor, no shadows beyond hardware silhouette."
+}
