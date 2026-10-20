@@ -1,6 +1,6 @@
 # Visual production rollout — integrated
 
-The approved visual foundation is now integrated into the real editor. **Ancient Ruined Dungeon** is the default, with Stone, Classic and the earlier Dimensional Stone retained as fallbacks.
+The approved visual foundation is now integrated into the real editor. **Ancient Ruined Dungeon** is the default, with Stone and Classic retained as fallbacks.
 
 See [the integration inventory, architecture, validation and remaining limits](production-visual-integration.md) for the completed rollout. Appearance controls expose all seven preserved floor sources, three wall families and five compatible cap/coping bundles. Doors, thresholds, stairs with separate adjacent symbols, mounted north/side torches, lighting and wall/floor separation use the approved compositor.
 

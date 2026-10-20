@@ -1,6 +1,6 @@
 # Approved visuals in the real generator
 
-The editor now starts with **Ancient Ruined Dungeon**. The approved architecture compositor drives real generated floors and PNG exports. Stone, Classic and the earlier Dimensional Stone remain selectable fallbacks. Generation, movement, collision, seed behavior and the saved floor schema are unchanged.
+The editor now starts with **Ancient Ruined Dungeon**. The approved architecture compositor drives real generated floors and PNG exports. Stone and Classic remain selectable fallbacks. Generation, movement, collision, seed behavior and the saved floor schema are unchanged.
 
 Open **Materials** in the map toolbar to choose floors, walls, coping and details. Appearance is saved locally, separately from dungeon JSON. The tile inspector reports the selected material family. Failed image loads preserve the previous complete frame; exports wait for a valid committed view.
 
@@ -18,13 +18,13 @@ Open **Materials** in the map toolbar to choose floors, walls, coping and detail
 
 All seven original floor images, exposure settings and sampling conventions are preserved. No new source art was generated for this integration.
 
-The default uses one continuous primary floor. Corridors can inherit it or use any of the seven materials. **Coherent regional variation** optionally assigns a secondary material to 20% of room candidates and a rare material to 5% of candidates, with the rare choice limited to one chamber of at least 36 floor cells. These are deterministic candidate rates, not guaranteed quotas. Each room uses one family across its actual footprint, including irregular shapes. No per-tile material lottery is used.
+The default recipe uses **Broad natural slabs** for primary rooms, **Weathered flagstones** for corridors and **Irregular flagstones** for secondary rooms, with **Coherent regional variation** enabled. The existing Ancient Ruined wall family and Chiseled chamfer cap remain the defaults. Corridors and every room footprint keep a continuous material family; transitions occur at architectural thresholds. Regional selection assigns the secondary material to 20% of deterministic room candidates and the retained rare Ancient large stones to 5%, with the rare choice limited to one chamber of at least 36 floor cells. These are candidate rates, not guaranteed quotas. No per-tile material lottery is used, and every catalog entry remains selectable.
 
-| Wall family                  | Role                              |
-| ---------------------------- | --------------------------------- |
-| Ancient Ruined Dungeon       | Approved realistic default        |
-| Medieval Fortress            | Retained alternate masonry family |
-| Original dimensional masonry | Compatibility material            |
+| Wall family            | Role                              |
+| ---------------------- | --------------------------------- |
+| Ancient Ruined Dungeon | Approved realistic default        |
+| Medieval Fortress      | Retained alternate masonry family |
+| Original masonry       | Compatibility material            |
 
 | Cap/coping assembly  | Role                                                                   |
 | -------------------- | ---------------------------------------------------------------------- |
@@ -38,7 +38,7 @@ Wall and cap choices apply consistently to the entire map. Bundles encode compat
 
 ## Architecture and details
 
-- Doors use their logical travel axis and owner footprint to select the correct assembly. Their masonry planes, arch frames and thresholds share the approved projection. Closed/open presentation is selectable; it does not add a door simulation. Revealed secret panels carry S annotations at the correct wall-face center on either axis.
+- Doors use their logical travel axis and owner footprint to select the correct assembly. Their masonry planes, arch frames and thresholds share the approved projection. East/west assemblies add a deeper projected jamb reveal, a more readable wooden face with restrained metal straps/rivets, and articulated threshold stones so side doors remain identifiable in narrow corridors. North/south artwork remains pixel-identical. Closed/open presentation is selectable; it does not add a door simulation. Secret doors bypass the enhanced regular-door treatment and retain their concealed/revealed behavior.
 - Stairs use authoritative up/down metadata, six treads and a floor-level entry. Up retains the stronger 16-pixel rise; down retains the recessed well. Flights are sorted with architecture by depth, preventing a north wall from incorrectly covering a nearer raised flight. Foreground walls still occlude correctly.
 - Brass level arrows remain on separate plaques, with clear space from the stair frame. Placement tests projected cap/face silhouettes as well as terrain. Clear neighboring floor is preferred; in a narrow aisle where foreground coping hides the ground, the same plaque mounts on nearby room-facing masonry along the same floor approach. The 300-layout audit found placements for all 600 stairs: 549 floor plaques and 51 wall plaques. A fully boxed custom/imported stair with no valid receiving surface may omit its plaque rather than cover architecture.
 - Torches mount on exposed south/east-facing masonry surfaces with open receiving floor: the visible north and west room walls. Placement is seeded, keeps five-tile spacing and avoids doors/stairs within two tiles. A map-area limit bounds light cost. North sconces use the projected iron arm, separate basket and independent flame; side sconces retain their approved orientation-specific artwork.
@@ -83,7 +83,7 @@ try {
 }
 ```
 
-The synchronous renderer entry remains available for the three legacy themes. Review scenes use the same compositor; there is no separate production copy of the architecture code.
+The synchronous renderer entry remains available for Stone and Classic. Review scenes use the same compositor; there is no separate production copy of the architecture code.
 
 The follow-up refactor extracts request serialization from the canvas component, moves style definitions into an implementation-independent catalog, and shares projected planes between drawing and placement checks. Stair placement is split into terrain candidates, visibility checks and receiving-wall fallback. Regression checks compare all 12 generated-map pixel hashes against the completed integration before refactoring; all remain identical. Render-session tests cover coalescing, stale failures, recovery and unmount disposal.
 

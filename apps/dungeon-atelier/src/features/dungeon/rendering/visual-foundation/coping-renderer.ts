@@ -1,4 +1,4 @@
-import { wallCapRects } from '../dimensional-model'
+import { wallCapRects } from '../architecture-model'
 import { FOUNDATION as P } from './model'
 import type { CopingArt } from './coping-art'
 import type { CopingBlock, CopingNode, CopingStudy } from './coping-model'

@@ -1,0 +1,14 @@
+{
+  "provider": "Built-in image_gen",
+  "purpose": "Shared door leaf and wall sconce source art for Ancient Ruined Dungeon",
+  "assets": [
+    {
+      "file": "door-leaf-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: isolated game sprite, transparent background. An exceptionally detailed heavy medieval dungeon door LEAF ONLY seen perfectly straight-on, isolated centered occupying nearly the whole square image with a little clear padding. Rounded arch top, straight vertical sides, flat bottom, aged dark warm oak boards with beautiful splintered grain, thick hammered charcoal iron cross braces with bronze rivets, a small iron ring handle on the right. Premium hand-painted dark-fantasy 2D RPG sprite, earthy wood, restrained warm metal edge glints, deep cracks and worn edges, richly dimensional but no glossy plastic. Neutral subtle upper-left light. The curved door is about twice as tall as wide, fully visible; NO stone jambs or frame, NO wall, no surrounding floor, no background, no text, no other props, no tilted/isometric perspective, no cast shadow outside the leaf. True transparent alpha. Square 1024x1024."
+    },
+    {
+      "file": "wall-sconce-v1.png",
+      "prompt": "Use case: stylized-concept. Asset type: isolated transparent 2D game sprite for orthographic dark fantasy dungeon architecture. One richly hand-painted medieval wall torch in a beautifully forged dark iron wall sconce with bronze rivets, a short iron basket, blackened wrapped wood, a vivid small golden-orange flame tapering upward with tiny ember tips. Perfectly front-on wall-mounted view, centered entire object, upright vertical, visible backing plate, elegant curled support arm and convincing battered metal. Inspired by a premium painted RPG dungeon tileset, exquisite material details with crisp shapes readable at small sizes. The object is tall and narrow, fully visible with clear padding. Bright warm flame but no huge glow sphere, no wall or ground, no scene or additional props, no words. True transparent background. Square 1024x1024."
+    }
+  ]
+}

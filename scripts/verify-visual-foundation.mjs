@@ -49,18 +49,6 @@ try {
         Buffer.from(png, 'base64'),
       )
   }
-  const baseline = await evaluate(`(async()=>{
-    const p=foundationProof,old=await p.c.renderFoundationBaseline(),result={}
-    for(const view of ['scene','room','architecture','doors-ns','doors-ew'])result[view]=p.c.cropFoundation(old,view,true).toDataURL().split(',')[1]
-    const a=p.c.cropFoundation(old,'room',true),b=p.c.cropFoundation(p.closed,'room'),image=document.createElement('canvas');image.width=a.width+b.width+24;image.height=Math.max(a.height,b.height)+44
-    const c=image.getContext('2d');c.fillStyle='#10171b';c.fillRect(0,0,image.width,image.height);c.fillStyle='#e8dac0';c.font='20px sans-serif';c.fillText('Current Dimensional Stone',12,28);c.fillText('Visual foundation candidate',a.width+36,28);c.drawImage(a,0,44);c.drawImage(b,a.width+24,44);result.comparison=image.toDataURL().split(',')[1]
-    return result
-  })()`)
-  for (const [view, png] of Object.entries(baseline))
-    fs.writeFileSync(
-      path.join(output, view === 'comparison' ? 'comparison-room.png' : `baseline-${view}.png`),
-      Buffer.from(png, 'base64'),
-    )
   const atlas = await evaluate(
     `(async()=>(await foundationProof.r.foundationAtlas()).toDataURL().split(',')[1])()`,
   )
@@ -102,14 +90,6 @@ try {
       (await pageHash()) !== unlitHash &&
       !(await evaluate("!!document.querySelector('.q-spinner')")),
     'Grid control',
-  )
-  await evaluate(`document.querySelector('[aria-label="Foundation comparison"]').click()`)
-  await poll(
-    () =>
-      evaluate(
-        `!!document.querySelector('canvas[aria-label="Baseline artwork"]')&&!document.querySelector('.q-spinner')`,
-      ),
-    'Baseline comparison',
   )
   // Return to the default approval view before capturing the review UI.
   await evaluate('window.foundationReloadMarker=true')
@@ -204,7 +184,6 @@ try {
       doors: true,
       lighting: true,
       grid: true,
-      comparison: true,
       views: true,
       secrets: true,
       png: true,

@@ -15,7 +15,7 @@ export const ANCIENT_FLOORS = [
 export const ANCIENT_WALLS = [
   { value: 'ruins', label: 'Ancient Ruined Dungeon' },
   { value: 'fortress', label: 'Medieval Fortress' },
-  { value: 'original', label: 'Original dimensional masonry' },
+  { value: 'original', label: 'Original masonry' },
 ] as const
 export const ANCIENT_CAPS = [
   {
@@ -58,6 +58,19 @@ export interface AncientAppearance {
   doorsOpen: boolean
 }
 export const DEFAULT_ANCIENT: Readonly<AncientAppearance> = Object.freeze({
+  floor: 'study-broad',
+  wall: 'ruins',
+  cap: 'cut',
+  distribution: 'regional',
+  corridor: 'study-weathered',
+  secondary: 'study-irregular',
+  rare: 'study-early',
+  lighting: true,
+  torches: true,
+  stairSymbols: true,
+  doorsOpen: false,
+})
+const LEGACY_DEFAULT_ANCIENT: Readonly<AncientAppearance> = Object.freeze({
   floor: 'refined',
   wall: 'ruins',
   cap: 'cut',
@@ -70,6 +83,11 @@ export const DEFAULT_ANCIENT: Readonly<AncientAppearance> = Object.freeze({
   stairSymbols: true,
   doorsOpen: false,
 })
+/** Upgrade only the untouched former recipe; customized saved appearances remain authoritative. */
+export function isLegacyDefaultAncient(value: Partial<AncientAppearance>) {
+  const record = value as Record<string, unknown>
+  return Object.entries(LEGACY_DEFAULT_ANCIENT).every(([key, expected]) => record[key] === expected)
+}
 export function normalizeAncient(value: Partial<AncientAppearance> = {}): AncientAppearance {
   const result = { ...DEFAULT_ANCIENT }
   for (const key of Object.keys(result) as (keyof AncientAppearance)[]) {
@@ -100,6 +118,7 @@ export function ancientOptions(a: AncientAppearance): FoundationOptions {
     stairs: 'recessed',
     stairProfile: 'ascending',
     depthSortedStairs: true,
+    sideDoors: 'defined',
     stairArrow: a.stairSymbols ? 'brass' : 'none',
     torches: 'mounted',
     northTorchMount: 'projecting',

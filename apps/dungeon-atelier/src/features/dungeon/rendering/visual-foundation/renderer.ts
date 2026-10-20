@@ -1,13 +1,13 @@
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
 import {
-  createDimensionalPlan,
-  dimensionalLightCells,
+  createArchitecturePlan,
+  architectureLightCells,
   wallCapRects,
   wallEastSegments,
   wallFrontSegments,
   visualOpen,
-} from '../dimensional-model'
-import type { DimensionalOptions, SpriteDefinition } from '../dimensional-model'
+} from '../architecture-model'
+import type { ArchitectureOptions, SpriteDefinition } from '../architecture-model'
 import { canvas, loadFoundationArt, floorStudy } from './art'
 import type { FoundationArt, FoundationTreatment, FoundationFloor } from './art'
 import {
@@ -58,6 +58,8 @@ export interface FoundationOptions {
   northTorchMount?: 'flat' | 'projecting'
   openDoorIds?: readonly string[]
   depthSortedStairs?: boolean
+  /** Perspective-specific treatment for doors on east/west-facing wall planes. */
+  sideDoors?: 'legacy' | 'defined'
 }
 interface ArchitecturalSprite {
   definition: SpriteDefinition
@@ -68,7 +70,7 @@ interface ArchitecturalSprite {
 }
 interface BuiltScene {
   scene: FoundationScene
-  plan: ReturnType<typeof createDimensionalPlan>
+  plan: ReturnType<typeof createArchitecturePlan>
   atlas: ArchitecturalSprite[]
   floorPath: Path2D
   art: FoundationArt
@@ -141,6 +143,66 @@ function imagePlane(c: CanvasRenderingContext2D, image: CanvasImageSource, point
   c.drawImage(image, 0, 0, 32, 24)
   c.restore()
 }
+function faceInset(points: Position[], left: number, top: number, right: number, bottom: number) {
+  const a = points[0]!,
+    b = points[1]!,
+    d = points[3]!
+  const at = (u: number, v: number) => ({
+    x: a.x + (b.x - a.x) * u + (d.x - a.x) * v,
+    y: a.y + (b.y - a.y) * u + (d.y - a.y) * v,
+  })
+  return [at(left, top), at(right, top), at(right, bottom), at(left, bottom)]
+}
+
+/** Final projected return for east/west leaves. Adjacent masonry legitimately
+ * occludes most of the side-facing source panel, so the visible leaf return is
+ * restored after the architecture pass using the same wall-face projection. */
+function drawDefinedSideDoorDetail(
+  c: CanvasRenderingContext2D,
+  art: FoundationArt,
+  points: Position[],
+  closed: boolean,
+) {
+  const opening = art.opening,
+    outer = faceInset(
+      points,
+      Math.max(0, opening.x - 0.045),
+      Math.max(0, opening.y - 0.035),
+      Math.min(1, opening.x + opening.width + 0.045),
+      1,
+    ),
+    leaf = faceInset(points, opening.x, opening.y, opening.x + opening.width, 1)
+  c.save()
+  c.fillStyle = '#020506f2'
+  c.fill(polygon(outer))
+  if (closed) {
+    imagePlane(c, art.wood, leaf)
+    const shade = c.createLinearGradient(leaf[0]!.x, 0, leaf[3]!.x, 0)
+    shade.addColorStop(0, '#050606d9')
+    shade.addColorStop(0.3, '#32180a28')
+    shade.addColorStop(0.72, '#b56d3038')
+    shade.addColorStop(1, '#080606b8')
+    c.fillStyle = shade
+    c.fill(polygon(leaf))
+    c.strokeStyle = '#111819f2'
+    c.lineWidth = 1.15
+    for (const v of [0.42, 0.73]) {
+      const band = faceInset(
+        points,
+        opening.x,
+        opening.y + (1 - opening.y) * v,
+        opening.x + opening.width,
+        opening.y + (1 - opening.y) * v + 0.045,
+      )
+      c.fillStyle = '#111819e8'
+      c.fill(polygon(band))
+    }
+    c.strokeStyle = '#c4a875b8'
+    c.lineWidth = 0.65
+    c.stroke(polygon(leaf))
+  }
+  c.restore()
+}
 function framePanel(art: FoundationArt, closed: boolean, start = 0) {
   if (art.aperture) {
     const panel = canvas(88, 48),
@@ -196,6 +258,90 @@ function framePanel(art: FoundationArt, closed: boolean, start = 0) {
     c.fillRect(0, 0, 64, 48)
     c.restore()
   }
+  return panel
+}
+
+/** East/west doors occupy the narrow receding wall axis. Their extra depth and
+ * hardware are painted into that wall plane, never as a screen-space marker. */
+function definedSideFramePanel(art: FoundationArt, closed: boolean, start = 0) {
+  const panel = framePanel(art, closed, start),
+    c = panel.getContext('2d')!,
+    scaleX = panel.width / 88,
+    scaleY = panel.height / 48,
+    opening = {
+      x: art.opening.x * panel.width,
+      y: art.opening.y * panel.height,
+      width: art.opening.width * panel.width,
+      height: art.opening.height * panel.height,
+    }
+  c.save()
+  c.scale(scaleX, scaleY)
+  const hole = {
+    x: opening.x / scaleX,
+    y: opening.y / scaleY,
+    width: opening.width / scaleX,
+    height: opening.height / scaleY,
+  }
+  if (closed) {
+    // Preserve the leaf's grain and warm material. Depth comes from the jambs
+    // and a narrow falloff instead of a dark wash over the complete door.
+    const leafTone = c.createLinearGradient(hole.x, 0, hole.x + hole.width, 0)
+    leafTone.addColorStop(0, '#160d08a8')
+    leafTone.addColorStop(0.16, '#6e37182e')
+    leafTone.addColorStop(0.58, '#b66f343d')
+    leafTone.addColorStop(0.86, '#6d351425')
+    leafTone.addColorStop(1, '#080707a8')
+    c.fillStyle = leafTone
+    c.fillRect(hole.x, hole.y, hole.width, hole.height)
+    c.strokeStyle = '#d099565c'
+    c.lineWidth = 0.75
+    for (const x of [0.34, 0.66]) {
+      c.beginPath()
+      c.moveTo(hole.x + hole.width * x, hole.y + 2)
+      c.lineTo(hole.x + hole.width * x, hole.y + hole.height - 1)
+      c.stroke()
+    }
+  } else {
+    const recess = c.createLinearGradient(hole.x, 0, hole.x + hole.width, 0)
+    recess.addColorStop(0, '#010405ed')
+    recess.addColorStop(0.24, '#06090bd9')
+    recess.addColorStop(0.72, '#0b0d0dbf')
+    recess.addColorStop(1, '#000304ed')
+    c.fillStyle = recess
+    c.fillRect(hole.x, hole.y, hole.width, hole.height)
+  }
+
+  // Deep jamb reveals and a light-catching outer arris make the portal read
+  // along the foreshortened axis while remaining embedded in the masonry.
+  c.fillStyle = '#030708eb'
+  c.fillRect(hole.x - 3.4, hole.y, 3.4, hole.height)
+  c.fillRect(hole.x + hole.width, hole.y, 3, hole.height)
+  c.fillRect(hole.x - 2, hole.y - 2.2, hole.width + 4, 2.4)
+  c.strokeStyle = '#d0c5a078'
+  c.lineWidth = 0.9
+  c.beginPath()
+  c.moveTo(hole.x - 3.5, hole.y + 1)
+  c.lineTo(hole.x - 3.5, hole.y + hole.height)
+  c.moveTo(hole.x + hole.width + 3.1, hole.y + 1)
+  c.lineTo(hole.x + hole.width + 3.1, hole.y + hole.height)
+  c.stroke()
+
+  if (closed) {
+    // Broad iron straps, rivets and a small latch survive normal map zoom.
+    c.fillStyle = '#0b1112f0'
+    for (const y of [hole.y + hole.height * 0.34, hole.y + hole.height * 0.7])
+      c.fillRect(hole.x + 0.5, y, hole.width - 1, 2.2)
+    c.fillStyle = '#c3a56b'
+    for (const x of [hole.x + 3, hole.x + hole.width - 4])
+      for (const y of [hole.y + hole.height * 0.36, hole.y + hole.height * 0.72]) {
+        c.beginPath()
+        c.arc(x, y, 0.75, 0, Math.PI * 2)
+        c.fill()
+      }
+    c.fillStyle = '#d0aa66'
+    c.fillRect(hole.x + hole.width * 0.67, hole.y + hole.height * 0.5, 3.4, 2)
+  }
+  c.restore()
   return panel
 }
 function buildArchitecture(
@@ -273,11 +419,14 @@ function buildArchitecture(
         patternFace(c, art.face, points, (surface.horizontal ? x : y) - 6, 44, !surface.horizontal)
       } else {
         const doorOpen = options.doors === 'open' || options.openDoorIds?.includes(item.door.id)
-        const panel = art.aperture
-          ? framePanel(art, !doorOpen, (surface.horizontal ? x : y) - 6)
-          : doorOpen
-            ? open
-            : closed
+        const sideDefined = !surface.horizontal && options.sideDoors === 'defined',
+          panel = art.aperture
+            ? sideDefined
+              ? definedSideFramePanel(art, !doorOpen, y - 6)
+              : framePanel(art, !doorOpen, (surface.horizontal ? x : y) - 6)
+            : doorOpen
+              ? open
+              : closed
         imagePlane(c, panel, points)
         if (art.aperture && !surface.horizontal) {
           c.save()
@@ -383,13 +532,13 @@ async function built(
   source?: FoundationScene,
   material?: FoundationArt,
 ) {
-  const key = `${options.treatment ?? 'ruins'}:${options.doors ?? 'closed'}:${options.secret ?? 'none'}:${options.separation !== false}:${options.floor ?? 'refined'}:${!!options.capPolish}:${options.capEffects?.join(',') ?? 'all'}:${options.coping ?? 'current'}:${options.capProfile ?? 'raised'}:${options.capFinish ?? 'soft'}:${options.stairs ?? 'none'}:${options.torches ?? 'current'}`
+  const key = `${options.treatment ?? 'ruins'}:${options.doors ?? 'closed'}:${options.secret ?? 'none'}:${options.separation !== false}:${options.floor ?? 'refined'}:${!!options.capPolish}:${options.capEffects?.join(',') ?? 'all'}:${options.coping ?? 'current'}:${options.capProfile ?? 'raised'}:${options.capFinish ?? 'soft'}:${options.stairs ?? 'none'}:${options.torches ?? 'current'}:${options.sideDoors ?? 'legacy'}`
   const cached = source || material ? undefined : scenes.get(key)
   if (cached) return cached
   const scene =
     source ?? createFoundationScene(options.secret === 'hidden' || options.secret === 'revealed')
-  const renderOptions: DimensionalOptions = { revealSecrets: options.secret === 'revealed' }
-  const plan = createDimensionalPlan(scene.floor, renderOptions),
+  const renderOptions: ArchitectureOptions = { revealSecrets: options.secret === 'revealed' }
+  const plan = createArchitecturePlan(scene.floor, renderOptions),
     art =
       material ??
       (await loadFoundationArt(options.treatment, options.separation !== false, options.floor))
@@ -486,6 +635,13 @@ function drawArchitecture(
     )
   }
   while (cursor < stairs.length) nextStair()
+  if (options?.sideDoors === 'defined')
+    for (const door of data.plan.doors) {
+      if (door.orientation !== 'east-west' || door.type === 'secret') continue
+      const surface = doorSurface(door.position, data.scene.facings[door.id]!),
+        open = options.doors === 'open' || options.openDoorIds?.includes(door.id)
+      drawDefinedSideDoorDetail(c, data.art, plane(surface.a, surface.b), !open)
+    }
 }
 /** One union silhouette avoids dark overlaps at corners and seams between connected tiles. */
 function buildContact(data: BuiltScene, blur = 5, opacity = 0.86) {
@@ -519,7 +675,7 @@ function buildContact(data: BuiltScene, blur = 5, opacity = 0.86) {
   solid.width = solid.height = 1
   return result
 }
-function drawGround(c: CanvasRenderingContext2D, data: BuiltScene) {
+function drawGround(c: CanvasRenderingContext2D, data: BuiltScene, options: FoundationOptions) {
   c.save()
   c.clip(data.floorPath)
   c.scale(1, P.depth)
@@ -567,6 +723,35 @@ function drawGround(c: CanvasRenderingContext2D, data: BuiltScene) {
       c.fillStyle = contact
       c.fillRect(3, sillY + 3, 26, 5)
       c.restore()
+      if (!ns && door.type !== 'secret' && options.sideDoors === 'defined') {
+        const top = project(x * 32 + 23, y * 32 + 3),
+          bottom = project(x * 32 + 23, y * 32 + 29),
+          innerTop = project(x * 32 + 30, y * 32 + 3),
+          innerBottom = project(x * 32 + 30, y * 32 + 29)
+        c.lineCap = 'square'
+        c.strokeStyle = '#050a0bd1'
+        c.lineWidth = 2.4
+        c.beginPath()
+        c.moveTo(top.x, top.y)
+        c.lineTo(bottom.x, bottom.y)
+        c.stroke()
+        c.strokeStyle = '#c8b99082'
+        c.lineWidth = 0.75
+        c.beginPath()
+        c.moveTo(innerTop.x, innerTop.y)
+        c.lineTo(innerBottom.x, innerBottom.y)
+        c.stroke()
+        for (const offset of [9, 17]) {
+          const a = project(x * 32 + 23, y * 32 + offset),
+            b = project(x * 32 + 30, y * 32 + offset)
+          c.strokeStyle = '#111818b8'
+          c.lineWidth = 0.65
+          c.beginPath()
+          c.moveTo(a.x, a.y)
+          c.lineTo(b.x, b.y)
+          c.stroke()
+        }
+      }
       continue
     }
     const threshold = rectangle(
@@ -626,7 +811,7 @@ function illuminate(
     const face = data.scene.torchFacings?.[`${torch.x},${torch.y}`] ?? 'south',
       reach = mounted
         ? mountedLightCells(data.plan.floor, torch, face, openDoors)
-        : dimensionalLightCells(data.plan, torch, openDoors, 5),
+        : architectureLightCells(data.plan, torch, openDoors, 5),
       mask = new Path2D()
     for (const cell of reach.floors)
       mask.addPath(rectangle(cell.x * 32 - 6, cell.y * 32 - 6, 44, 44))
@@ -677,7 +862,7 @@ function paintFoundation(data: BuiltScene, options: FoundationOptions, result = 
   c.fillStyle = '#080d10'
   c.fillRect(0, 0, bounds.width, bounds.height)
   c.translate(bounds.origin.x, bounds.origin.y)
-  drawGround(c, data)
+  drawGround(c, data, options)
   if (data.edgeTone) {
     c.save()
     c.setTransform(1, 0, 0, 1, 0, 0)

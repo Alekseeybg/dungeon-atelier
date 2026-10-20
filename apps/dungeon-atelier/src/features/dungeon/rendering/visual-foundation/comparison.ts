@@ -1,27 +1,5 @@
-import { renderDimensional } from '../dimensional-renderer'
-import { prepareDimensionalAtlas } from '../dimensional-sprites'
 import { canvas } from './art'
-import { createFoundationScene } from './model'
-import type { FoundationOptions } from './renderer'
 
-/** The production renderer is called as-is, on the same fixture, at the same pixel density. */
-export async function renderFoundationBaseline(options: FoundationOptions = {}) {
-  await prepareDimensionalAtlas()
-  const { floor } = createFoundationScene(
-    options.secret === 'hidden' || options.secret === 'revealed',
-  )
-  const result = canvas((floor.width * 32 + 64) * 2, (floor.height * 32 + 64) * 2),
-    c = result.getContext('2d')!
-  c.scale(2, 2)
-  c.fillStyle = '#080d10'
-  c.fillRect(0, 0, result.width, result.height)
-  c.translate(32, 32)
-  renderDimensional(c, floor, options.grid ?? false, {
-    revealSecrets: options.secret === 'revealed',
-    openDoorIds: options.doors === 'open' ? floor.doors.map((d) => d.id) : [],
-  })
-  return result
-}
 export type FoundationView =
   | 'room'
   | 'scene'
@@ -43,9 +21,9 @@ export function cropCoping(source: HTMLCanvasElement, view: FoundationView) {
   result.getContext('2d')!.drawImage(image, 0, 0)
   return result
 }
-export function cropFoundation(source: HTMLCanvasElement, view: FoundationView, baseline = false) {
+export function cropFoundation(source: HTMLCanvasElement, view: FoundationView) {
   if (view === 'scene') return source
-  const depth = baseline ? 32 : 26
+  const depth = 26
   if (
     view === 'coping-edge' ||
     view === 'wall-detail' ||

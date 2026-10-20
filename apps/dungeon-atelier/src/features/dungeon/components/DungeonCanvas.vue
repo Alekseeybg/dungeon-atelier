@@ -75,10 +75,7 @@
             /></q-item-section>
           </q-item>
           <q-item
-            v-if="
-              ['dimensional', 'ancient'].includes(mapStyle) &&
-              floor?.doors.some((door) => door.type === 'secret')
-            "
+            v-if="mapStyle === 'ancient' && floor?.doors.some((door) => door.type === 'secret')"
             tag="label"
           >
             <q-item-section>
@@ -215,7 +212,6 @@ import {
   MAP_STYLES,
   MAP_BACKGROUND,
 } from '../rendering/dungeon-renderer'
-import { drawDimensionalWalkCutaway } from '../rendering/dimensional-renderer'
 import { storeToRefs } from 'pinia'
 import { useAppearanceStore } from '../../../stores/appearance'
 import AppearancePanel from './AppearancePanel.vue'
@@ -266,7 +262,7 @@ const { style: mapStyle } = storeToRefs(appearance)
 const loadingTheme = ref(false)
 const renderOptions = computed(() => ({
   revealSecrets:
-    ['dimensional', 'ancient'].includes(mapStyle.value) &&
+    mapStyle.value === 'ancient' &&
     ((revealSecrets.value && !props.walk.active) ||
       (mapStyle.value === 'ancient' && props.walk.active)),
   ancient: { ...appearance.ancient },
@@ -321,7 +317,6 @@ function paint() {
     context.save()
     context.translate(camera.x, camera.y)
     context.scale(camera.scale, camera.scale)
-    if (activeStyle === 'dimensional') drawDimensionalWalkCutaway(context, mapCanvas, props.walk)
     if (activeStyle === 'ancient') drawAncientWalkCutaway(context, mapCanvas, props.walk)
     renderWalkFog(context, props.floor, props.walk, activeStyle)
     context.restore()
@@ -330,7 +325,7 @@ function paint() {
   if (
     showShortcut.value &&
     props.floor.shortcuts?.length &&
-    (!['dimensional', 'ancient'].includes(activeStyle) || renderOptions.value.revealSecrets)
+    (activeStyle !== 'ancient' || renderOptions.value.revealSecrets)
   ) {
     context.save()
     context.translate(camera.x, camera.y)
@@ -572,7 +567,7 @@ watch(showGrid, () => {
   void rebuild()
 })
 watch(showShortcut, (visible) => {
-  if (visible && ['dimensional', 'ancient'].includes(mapStyle.value)) revealSecrets.value = true
+  if (visible && mapStyle.value === 'ancient') revealSecrets.value = true
   paint()
 })
 watch(
@@ -583,7 +578,7 @@ watch(
     if (!path?.length) return
     autoFit = false
     showShortcut.value = true
-    if (['dimensional', 'ancient'].includes(mapStyle.value)) revealSecrets.value = true
+    if (mapStyle.value === 'ancient') revealSecrets.value = true
     const minX = Math.min(...path.map((p) => p.x)),
       maxX = Math.max(...path.map((p) => p.x))
     const minY = Math.min(...path.map((p) => p.y)),

@@ -1,6 +1,6 @@
 # Dungeon Atelier — external artwork specification
 
-Inspected 2026-10-16. This describes the current working tree, including the new Dimensional Stone renderer. It is a specification only: no renderer or artwork changes accompany this document.
+Archived specification, inspected 2026-10-16. The Dimensional Stone renderer, atlas, and dedicated assets described here have since been removed. This document and `current-sprite-inventory.csv` record that retired implementation; they are not a current asset contract. See [production visual integration](../production-visual-integration.md) for the supported themes.
 
 ## 1. Scope and status
 

@@ -8,7 +8,7 @@ export const NEIGHBORS = [
   [0, 1],
   [-1, 0],
 ] as const
-export const DIMENSIONAL_LAYERS = [
+export const ARCHITECTURE_LAYERS = [
   'void',
   'floor',
   'markings',
@@ -18,8 +18,8 @@ export const DIMENSIONAL_LAYERS = [
   'emissive',
   'grid',
 ] as const
-export type DimensionalLayer = (typeof DIMENSIONAL_LAYERS)[number]
-export interface DimensionalOptions {
+export type ArchitectureLayer = (typeof ARCHITECTURE_LAYERS)[number]
+export interface ArchitectureOptions {
   revealSecrets?: boolean
   /** Optional presentation overrides for previews; not door simulation or saved state. */
   openDoorIds?: readonly string[]
@@ -35,32 +35,9 @@ export interface SpriteDefinition {
   height: number
   anchor: Position
   offset: Position
-  layer: DimensionalLayer
+  layer: ArchitectureLayer
   variants?: readonly string[]
   connectivityMask?: number
-}
-export function dimensionalProjection(tileSize: number) {
-  if (!Number.isFinite(tileSize) || tileSize <= 0) throw new Error('Tile size must be positive.')
-  const rise = tileSize * 0.75
-  return {
-    tileSize,
-    rise,
-    side: tileSize / 8,
-    padding: {
-      left: tileSize / 4,
-      right: tileSize / 4,
-      top: tileSize,
-      bottom: tileSize / 4,
-    },
-  }
-}
-export function spriteDestination(sprite: SpriteDefinition, logicalX: number, logicalY: number) {
-  return {
-    x: logicalX - sprite.anchor.x + sprite.offset.x,
-    y: logicalY - sprite.anchor.y + sprite.offset.y,
-    width: sprite.width,
-    height: sprite.height,
-  }
 }
 export function visualOpen(tile: string | undefined) {
   return tile === 'floor' || tile === 'door'
@@ -211,7 +188,7 @@ export function wallEastSegments(mask: number, corner: number, size: number) {
     }
   return segments
 }
-export interface DimensionalPlan {
+export interface ArchitecturePlan {
   floor: DungeonFloor
   walls: WallCell[]
   doors: Door[]
@@ -224,12 +201,13 @@ export function visualHash(x: number, y: number, seed: number) {
   value = Math.imul(value ^ (value >>> 13), 1274126177)
   return (value ^ (value >>> 16)) >>> 0
 }
-export function createDimensionalPlan(
+export function createArchitecturePlan(
   source: DungeonFloor,
-  options: DimensionalOptions = {},
-): DimensionalPlan {
+  options: ArchitectureOptions = {},
+): ArchitecturePlan {
   const floor = options.revealSecrets ? source : concealSecretArchitecture(source)
   let seed = 2166136261
+  // Keep the established seed salt so Ancient masonry and lighting remain unchanged.
   for (const char of `${floor.seed}:${floor.floorNumber}:dimensional-v1`)
     seed = Math.imul(seed ^ char.charCodeAt(0), 16777619)
   const open = (x: number, y: number) => visualOpen(floor.tiles[y]?.[x])
@@ -310,8 +288,8 @@ export function createDimensionalPlan(
 }
 
 /** Cardinal flood for static light: walls and closed doors receive light but do not transmit it. */
-export function dimensionalLightCells(
-  plan: DimensionalPlan,
+export function architectureLightCells(
+  plan: ArchitecturePlan,
   torch: Position,
   openDoors: ReadonlySet<string> = new Set(),
   radius = 4,
@@ -346,94 +324,4 @@ export function dimensionalLightCells(
     floors: queue,
     walls: [...walls].map((key) => ({ x: key % floor.width, y: Math.floor(key / floor.width) })),
   }
-}
-
-/** A stable shelf-packed manifest; external PNG/WebP packs can supply the same IDs. */
-export function dimensionalSpriteDefinitions(tileSize: number): SpriteDefinition[] {
-  const { rise, side } = dimensionalProjection(tileSize),
-    atlasWidth = tileSize * 32
-  let x = 0,
-    y = 0,
-    rowHeight = 0
-  const definitions: SpriteDefinition[] = []
-  const add = (
-    id: string,
-    width: number,
-    height: number,
-    layer: DimensionalLayer,
-    anchor: Position,
-    mask?: number,
-  ) => {
-    if (x + width > atlasWidth) {
-      x = 0
-      y += rowHeight
-      rowHeight = 0
-    }
-    const definition: SpriteDefinition = {
-      id,
-      atlas: 'dimensional-stone-v1',
-      source: { x, y, width, height },
-      footprint: { width: 1, height: 1 },
-      width,
-      height,
-      anchor,
-      offset: { x: 0, y: 0 },
-      layer,
-    }
-    if (mask !== undefined) definition.connectivityMask = mask
-    definitions.push(definition)
-    x += width
-    rowHeight = Math.max(rowHeight, height)
-  }
-  for (const kind of ['flagstone', 'slab', 'ornament', 'corridor', 'repair', 'threshold'])
-    for (const variant of Array.from({ length: 16 }, (_, index) => index)) {
-      add(`floor.${kind}.${variant}`, tileSize * 2, tileSize * 2, 'floor', { x: 0, y: 0 })
-      definitions.at(-1)!.footprint = { width: 2, height: 2 }
-    }
-  for (let mask = 0; mask < 16; mask++)
-    for (let corner = 0; corner < 16; corner++)
-      if ((corner & ~capCornerOptions(mask)) === 0)
-        for (let variant = 0; variant < 4; variant++) {
-          add(
-            `wall.${mask}.${corner}.${variant}`,
-            tileSize + side,
-            tileSize + rise,
-            'architecture',
-            { x: side, y: rise },
-            mask,
-          )
-        }
-  for (const axis of ['north-south', 'east-west'])
-    for (const state of ['closed', 'open', 'secret'])
-      add(
-        `door.${axis}.${state}`,
-        tileSize + side + (axis === 'north-south' ? tileSize / 4 : 0),
-        tileSize + rise,
-        'architecture',
-        { x: side + (axis === 'north-south' ? tileSize / 8 : 0), y: rise },
-      )
-  for (const direction of ['up', 'down'])
-    add(`stairs.${direction}`, tileSize, tileSize, 'markings', { x: 0, y: 0 })
-  for (const condition of ['worn', 'cracked', 'mossy', 'grimy'])
-    for (let variant = 0; variant < 4; variant++)
-      add(`detail.${condition}.${variant}`, tileSize, tileSize, 'markings', { x: 0, y: 0 })
-  add('inlay.center', tileSize * 2.5, tileSize * 2.5, 'markings', {
-    x: tileSize * 1.25,
-    y: tileSize * 1.25,
-  })
-  definitions.at(-1)!.footprint = { width: 3, height: 3 }
-  add('torch.sconce', Math.round(tileSize * 0.38), Math.round(tileSize * 1.1), 'emissive', {
-    x: 0,
-    y: Math.round(tileSize * 0.12),
-  })
-  definitions.at(-1)!.offset.x = Math.round(tileSize * 0.31)
-  for (const definition of definitions) {
-    const prefix = definition.id.slice(0, definition.id.lastIndexOf('.'))
-    if (/\.\d+$/.test(definition.id))
-      definition.variants = Array.from(
-        { length: definition.id.startsWith('floor.') ? 16 : 4 },
-        (_, variant) => `${prefix}.${variant}`,
-      )
-  }
-  return definitions
 }

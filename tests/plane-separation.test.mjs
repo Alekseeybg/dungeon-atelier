@@ -7,7 +7,7 @@ import {
 import {
   wallCapRects,
   capCornerOptions,
-} from '../apps/dungeon-atelier/src/features/dungeon/rendering/dimensional-model.ts'
+} from '../apps/dungeon-atelier/src/features/dungeon/rendering/architecture-model.ts'
 
 test('surface response preserves value ordering and separates stone planes for any input value', () => {
   for (let v = 0; v <= 255; v++) {

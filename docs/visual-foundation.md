@@ -1,6 +1,6 @@
 # Visual foundation — four-door demonstration
 
-Status: **candidate for visual approval**, not a replacement editor theme. No renderer migration, generator change, or map-wide rollout.
+These notes record the original visual foundation study. Its approved architecture now ships in Ancient Ruined Dungeon; see [production visual integration](production-visual-integration.md). The review page retains material comparisons, but the retired Dimensional Stone baseline renderer has been removed.
 
 The current [realistic floor refinement](realistic-floor-review.md) uses the latest mockup's realistic half. The previous floor remains selectable; the comic-book half is reserved for a future theme. The foundation notes below describe the shared architecture and earlier source set.
 
@@ -8,7 +8,7 @@ The latest [structural readability pass](plane-separation.md) adds shared cap/fa
 
 The current review adds [two masonry and doorway treatments, A / B](masonry-review.md), while keeping the projection, floor, and fixture below. A is the default; the preceding material set remains selectable as Previous prototype. The following foundation notes describe the shared construction; see the A/B review for the replacement wall/frame/sill sources and current screenshots.
 
-With `npm run dev` running, open [the review page](http://localhost:9000/#/visual-foundation). It has a room view, full layout, masonry/corner detail, north/south and east/west details, closed/open doorways, a concealed/revealed north entrance, candidate lighting, a logical grid, baseline comparison, and PNG download.
+With `npm run dev` running, open [the review page](http://localhost:9000/#/visual-foundation). It has a room view, full layout, masonry/corner detail, north/south and east/west details, closed/open doorways, a concealed/revealed north entrance, lighting, a logical grid, material comparisons, and PNG download.
 
 ## Result and comparison
 
@@ -22,7 +22,7 @@ With `npm run dev` running, open [the review page](http://localhost:9000/#/visua
 - [Open doorways](../reports/visual-foundation/candidate-room-open.png)
 - [Technical report](../reports/visual-foundation/report.json)
 
-The PNGs come from the actual Canvas renderer used by the review page. They are not a single painted background or a generated room mockup. Baseline and candidate share the same deterministic room, corridors, doors, and output pixel density. The baseline retains its original lighting; the candidate lighting toggle does not rewrite that renderer.
+The PNGs are archived Canvas exports from the original review. Baseline and candidate used the same deterministic room, corridors, doors, and output pixel density. The baseline images remain as historical evidence; that renderer is no longer included in the app.
 
 The reference is the user's dungeon mockup and `D:/Projects/Dungeon Tileset Atlas and Preview.png`, used as an art-style reference, not cropped into a tileset.
 
@@ -67,7 +67,7 @@ screenY = (26/32)Y - 24h
 
 The unrotated floor axes plus a lateral height lift are an artistic parallel-projection convention, not a claim that this is an exact physical 3D camera. It provides a single consistent construction rule within the requested orthographic visual style.
 
-The editor continues to use its existing camera and coordinate conventions. These values are **not** a new production asset contract until approved. See [the existing asset specification](art-pack/asset-specification.md) for the current editor's different dimensions.
+These projection conventions now underpin Ancient's production presentation. See [production visual integration](production-visual-integration.md) for the editor integration; the [archived asset specification](art-pack/asset-specification.md) describes the retired theme's different dimensions.
 
 ## Architectural rules
 
@@ -112,7 +112,7 @@ New art lives in `apps/dungeon-atelier/src/assets/visual-foundation/`:
 | `arch-frame-v1.png`      | 1448 × 1086       | Transparent frame with a genuinely transparent arch opening                             |
 | `flagstone-large-v1.png` | 1254 × 1254       | Retained early material study; not imported by the demonstration                        |
 
-`door-leaf-v1.webp` and `wall-sconce-v1.webp` are reused from the existing dimensional asset directory. The source PNGs are bundled only through the lazy review route. They are intentionally not yet optimized into a production pack.
+`door-leaf-v1.webp` and `wall-sconce-v1.webp` are shared source assets in `src/assets/architecture/`. The source PNGs are bundled only through the lazy review route. They are intentionally not yet optimized into a production pack.
 
 All new raster artwork was produced with the built-in **image_gen** tool. Exact prompts, reference role, and filenames are recorded in [prompts.json](../apps/dungeon-atelier/src/assets/visual-foundation/prompts.json). No concept-sheet tiles were blindly cropped into production cells.
 
@@ -142,7 +142,7 @@ npm run build
 npm run verify:foundation
 ```
 
-The scene verifier captures all review images, tests every door's changed pixels in open/closed state, verifies transparent openings, deterministic output, no mutation, and secret concealment against an independently sealed twin. It exercises view/state/lighting/grid/secret/comparison controls, downloads a real PNG, and checks desktop/mobile layouts. The existing dimensional browser verifier separately checks original Stone/Classic pixels and normal editor interactions.
+The scene verifier captures all review images, tests every door's changed pixels in open/closed state, verifies transparent openings, deterministic output, no mutation, and secret concealment against an independently sealed twin. It exercises view/state/lighting/grid/secret controls, downloads a real PNG, and checks desktop/mobile layouts. The production browser verifier checks Stone/Classic rendering and normal editor interactions.
 
 Completed checks on 2026-10-16: **112 automated tests passed**, along with type checking, repository formatting/ESLint, and the production build. The foundation browser checks passed at 1920×1080, 2560×1440, and 390×844/DPR 2, including actual PNG download. All 12 original Stone/Classic baseline pixel hashes still match, and the normal editor's zoom, pan, inspection, grid, minimap, walk/fog, and padded rendering checks passed. Those generated-map checks used the existing editor styles, not this candidate.
 

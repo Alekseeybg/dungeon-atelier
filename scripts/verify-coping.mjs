@@ -51,7 +51,7 @@ try {
     })()`)
     report.families[treatment] = proof
     const connections = await browser.evaluate(`(async()=>{
-      const p=copingProof,q=await import('/src/features/dungeon/rendering/visual-foundation/coping-coupon.ts'),d=await import('/src/features/dungeon/rendering/dimensional-model.ts'),m=await import('/src/features/dungeon/rendering/visual-foundation/coping-model.ts'),r=await import('/src/features/dungeon/rendering/visual-foundation/coping-renderer.ts'),source=q.createCopingCoupon(),before=JSON.stringify(source),plan=d.createDimensionalPlan(source.floor,{}),nodes=plan.walls.map(w=>({x:w.x,y:w.y,mask:w.mask,corner:w.cornerFill})),lookup=new Map(nodes.map(n=>[n.x+','+n.y,n])),art=await p.a.loadCopingArt(${JSON.stringify(treatment)}),results={};
+      const p=copingProof,q=await import('/src/features/dungeon/rendering/visual-foundation/coping-coupon.ts'),d=await import('/src/features/dungeon/rendering/architecture-model.ts'),m=await import('/src/features/dungeon/rendering/visual-foundation/coping-model.ts'),r=await import('/src/features/dungeon/rendering/visual-foundation/coping-renderer.ts'),source=q.createCopingCoupon(),before=JSON.stringify(source),plan=d.createArchitecturePlan(source.floor,{}),nodes=plan.walls.map(w=>({x:w.x,y:w.y,mask:w.mask,corner:w.cornerFill})),lookup=new Map(nodes.map(n=>[n.x+','+n.y,n])),art=await p.a.loadCopingArt(${JSON.stringify(treatment)}),results={};
       if(!nodes.some(n=>n.mask===15))throw Error('Coupon lacks cross intersection');
       for(const study of ['hewn','broken']){
         const blocks=m.copingBlocks(nodes,study),surface=r.buildCopingSurface(nodes,blocks,art,study),image=surface.top,c=image.getContext('2d');

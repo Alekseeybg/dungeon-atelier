@@ -110,9 +110,9 @@ try {
         assert.equal(await b.evaluate(`JSON.stringify(prod.store.floor)`), JSON.stringify(floor))
         const data = await b.evaluate(`(async()=>{
       const p=prod,s=p.state(),before=JSON.stringify(p.store.floor),start=performance.now(),image=await p.r.createMapCanvasAsync(p.store.floor,s.grid,s.style,s.options),duration=performance.now()-start,
-        g=await import('/src/features/dungeon/rendering/visual-foundation/generated-scene.ts'),m=await import('/src/features/dungeon/rendering/dimensional-model.ts'),
+        g=await import('/src/features/dungeon/rendering/visual-foundation/generated-scene.ts'),m=await import('/src/features/dungeon/rendering/architecture-model.ts'),
         markerApi=await import('/src/features/dungeon/rendering/visual-foundation/stair-placement.ts'),projection=await import('/src/features/dungeon/rendering/visual-foundation/model.ts'),
-        scene=g.generatedFoundationScene(p.store.floor,s.options.revealSecrets),plan=m.createDimensionalPlan(scene.floor,{revealSecrets:true}),
+        scene=g.generatedFoundationScene(p.store.floor,s.options.revealSecrets),plan=m.createArchitecturePlan(scene.floor,{revealSecrets:true}),
         markers=markerApi.projectedStairMarkers(scene.floor,plan),markerPixels=scene.floor.stairs.map(stair=>{const box=markers.get(stair.id);if(!box)throw Error('No visible stair sign '+stair.id);const point=markerApi.stairMarkerPoint(box);return{direction:stair.direction,mount:box.plane??'floor',color:[...image.getContext('2d').getImageData((32+point.x)*2,(32+point.y)*2,1,1).data]}}),
         map=p.png(p.overview(image)),stairs=scene.floor.stairs.map(stair=>({direction:stair.direction,png:p.png(p.detail(image,stair.position))})),
         hash=p.hash(image),raster=[image.width,image.height],torchFacings=Object.values(scene.torchFacings),geometry=[...new Set(plan.walls.map(w=>w.mask))],details=[];
@@ -283,7 +283,7 @@ try {
     return !s.loading && s.options.ancient.wall === 'ruins'
   }, 'Asset recovery')
   report.interactions.assetFailurePreservesFrame = true
-  for (const style of ['classic', 'stone', 'dimensional', 'ancient']) {
+  for (const style of ['classic', 'stone', 'ancient']) {
     await b.evaluate(`prod.appearance.style=${JSON.stringify(style)}`)
     await poll(async () => {
       const s = await state()

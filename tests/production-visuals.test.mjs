@@ -11,11 +11,12 @@ import {
   ANCIENT_FLOORS,
   ANCIENT_CAPS,
   normalizeAncient,
+  isLegacyDefaultAncient,
   ancientOptions,
   ancientFloorAssignments,
 } from '../apps/dungeon-atelier/src/features/dungeon/rendering/ancient-settings.ts'
 import { mountedTorchPlacements } from '../apps/dungeon-atelier/src/features/dungeon/rendering/mounted-placement.ts'
-import { concealSecretArchitecture } from '../apps/dungeon-atelier/src/features/dungeon/rendering/dimensional-model.ts'
+import { concealSecretArchitecture } from '../apps/dungeon-atelier/src/features/dungeon/rendering/architecture-model.ts'
 import { projectedStairMarkers } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/stair-placement.ts'
 
 const floors = []
@@ -39,7 +40,7 @@ for (const size of [32, 64, 96])
       floors.push(result.floor)
     }
 test('all presentation styles round-trip square logical cells independently of raster density', () => {
-  for (const style of ['ancient', 'stone', 'classic', 'dimensional'])
+  for (const style of ['ancient', 'stone', 'classic'])
     for (const floor of floors) {
       const p = mapProjection(style)
       assert.equal(p.width, 32)
@@ -66,6 +67,41 @@ test('appearance catalog preserves all seven floors and valid cap assemblies; ma
     if (options.capProfile === 'chamfered') assert.equal(options.coping, 'hewn')
     assert.equal(options.separation, true)
   }
+  assert.deepEqual(
+    {
+      floor: DEFAULT_ANCIENT.floor,
+      corridor: DEFAULT_ANCIENT.corridor,
+      secondary: DEFAULT_ANCIENT.secondary,
+      distribution: DEFAULT_ANCIENT.distribution,
+      wall: DEFAULT_ANCIENT.wall,
+      cap: DEFAULT_ANCIENT.cap,
+    },
+    {
+      floor: 'study-broad',
+      corridor: 'study-weathered',
+      secondary: 'study-irregular',
+      distribution: 'regional',
+      wall: 'ruins',
+      cap: 'cut',
+    },
+  )
+  assert.equal(
+    isLegacyDefaultAncient({
+      floor: 'refined',
+      wall: 'ruins',
+      cap: 'cut',
+      distribution: 'uniform',
+      corridor: 'inherit',
+      secondary: 'study-weathered',
+      rare: 'study-early',
+      lighting: true,
+      torches: true,
+      stairSymbols: true,
+      doorsOpen: false,
+    }),
+    true,
+  )
+  assert.equal(isLegacyDefaultAncient({ floor: 'study-broad' }), false)
 })
 test('material zoning is coherent per room, rare use is bounded, and floor data never changes', () => {
   for (const floor of floors) {
@@ -82,7 +118,14 @@ test('material zoning is coherent per room, rare use is bounded, and floor data 
       if (materials.has(a.rare)) rareRooms++
     }
     assert(rareRooms <= 1)
-    assert.equal(ancientFloorAssignments(floor, DEFAULT_ANCIENT).size, 0)
+    const defaults = ancientFloorAssignments(floor, DEFAULT_ANCIENT)
+    assert.deepEqual(defaults, ancientFloorAssignments(floor, DEFAULT_ANCIENT))
+    for (const room of floor.rooms) {
+      const materials = new Set(
+        roomCells(room).map((p) => defaults.get(p.y * floor.width + p.x) ?? DEFAULT_ANCIENT.floor),
+      )
+      assert.equal(materials.size, 1)
+    }
     assert.equal(JSON.stringify(floor), before)
   }
 })

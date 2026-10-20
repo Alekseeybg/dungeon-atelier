@@ -1,11 +1,11 @@
 import type { DungeonFloor, Position, Staircase } from '@dungeon-atelier/core'
 import {
-  createDimensionalPlan,
+  createArchitecturePlan,
   wallCapRects,
   wallEastSegments,
   wallFrontSegments,
-} from '../dimensional-model.ts'
-import type { DimensionalPlan } from '../dimensional-model.ts'
+} from '../architecture-model.ts'
+import type { ArchitecturePlan } from '../architecture-model.ts'
 import { FOUNDATION, doorSurface, project } from './model.ts'
 import { stairMarkerPlacement } from './finishing-model.ts'
 import type { StairMarkerBox } from './finishing-model.ts'
@@ -43,7 +43,7 @@ function flightOutline(stair: Staircase) {
     up = stair.direction === 'up'
   return rect(p.x * 32 - (up ? 3 : 0), p.y * 32 - (up ? 17 : 0), up ? 35 : 32, up ? 49 : 32)
 }
-function architecturePlanes(plan: DimensionalPlan): Architecture[] {
+function architecturePlanes(plan: ArchitecturePlan): Architecture[] {
   const architecture = plan.walls.map((w) => {
     const x = w.x * 32,
       y = w.y * 32
@@ -103,7 +103,7 @@ function nearbyApproaches(floor: DungeonFloor, start: Position) {
 }
 function wallMarker(
   floor: DungeonFloor,
-  plan: DimensionalPlan,
+  plan: ArchitecturePlan,
   stair: Staircase,
   architecture: Architecture[],
   blocked: (area: Position[]) => boolean,
@@ -147,7 +147,7 @@ function wallMarker(
 /** Clear projected cap/face footprints as well as logical terrain. No floor mutation. */
 export function projectedStairMarkers(
   floor: DungeonFloor,
-  plan = createDimensionalPlan(floor, { revealSecrets: true }),
+  plan = createArchitecturePlan(floor, { revealSecrets: true }),
 ) {
   const architecture = architecturePlanes(plan),
     flights = floor.stairs.map(flightOutline),

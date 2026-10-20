@@ -10,7 +10,7 @@ The built-in `image_gen` tool produced these images using the user's atlas as a 
 - `arch-frame-v1.png`: neutral frontal frame elevation with a transparent opening.
 - `flagstone-large-v1.png`: earlier material study, now available as Early study · Large flagstones.
 
-These are source masters. They are sampled into the prototype's cached 2× scene atlas; their source dimensions are not logical tile dimensions. Existing neutral oak leaf and sconce images are reused from `../dimensional/`.
+These are source masters. They are sampled into the prototype's cached 2× scene atlas; their source dimensions are not logical tile dimensions. Existing neutral oak leaf and sconce images are reused from `../architecture/`.
 
 The `ruins-*-v2.png` and `fortress-*-v2.png` sets add coordinated face, cap, frame, and sill source masters for the isolated A/B review. The floor and projection are unchanged. Their exact built-in image_gen prompts and filenames are in [masonry-prompts-v2.json](masonry-prompts-v2.json). See [the masonry review](../../../../../docs/masonry-review.md) for dimensions, compositing details, rendered comparisons, and limitations. The v1 set remains selectable as Previous prototype.
 

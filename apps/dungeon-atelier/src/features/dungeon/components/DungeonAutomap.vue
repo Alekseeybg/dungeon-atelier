@@ -23,7 +23,7 @@ import { renderWalkFog } from '../rendering/walk-fog'
 import type { WalkState } from '../exploration/useDungeonWalk'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
 import { createMapCanvas, disposeMapCanvas, TILE_SIZE } from '../rendering/dungeon-renderer'
-import { concealSecretArchitecture } from '../rendering/dimensional-model'
+import { concealSecretArchitecture } from '../rendering/architecture-model.ts'
 
 const props = defineProps<{
   floor: DungeonFloor

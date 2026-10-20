@@ -6,7 +6,7 @@ import { format, resolveConfig } from 'prettier'
 export async function formatProductionReports() {
   const directory = path.resolve('reports/production'),
     options = await resolveConfig('package.json')
-  for (const name of fs.readdirSync(directory)) {
+  for (const name of fs.readdirSync(directory, { recursive: true })) {
     if (!/\.(json|html)$/.test(name)) continue
     const file = path.join(directory, name)
     fs.writeFileSync(

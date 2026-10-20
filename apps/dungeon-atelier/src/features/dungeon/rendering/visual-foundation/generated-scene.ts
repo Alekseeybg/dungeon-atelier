@@ -1,5 +1,5 @@
 import type { DungeonFloor } from '@dungeon-atelier/core'
-import { concealSecretArchitecture, doorFacing } from '../dimensional-model'
+import { concealSecretArchitecture, doorFacing } from '../architecture-model'
 import { mountedTorchPlacements } from '../mounted-placement'
 import type { FoundationScene } from './model'
 

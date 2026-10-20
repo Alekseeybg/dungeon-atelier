@@ -1,5 +1,5 @@
 import { computed, reactive, ref, shallowRef } from 'vue'
-import { defineStore } from 'pinia'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 import { DEFAULT_CONFIG, generateDungeon, importFloorJson } from '@dungeon-atelier/core'
 import type { DungeonFloor } from '@dungeon-atelier/core'
 
@@ -96,3 +96,7 @@ export const useDungeonStore = defineStore('dungeon', () => {
     reportError,
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useDungeonStore, import.meta.hot))
+}

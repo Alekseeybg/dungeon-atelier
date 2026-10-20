@@ -22,7 +22,7 @@ const click = (aria) =>
 try {
   await b.evaluate(`(async()=>{const r=await import('/src/features/dungeon/rendering/dungeon-renderer.ts'),
     store=(await import('/src/stores/dungeon.ts')).useDungeonStore(),a=(await import('/src/stores/appearance.ts')).useAppearanceStore(),
-    m=await import('/src/features/dungeon/rendering/dimensional-model.ts'),
+    m=await import('/src/features/dungeon/rendering/architecture-model.ts'),
     fog=await import('/src/features/dungeon/rendering/walk-fog.ts'),walk=await import('/src/features/dungeon/rendering/ancient-renderer.ts'),
     component=()=>document.querySelector('.dungeon-canvas').__vueParentComponent,
     png=c=>c.toDataURL().split(',')[1],hash=c=>{let h=2166136261;for(const x of c.getContext('2d').getImageData(0,0,c.width,c.height).data)h=Math.imul(h^x,16777619);return(h>>>0).toString(16)},

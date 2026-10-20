@@ -199,11 +199,6 @@
               style="min-width: 12rem"
               aria-label="Foundation secret"
             />
-            <q-toggle
-              v-model="compare"
-              label="Compare baseline"
-              aria-label="Foundation comparison"
-            />
             <q-btn
               outline
               no-caps
@@ -219,12 +214,7 @@
           class="foundation-panels"
           :class="{
             'foundation-panels--compare':
-              compare ||
-              compareMaterials ||
-              compareFloors ||
-              compareCaps ||
-              compareCoping ||
-              compareProfiles,
+              compareMaterials || compareFloors || compareCaps || compareCoping || compareProfiles,
             'foundation-panels--coping': compareCoping,
           }"
         >
@@ -234,11 +224,6 @@
               <canvas ref="capComparisonCanvas" aria-label="Current cap artwork" />
             </div>
           </q-card>
-          <q-card v-if="compare" flat bordered
-            ><q-card-section class="text-subtitle1">Current Dimensional Stone</q-card-section>
-            <div class="foundation-image">
-              <canvas ref="baselineCanvas" aria-label="Baseline artwork" /></div
-          ></q-card>
           <q-card flat bordered
             ><q-card-section class="row items-center"
               ><div class="col">
@@ -369,7 +354,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { matSwapHoriz } from '@quasar/extras/material-icons'
 import { renderFoundation } from '../features/dungeon/rendering/visual-foundation/renderer'
 import {
-  renderFoundationBaseline,
   cropFoundation,
   cropCoping,
 } from '../features/dungeon/rendering/visual-foundation/comparison'
@@ -413,11 +397,9 @@ function swapFloors() {
   referenceFloor.value = previous
 }
 const secret = ref<'none' | 'hidden' | 'revealed'>('none'),
-  compare = ref(false),
   busy = ref(true),
   error = ref('')
 const candidateCanvas = ref<HTMLCanvasElement>(),
-  baselineCanvas = ref<HTMLCanvasElement>(),
   otherCanvas = ref<HTMLCanvasElement>(),
   floorComparisonCanvas = ref<HTMLCanvasElement>(),
   capComparisonCanvas = ref<HTMLCanvasElement>(),
@@ -474,7 +456,6 @@ async function refresh() {
       ...(compareProfiles.value ? { capProfile: 'chamfered' as const } : {}),
     }
     const candidate = await renderFoundation(options)
-    const baseline = compare.value ? await renderFoundationBaseline(options) : undefined
     const other = compareMaterials.value
       ? await renderFoundation({ ...options, treatment: otherTreatment() })
       : undefined
@@ -504,7 +485,6 @@ async function refresh() {
         : cropFoundation(candidate, view.value)
     copingPanelWidth.value = rendered.width
     paint(candidateCanvas.value, rendered)
-    if (baseline) paint(baselineCanvas.value, cropFoundation(baseline, view.value, true))
     if (other) paint(otherCanvas.value, cropFoundation(other, view.value))
     if (alternateFloor)
       paint(floorComparisonCanvas.value, cropFoundation(alternateFloor, view.value))
@@ -562,12 +542,7 @@ watch(compareProfiles, (enabled) => {
   })
   if (!enabled) return
   coping.value = 'hewn'
-  compareCoping.value =
-    compareCaps.value =
-    compareMaterials.value =
-    compareFloors.value =
-    compare.value =
-      false
+  compareCoping.value = compareCaps.value = compareMaterials.value = compareFloors.value = false
 })
 // Same-page navigation to a shared comparison URL must update the mounted demo.
 watch(
@@ -583,7 +558,6 @@ watch(
     lighting,
     grid,
     secret,
-    compare,
     treatment,
     compareMaterials,
     separation,

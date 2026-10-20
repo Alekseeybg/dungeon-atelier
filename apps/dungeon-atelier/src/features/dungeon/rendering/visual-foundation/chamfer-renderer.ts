@@ -1,5 +1,5 @@
 import type { DungeonFloor } from '@dungeon-atelier/core'
-import { wallCapRects } from '../dimensional-model'
+import { wallCapRects } from '../architecture-model'
 import { capBoundarySegments } from './plane-separation'
 import { copingBlocks } from './coping-model'
 import type { CopingNode } from './coping-model'

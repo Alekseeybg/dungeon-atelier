@@ -8,10 +8,10 @@ The project combines a browser-based editor with a separate TypeScript generatio
 
 - **Deterministic generation:** Classic Rooms and Compact Labyrinth presets, rectangular, L/T/cross/U-shaped rooms, alcoved halls, chamfered chambers, paired chamber blocks, orthogonal corridors, regional loops, rare useful shortcuts, stable IDs, and one up/down staircase pair.
 - **Validated layouts:** checks for geometry, connectivity, door placement, staircase placement, and agreement between the floor and its diagnostics.
-- **Approved dimensional artwork:** Ancient Ruined Dungeon is the default, with seven floor materials, three wall families, five cap/coping assemblies, integrated doorways, dimensional stairs with adjacent level symbols, mounted torches and restrained lighting. Stone, Classic and the earlier Dimensional Stone remain selectable fallbacks.
+- **Approved dimensional artwork:** Ancient Ruined Dungeon is the default, with seven floor materials, three wall families, five cap/coping assemblies, integrated doorways, dimensional stairs with adjacent level symbols, mounted torches and restrained lighting. Stone and Classic remain selectable fallbacks.
 - **Dark Quasar interface:** task-based settings tabs, pinned generation actions, grouped reports, an overlays menu, SVG icons, and custom number steppers. Fluid typography and proportional controls grow on larger displays, with saved Auto/Standard/Large text preferences. Smaller windows switch between Dungeon, Settings, and Report.
 - **Map inspection:** drag to pan, zoom around the cursor, fit to the viewport, toggle the grid, inspect individual tiles, and review floor statistics and staircase coordinates.
-- **Secret-passage inspection:** reveal hidden architecture in Ancient/Dimensional views; revealed panels carry an S annotation. Locate shortcut centers the route with an optional cyan highlight. Concealed architecture contributes no route, torch or light clues.
+- **Secret-passage inspection:** reveal hidden architecture in Ancient views; revealed panels carry an S annotation. Locate shortcut centers the route with an optional cyan highlight. Concealed architecture contributes no route, torch or light clues.
 - **Walk mode:** a directional player arrow, keyboard and on-screen movement controls, wall collisions, a step counter, and a fog-aware automap.
 - **Persistent discovery during a playtest:** the player's surrounding 3×3 area is revealed, and previously discovered tiles remain fully visible.
 - **Portable files:** validated JSON import/export and full-map PNG export in the selected visual style.
@@ -49,7 +49,7 @@ npm ci
 npm run dev
 ```
 
-Installation builds the core package and prepares the Quasar app. Development prints the local URL in the terminal. The app uses the workspace generator directly, and rebuilding the core automatically restarts the development server and its type checker so cached code or declarations cannot persist. The server does not open new browser windows automatically. A global Quasar CLI installation is unnecessary.
+Installation builds the core package and prepares the Quasar app. `npm run dev` builds the core, then starts the standard Quasar development server, which prints the local URL and opens a tab in your default browser. Changes to application or generator source update that same tab through Vite's hot module replacement or page reload, without restarting the server or opening additional tabs. Starting the server again uses Quasar's normal browser-opening behavior and may open another tab; it does not detect existing tabs. A global Quasar CLI installation is unnecessary.
 
 Use `npm install` when intentionally changing dependencies; commit the resulting lockfile.
 
@@ -83,7 +83,7 @@ Number fields support minus/plus buttons, direct typing, and up/down arrow keys.
 
 ### Inspect the map
 
-The map starts in **Ancient Ruined Dungeon**. Open **Materials** to select floors, wall families, cap profiles and details. Appearance is saved locally, separately from generation settings. Stone, Classic and Dimensional Stone remain available in the appearance selector. Every view uses the same logical cells; the Classic automap stays square and can locate a cell in the projected view. See [production visual integration](docs/production-visual-integration.md) for usage rules and the full option inventory.
+The map starts in **Ancient Ruined Dungeon**. Its initial material recipe uses Broad natural slabs for primary rooms, Weathered flagstones for corridors, Irregular flagstones for deterministic regional room variation, and the existing Ancient Ruined / Chiseled chamfer wall defaults. Open **Materials** to customize any floor, wall, cap profile or detail. Appearance is saved locally, separately from generation settings. Stone and Classic remain available in the appearance selector. Every view uses the same logical cells; the Classic automap stays square and can locate a cell in the projected view. See [production visual integration](docs/production-visual-integration.md) for usage rules and the full option inventory.
 
 | Input                         | Editor behavior                          |
 | ----------------------------- | ---------------------------------------- |
@@ -169,7 +169,7 @@ dungeon-atelier/
 
 The app imports `@dungeon-atelier/core` by package name. The core has no Vue, Quasar, Canvas, DOM, filesystem, or browser dependencies; its only runtime dependency is Ajv. Rendering and playtest state remain in the application.
 
-When changing core source during development, run `npm run build:core` to refresh its compiled output. Restarting `npm run dev` also rebuilds it. Dependency folders, `.quasar`, and `dist` are ignored by Git.
+During development, Vite loads `packages/dungeon-core/src` directly, so generator edits appear automatically without a manual rebuild or server restart. Generate a new dungeon to apply changed generation rules to the displayed floor. Production builds and command-line verification use the compiled core; `npm run build` and `npm test` rebuild it automatically. Dependency folders, `.quasar`, and `dist` are ignored by Git.
 
 ## Generation and rendering rules
 
@@ -208,7 +208,7 @@ See [Generation and Stone material rules](docs/generation-and-materials.md) for 
 
 ### Visual foundation reference scenes
 
-An isolated four-door artwork demonstration is available at `/#/visual-foundation` while the app is running. It compares the existing Dimensional Stone view with a candidate using new painted flagstones, coping, masonry, and architectural frames. Review closed/open doorways, unlit materials, corners, secret concealment, and PNG exports there. These historical comparisons remain available; the approved result now drives the real Ancient theme.
+An isolated four-door artwork demonstration is available at `/#/visual-foundation` while the app is running. Review Ancient's floor materials, coping, masonry, architectural frames, closed/open doorways, unlit materials, corners, secret concealment, and PNG exports there. Material comparisons remain available; the retired Dimensional Stone renderer has been removed.
 
 See [the projection, artwork, screenshots, and remaining limitations](docs/visual-foundation.md). With the development server running, `npm run verify:foundation` captures the demonstration and exercises its controls.
 

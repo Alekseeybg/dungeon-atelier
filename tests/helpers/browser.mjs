@@ -19,7 +19,7 @@ export async function browserSession(url) {
     (process.platform === 'win32'
       ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
       : 'google-chrome')
-  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-dimensional-'))
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-browser-'))
   const child = spawn(
     chrome,
     [

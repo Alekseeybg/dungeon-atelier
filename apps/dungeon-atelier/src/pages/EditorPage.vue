@@ -147,7 +147,7 @@
         :walk="walker.state"
         :map-style="mapStyle"
         :render-options="renderOptions"
-        :conceal-secrets="['dimensional', 'ancient'].includes(mapStyle) && !revealSecrets"
+        :conceal-secrets="mapStyle === 'ancient' && !revealSecrets"
         @inspect="locateTile"
         @locate-shortcut="locateShortcut"
       />

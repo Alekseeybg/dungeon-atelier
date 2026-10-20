@@ -8,7 +8,7 @@ import {
   doorSurface,
   viewBounds,
 } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/model.ts'
-import { wallCapRects } from '../apps/dungeon-atelier/src/features/dungeon/rendering/dimensional-model.ts'
+import { wallCapRects } from '../apps/dungeon-atelier/src/features/dungeon/rendering/architecture-model.ts'
 
 test('foundation fixture is deterministic, isolated, and has four correctly connected room entrances', () => {
   const a = createFoundationScene(),

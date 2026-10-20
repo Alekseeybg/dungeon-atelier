@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { assignCutMaterials } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/cut-material-model.ts'
 import { createFoundationScene } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/model.ts'
-import { createDimensionalPlan } from '../apps/dungeon-atelier/src/features/dungeon/rendering/dimensional-model.ts'
+import { createArchitecturePlan } from '../apps/dungeon-atelier/src/features/dungeon/rendering/architecture-model.ts'
 import { copingBlocks } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/coping-model.ts'
 import { cutCopingBlocks } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/cut-coping-model.ts'
 
@@ -50,7 +50,7 @@ test('material choices are deterministic, seed-sensitive, order-independent and 
 
 test('every neighboring stone in the actual four-door fixture has a different source pattern', () => {
   const scene = createFoundationScene(),
-    plan = createDimensionalPlan(scene.floor, {}),
+    plan = createArchitecturePlan(scene.floor, {}),
     nodes = [
       ...plan.walls.map((w) => ({ ...w, corner: w.cornerFill })),
       ...plan.doors.map((d) => ({

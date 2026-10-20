@@ -20,7 +20,6 @@
     "verify:regressions": "npm run build:core && node --test tests/regressions.test.mjs",
     "verify:replay": "npm run build:core && node scripts/reproduce.mjs",
     "verify:browser": "node scripts/verify-browser.mjs",
-    "verify:dimensional": "node scripts/verify-dimensional.mjs",
     "verify:foundation": "node scripts/verify-visual-foundation.mjs",
     "verify:masonry": "node scripts/verify-masonry.mjs",
     "verify:readability": "node scripts/verify-readability.mjs",
@@ -34,9 +33,9 @@
     "verify:production-visuals": "node scripts/verify-production-visuals.mjs",
     "verify:production-details": "node scripts/verify-production-details.mjs",
     "verify:production-build": "node scripts/verify-production-build.mjs",
+    "verify:side-doors": "node scripts/verify-side-doors.mjs",
     "verify:production-placements": "node --experimental-strip-types scripts/verify-production-placements.mjs",
-    "verify:foundation-staging": "node scripts/verify-foundation-staging.mjs",
-    "preview:dimensional": "node scripts/render-dimensional-prototype.mjs"
+    "verify:foundation-staging": "node scripts/verify-foundation-staging.mjs"
   },
   "devDependencies": {
     "prettier": "^3.8.1",

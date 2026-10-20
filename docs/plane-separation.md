@@ -45,4 +45,4 @@ Mean unlit luminance in the fixed east-wall sample regions, on a 0–255 display
 
 These measurements describe the sampled fixture, not a universal art-quality score. Pure tests separately verify monotonic plane responses and correct exposed contours for every valid connection/corner-fill combination. Existing masonry/foundation browser checks cover door states, secret concealment, export, and responsive controls.
 
-The feature remains in the four-door review. There is no map-wide rollout or replacement of Classic, Stone, or the current editor Dimensional theme.
+This report records the original four-door review. The approved treatment now ships in Ancient Ruined Dungeon; see [production visual integration](production-visual-integration.md). Stone and Classic remain available, and the former Dimensional Stone theme has been removed.

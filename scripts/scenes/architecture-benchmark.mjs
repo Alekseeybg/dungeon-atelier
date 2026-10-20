@@ -6,7 +6,7 @@ import {
 import { flood } from '../../tests/helpers/verify-floor.mjs'
 
 /** Real, validated floor geometry; a stable architecture benchmark, not a generated screenshot. */
-export function dimensionalBenchmark() {
+export function architectureBenchmark() {
   const width = 32,
     height = 24,
     tiles = Array.from({ length: height }, () => Array(width).fill('wall'))
