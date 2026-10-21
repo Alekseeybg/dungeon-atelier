@@ -103,7 +103,7 @@ try {
   // Reuse an actual generated map from the floor audit to inspect connected cap runs.
   const floor = JSON.parse(
     fs.readFileSync(
-      'reports/visual-foundation/generated-floors/floor-audit-64-compact-amber.json',
+      new URL('../tests/fixtures/cap-polish-generated-floor.json', import.meta.url),
       'utf8',
     ),
   )

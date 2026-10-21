@@ -26,3 +26,7 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Generated visual verification output (keep curated references in docs/)
+/reports/
+/screenshots/

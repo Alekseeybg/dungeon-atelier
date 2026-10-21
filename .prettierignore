@@ -4,3 +4,7 @@ node_modules/
 **/dist/
 package-lock.json
 **/quasar.config.*.temporary.*
+
+# Generated visual verification output (keep curated references in docs/)
+/reports/
+/screenshots/

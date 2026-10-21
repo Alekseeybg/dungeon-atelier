@@ -27,13 +27,13 @@ All pairs use seed `side-door-readability-0` with identical camera, zoom and geo
 
 [Side-by-side comparison gallery](../reports/dungeon-3d-themes/index.html).
 
-| View                     | Restored Crypt                                                       | Ancient Ruins                                                       |
-| ------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Full dungeon             | [Image](../reports/dungeon-3d-themes/restored-crypt-full.png)        | [Image](../reports/dungeon-3d-themes/ancient-ruins-full.png)        |
-| Walls and chamfered caps | [Image](../reports/dungeon-3d-themes/restored-crypt-walls-caps.png)  | [Image](../reports/dungeon-3d-themes/ancient-ruins-walls-caps.png)  |
-| Floors                   | [Image](../reports/dungeon-3d-themes/restored-crypt-floors.png)      | [Image](../reports/dungeon-3d-themes/ancient-ruins-floors.png)      |
-| Stairs Up                | [Image](../reports/dungeon-3d-themes/restored-crypt-stairs-up.png)   | [Image](../reports/dungeon-3d-themes/ancient-ruins-stairs-up.png)   |
-| Stairs Down              | [Image](../reports/dungeon-3d-themes/restored-crypt-stairs-down.png) | [Image](../reports/dungeon-3d-themes/ancient-ruins-stairs-down.png) |
+| View                     | Restored Crypt                                                       | Ancient Ruins                                                  |
+| ------------------------ | -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Full dungeon             | [Image](visual-references/restored-crypt-full.png)                   | [Image](visual-references/ancient-ruins-full.png)              |
+| Walls and chamfered caps | [Image](../reports/dungeon-3d-themes/restored-crypt-walls-caps.png)  | [Image](visual-references/ancient-walls-caps.png)              |
+| Floors                   | [Image](../reports/dungeon-3d-themes/restored-crypt-floors.png)      | [Image](../reports/dungeon-3d-themes/ancient-ruins-floors.png) |
+| Stairs Up                | [Image](../reports/dungeon-3d-themes/restored-crypt-stairs-up.png)   | [Image](visual-references/stairs-up.png)                       |
+| Stairs Down              | [Image](../reports/dungeon-3d-themes/restored-crypt-stairs-down.png) | [Image](visual-references/stairs-down.png)                     |
 
 ## Validation
 

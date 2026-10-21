@@ -10,6 +10,6 @@ The alternatives use the dedicated forged-iron texture. Shared static flame mate
 
 ![Existing, A, B](../reports/torch-study/three-quarter.png)
 
-[Existing close-up](../reports/torch-study/existing.png) · [A](../reports/torch-study/basket.png) · [B](../reports/torch-study/brazier.png) · [Gameplay](../reports/torch-study/gameplay.png).
+[Existing close-up](../reports/torch-study/existing.png) · [A](../reports/torch-study/basket.png) · [B](visual-references/selected-brazier.png) · [Gameplay](../reports/torch-study/gameplay.png).
 
 `node scripts/verify-torch-study.mjs` checks model identity, view controls, individual close-ups, lighting toggle, browser errors, and return to the editor. The page and assets remain development-only. Caps and production rendering are unchanged.

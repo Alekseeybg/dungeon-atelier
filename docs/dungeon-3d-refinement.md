@@ -36,7 +36,7 @@ The [separate milestone gallery](../reports/dungeon-3d-refinement/index.html) pr
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Full room, default camera               | [after-full-room.png](../reports/dungeon-3d-refinement/after-full-room.png)                                                 |
 | Lower-angle room                        | [after-room-inspection.png](../reports/dungeon-3d-refinement/after-room-inspection.png)                                     |
-| Chamfer, joints and weathering close-up | [after-cap-profile-closeup.png](../reports/dungeon-3d-refinement/after-cap-profile-closeup.png)                             |
+| Chamfer, joints and weathering close-up | [after-cap-profile-closeup.png](visual-references/approved-cap-profile.png)                                                 |
 | Floor / cap / wall-face separation      | [after-east-corner.png](../reports/dungeon-3d-refinement/after-east-corner.png)                                             |
 | Torch warmth                            | [ON](../reports/dungeon-3d-refinement/after-torches-on.png) / [OFF](../reports/dungeon-3d-refinement/after-torches-off.png) |
 | Seeded wall variation                   | [after-wall-variation.png](../reports/dungeon-3d-refinement/after-wall-variation.png)                                       |

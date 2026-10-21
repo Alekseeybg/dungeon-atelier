@@ -301,3 +301,7 @@ The current final-detail review is at `/#/visual-foundation/final-polish`: three
 See the [technical audit](docs/verification/technical-audit.md), [verification guide](docs/verification/README.md), [completed campaign](docs/verification/results.md), and [machine-readable final report](reports/verification/final/report.json). The completed 10,000-floor campaign covers both presets and eight dimension combinations; Classic rendering was also compared against pre-art pixel hashes.
 
 This is a dungeon generator with a walk-through preview. Hidden doors are visible generator annotations and remain traversable in the preview; there is no search or discovery interaction for doors. Manual painting, locked doors, traps, water/lava terrain, encounters, combat, persistent game saves, and travel between floors are future work. Generation is synchronous and bounded; it does not yet run in a worker.
+
+## Generated artifacts
+
+Visual reports and screenshots are generated locally under ignored `reports/`. They are not needed to build or run the app. The [curated approved references](docs/visual-references/README.md) and required test fixtures remain versioned. See the [artifact policy and regeneration commands](docs/repository-artifacts.md). Historical milestone links into `reports/` refer to local generated galleries, not files included in a fresh clone.

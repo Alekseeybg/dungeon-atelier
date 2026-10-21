@@ -16,7 +16,7 @@ The comparison page shows the selected combination in the center. Toggle **Selec
 
 The models share one orthographic camera and lighting setup, matching aperture width and wall height, identical floor and wall context, and the established cap profile. Front, three-quarter, and gameplay views, amber lighting, and opening state are shared controls. Torches remain unchanged in the dungeon; the next selection is available separately at `/#/dev/dungeon-torches`.
 
-[Selected combination in neutral light](../reports/door-selection/selected-neutral.png).
+[Selected combination in neutral light](visual-references/selected-door.png).
 
 ![Existing, A, and B](../reports/door-study/three-quarter.png)
 

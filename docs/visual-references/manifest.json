@@ -1,0 +1,42 @@
+[
+  {
+    "file": "ancient-ruins-full.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-themes/ancient-ruins-full.png",
+    "sha256": "f9adea32717888d922b36e0b98475b129e9821a91bd5e30feaaf45343348da00"
+  },
+  {
+    "file": "restored-crypt-full.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-themes/restored-crypt-full.png",
+    "sha256": "790843db2847bfe857eb6521e441c7d4cc2d3754a0f481c7f88c3bc82e78c928"
+  },
+  {
+    "file": "approved-cap-profile.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-refinement/after-cap-profile-closeup.png",
+    "sha256": "edda8b4898c750071f4106061deb3e0565e614b4ac9c2dc1f7de155cefc07f53"
+  },
+  {
+    "file": "selected-door.png",
+    "sourceMilestoneCapture": "reports/door-selection/selected-neutral.png",
+    "sha256": "cd962a4a0a2ac1f4a69f97a9ba40d871b5c69e8d5f9618fad0b219024c9b8964"
+  },
+  {
+    "file": "selected-brazier.png",
+    "sourceMilestoneCapture": "reports/torch-study/brazier.png",
+    "sha256": "25c5fa88cfa9fb252a73839cbbffa2062d0191695b5dc42e9f2d0c19dc8d1819"
+  },
+  {
+    "file": "stairs-up.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-themes/ancient-ruins-stairs-up.png",
+    "sha256": "ebac201b6e0897bf077c42d7732fa15215c6ac5b60f1ef84e4509edb09a2f7de"
+  },
+  {
+    "file": "stairs-down.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-themes/ancient-ruins-stairs-down.png",
+    "sha256": "842e562c977b2be511dc78ba7e415de81d6c9074e58982522204ec07baa11c20"
+  },
+  {
+    "file": "ancient-walls-caps.png",
+    "sourceMilestoneCapture": "reports/dungeon-3d-themes/ancient-ruins-walls-caps.png",
+    "sha256": "861d9a019909688f6dba5da7f12a342a8e3610011d35c4e1d6652cb9c94685f9"
+  }
+]
