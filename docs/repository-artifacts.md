@@ -10,6 +10,8 @@ Application source, runtime assets, asset provenance, documentation, curated app
 
 ## Recreating visual reports
 
+Follow the [Development Efficiency Policy](../AGENTS.md). The commands below are optional, task-specific reproduction tools, not a checklist for routine work. Default to 1–2 necessary representative screenshots; larger comparisons require an explicit request or a specific diagnostic need. Keep temporary logs, traces, benchmark output, and browser profiles under ignored `reports/` or `.cache/` too.
+
 Run the standard development server in one terminal. In another, set `ATELIER_URL` to the URL printed by Quasar where the verifier supports it. Verifiers use temporary workspace-local browser profiles and close them after each run.
 
 ```sh

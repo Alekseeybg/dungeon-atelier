@@ -1,5 +1,7 @@
 # Verification guide
 
+Follow the [Development Efficiency Policy](../../AGENTS.md): use focused checks during development and broader validation once near completion when warranted. The commands and campaigns below are available tools, not a requirement to run every suite or generate every report for every task. Preserve all essential checks for the affected behavior.
+
 Run commands from the repository root after installing dependencies (`npm ci`). Node 22.12+, 24, or 26+ is supported. No test dependency or backend is required.
 
 ```sh

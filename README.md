@@ -304,4 +304,6 @@ This is a dungeon generator with a walk-through preview. Hidden doors are visibl
 
 ## Generated artifacts
 
+The [Development Efficiency Policy](AGENTS.md) applies to all tasks: focused validation, minimal necessary captures, and concise completion summaries. Historical verification commands and galleries are task-specific reproduction references, not a routine checklist.
+
 Visual reports and screenshots are generated locally under ignored `reports/`. They are not needed to build or run the app. The [curated approved references](docs/visual-references/README.md) and required test fixtures remain versioned. See the [artifact policy and regeneration commands](docs/repository-artifacts.md). Historical milestone links into `reports/` refer to local generated galleries, not files included in a fresh clone.
