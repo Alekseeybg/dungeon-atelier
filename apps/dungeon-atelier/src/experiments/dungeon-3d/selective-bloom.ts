@@ -69,7 +69,8 @@ export function createSelectiveBloom(
     },
     render() {
       const restoreMaterials: (() => void)[] = [],
-        auto = renderer.shadowMap.autoUpdate
+        auto = renderer.shadowMap.autoUpdate,
+        needsUpdate = renderer.shadowMap.needsUpdate
       scene.traverse((node) => {
         if (!(node instanceof THREE.Mesh)) return
         const material = node.material as THREE.Material | THREE.Material[]
@@ -79,10 +80,12 @@ export function createSelectiveBloom(
         node.material = Array.isArray(material) ? material.map(source) : source(material)
       })
       renderer.shadowMap.autoUpdate = false
+      renderer.shadowMap.needsUpdate = false
       try {
         composer.render(0)
       } finally {
         renderer.shadowMap.autoUpdate = auto
+        renderer.shadowMap.needsUpdate = needsUpdate
         restoreMaterials.forEach((restore) => restore())
       }
     },

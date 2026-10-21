@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import type { DungeonFloor } from '@dungeon-atelier/core'
-import { planDungeon3D } from './plan'
+import { BASE_WALL_HEIGHT, planDungeon3D } from './plan'
 import { createDungeon3DMaterials } from './materials'
 import { buildDungeon3D } from './scene'
 import { createContactLighting } from './contact-lighting'
@@ -70,6 +70,9 @@ export async function createDungeon3DViewport(
   renderer.toneMappingExposure = 1.15
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
+  // The casters and light rig are static during flame-only animation.
+  renderer.shadowMap.autoUpdate = false
+  renderer.shadowMap.needsUpdate = true
   renderer.domElement.setAttribute('aria-label', 'Experimental true 3D dungeon')
   renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none'
   host.appendChild(renderer.domElement)
@@ -93,10 +96,25 @@ export async function createDungeon3DViewport(
   let effectSettings: DungeonEffects = { ...BASELINE_EFFECTS }
   const timing = createEffectsTiming(renderer),
     frameTimes: number[] = []
-  let lastRenderMs = 0
+  let lastRenderMs = 0,
+    lastMetricsAt = -Infinity,
+    metricsDirty = true,
+    contextLost = false,
+    sceneMeshes = 0
+  const sourceTextureMiB =
+    (materials.estimatedTextureBytes + themeMaterials.estimatedTextureBytes) / 1048576
+  function countMeshes() {
+    sceneMeshes = 0
+    dungeon.root.traverse((node) => {
+      if (node instanceof THREE.Mesh) sceneMeshes++
+    })
+  }
+  countMeshes()
   renderer.info.autoReset = false
   let contactOcclusion = true,
-    wireframe = false
+    wireframe = false,
+    doorsOpen = false,
+    doorHeadCutaway = false
   const controls = new OrbitControls(camera, renderer.domElement),
     ambient = new THREE.HemisphereLight('#d5dcdf', '#858b8b', 1.9),
     sun = new THREE.DirectionalLight('#fff1d7', 3),
@@ -140,7 +158,17 @@ export async function createDungeon3DViewport(
     torchLighting = true,
     flameAnimation = !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     lastFlameFrame = -Infinity
+  function invalidateShadows() {
+    renderer.shadowMap.needsUpdate = true
+  }
+  function invalidateOcclusion() {
+    contactLighting.invalidate()
+  }
   function applyTheme(theme: Dungeon3DTheme = themeMaterials.active) {
+    if (theme !== themeMaterials.active) {
+      invalidateOcclusion()
+      invalidateShadows()
+    }
     dungeon.setTheme(theme)
     themeMaterials.apply(dungeon.root, theme)
     materialEffects.apply(
@@ -191,9 +219,12 @@ export async function createDungeon3DViewport(
       light.distance = (theme === 'ancient-ruins' ? 7.5 : 6) * effectSettings.torchRange
       light.decay = effectSettings.torchDecay
     })
+    metricsDirty = true
     dirty = true
   }
   function positionCamera() {
+    metricsDirty = true
+    invalidateOcclusion()
     const polar = THREE.MathUtils.degToRad(90 - elevation),
       azimuth = THREE.MathUtils.degToRad(DEFAULT_CAMERA.referenceAzimuth + rotation),
       distance = Math.max(plan.floor.width, plan.floor.height) * 2 + 20
@@ -206,6 +237,8 @@ export async function createDungeon3DViewport(
     dirty = true
   }
   function resize() {
+    metricsDirty = true
+    invalidateOcclusion()
     const width = Math.max(1, host.clientWidth),
       height = Math.max(1, host.clientHeight),
       aspect = width / height
@@ -239,18 +272,13 @@ export async function createDungeon3DViewport(
     controls.saveState()
   }
   function getMetrics(renderMs = lastRenderMs): PrototypeMetrics {
-    let meshes = 0
-    dungeon.root.traverse((node) => {
-      if (node instanceof THREE.Mesh) meshes++
-    })
     return {
-      meshes,
+      meshes: sceneMeshes,
       triangles: renderer.info.render.triangles,
       calls: renderer.info.render.calls,
       textures: renderer.info.memory.textures,
       geometries: renderer.info.memory.geometries,
-      estimatedTextureMiB:
-        (materials.estimatedTextureBytes + themeMaterials.estimatedTextureBytes) / 1048576,
+      estimatedTextureMiB: sourceTextureMiB,
       renderMs,
       gpuMs: timing.gpuMs,
       renderedFps:
@@ -268,7 +296,7 @@ export async function createDungeon3DViewport(
     }
   }
   function render() {
-    if (disposed) return
+    if (disposed || contextLost) return
     const start = performance.now(),
       query = timing.begin()
     frameTimes.push(start)
@@ -285,10 +313,18 @@ export async function createDungeon3DViewport(
     inspection.update()
     dirty = false
     lastRenderMs = performance.now() - start
-    onMetrics(getMetrics(lastRenderMs))
+    // Camera controls remain immediate; diagnostic counters need not rerender
+    // the surrounding Vue page on every flame frame.
+    if (metricsDirty || start - lastMetricsAt >= 250) {
+      lastMetricsAt = start
+      metricsDirty = false
+      onMetrics(getMetrics(lastRenderMs))
+    }
   }
   const changed = () => {
-    dungeon.updateTorchLights(controls.target)
+    metricsDirty = true
+    if (dungeon.updateTorchLights(controls.target)) invalidateShadows()
+    invalidateOcclusion()
     inspection.invalidatePick()
     dirty = true
   }
@@ -296,6 +332,22 @@ export async function createDungeon3DViewport(
   // OrbitControls owns ground-plane pan, wheel zoom and touch. Only the two
   // deliberately separated mouse rotation axes need a small pointer adapter.
   const canvas = renderer.domElement
+  function onContextLost(event: Event) {
+    event.preventDefault()
+    contextLost = true
+    timing.reset()
+  }
+  function onContextRestored() {
+    if (disposed) return
+    contextLost = false
+    timing.reset()
+    invalidateOcclusion()
+    invalidateShadows()
+    metricsDirty = true
+    dirty = true
+  }
+  canvas.addEventListener('webglcontextlost', onContextLost)
+  canvas.addEventListener('webglcontextrestored', onContextRestored)
   const inspection = createStairInspection(
     host,
     canvas,
@@ -359,10 +411,13 @@ export async function createDungeon3DViewport(
   }
   const observer = new ResizeObserver(resize)
   observer.observe(host)
+  // Synchronize geometry visibility, materials and lighting before the first
+  // frame can populate caches, including when used without the Vue playground.
+  applyTheme()
   fit()
   prototypeLifecycle.activeViewports++
   renderer.setAnimationLoop((time) => {
-    if (document.hidden) return
+    if (document.hidden || contextLost) return
     if (flameAnimation && time - lastFlameFrame >= 1000 / 30) {
       materials.flameClock.value = time / 1000
       lastFlameFrame = time
@@ -377,6 +432,13 @@ export async function createDungeon3DViewport(
     dungeon,
     setTheme: applyTheme,
     setEffects(value: DungeonEffects) {
+      if (
+        value.torchShadows !== effectSettings.torchShadows ||
+        value.torchBudget !== effectSettings.torchBudget ||
+        value.torchRange !== effectSettings.torchRange ||
+        value.torchIntensity > 0 !== effectSettings.torchIntensity > 0
+      )
+        invalidateShadows()
       effectSettings = { ...value }
       contactLighting.configure(value.aoIntensity, value.aoRadius, value.aoOnly)
       contactLighting.configureBloom(value)
@@ -454,12 +516,20 @@ export async function createDungeon3DViewport(
       positionCamera()
     },
     setZoom(value: number) {
+      metricsDirty = true
       camera.zoom = THREE.MathUtils.clamp(value, 0.5, 9)
       camera.updateProjectionMatrix()
+      invalidateOcclusion()
+      inspection.invalidatePick()
       dirty = true
     },
     setHeight(value: number) {
+      if (dungeon.height === BASE_WALL_HEIGHT * value) return
+      invalidateOcclusion()
+      invalidateShadows()
       dungeon.setHeight(value)
+      countMeshes()
+      metricsDirty = true
       dungeon.setTorchLighting(torchLighting)
       applyTheme()
       renderer.renderLists.dispose()
@@ -467,7 +537,12 @@ export async function createDungeon3DViewport(
       dirty = true
     },
     setDoorsOpen(value: boolean) {
+      if (doorsOpen === value) return
+      doorsOpen = value
+      invalidateOcclusion()
+      invalidateShadows()
       dungeon.setDoorsOpen(value)
+      countMeshes()
       dungeon.setTorchLighting(torchLighting)
       applyTheme()
       renderer.renderLists.dispose()
@@ -475,7 +550,12 @@ export async function createDungeon3DViewport(
       dirty = true
     },
     setDoorHeadCutaway(value: boolean) {
+      if (doorHeadCutaway === value) return
+      doorHeadCutaway = value
+      invalidateOcclusion()
+      invalidateShadows()
       dungeon.setDoorHeadCutaway(value)
+      countMeshes()
       dungeon.setTorchLighting(torchLighting)
       applyTheme()
       renderer.renderLists.dispose()
@@ -483,12 +563,15 @@ export async function createDungeon3DViewport(
       dirty = true
     },
     setTorchLighting(value: boolean) {
+      if (torchLighting === value) return
+      invalidateShadows()
       torchLighting = value
       dungeon.setTorchLighting(value)
       applyTheme()
       dirty = true
     },
     setFlameAnimation(value: boolean) {
+      metricsDirty = true
       flameAnimation = value
       if (!value) materials.flameClock.value = 0
       dirty = true
@@ -497,16 +580,22 @@ export async function createDungeon3DViewport(
       return { enabled: flameAnimation, time: materials.flameClock.value }
     },
     setContactOcclusion(value: boolean) {
+      metricsDirty = true
       contactOcclusion = value
       dirty = true
     },
     setWireframe(value: boolean) {
+      if (wireframe === value) return
+      invalidateShadows()
       wireframe = value
+      metricsDirty = true
       materials.setWireframe(value)
       themeMaterials.setWireframe(value)
       dirty = true
     },
     setShadows(value: boolean) {
+      if (renderer.shadowMap.enabled === value) return
+      invalidateShadows()
       renderer.shadowMap.enabled = value
       applyTheme()
       materials.invalidateShaders()
@@ -548,6 +637,7 @@ export async function createDungeon3DViewport(
       try {
         for (let i = 0; i < Math.max(8, Math.min(120, frames)) + 6 && !disposed; i++) {
           await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+          if (disposed || contextLost) break
           const now = performance.now()
           render()
           if (i >= 6) {
@@ -571,6 +661,9 @@ export async function createDungeon3DViewport(
         frameIntervalMs: median(intervals),
         renderedFps: intervals.length ? 1000 / median(intervals)! : null,
         gpuTimerSupported: timing.supported,
+        // Raw bounded samples support before/after means and percentiles without
+        // confusing CPU submission with complete GPU frame time.
+        samples: { cpuSubmissionMs: cpu, frameIntervalMs: intervals, gpuMs: gpu },
         ...{
           calls: renderer.info.render.calls,
           textures: renderer.info.memory.textures,
@@ -672,6 +765,8 @@ export async function createDungeon3DViewport(
       canvas.removeEventListener('pointercancel', endDrag)
       canvas.removeEventListener('lostpointercapture', endDrag)
       canvas.removeEventListener('auxclick', preventAuxiliary)
+      canvas.removeEventListener('webglcontextlost', onContextLost)
+      canvas.removeEventListener('webglcontextrestored', onContextRestored)
       window.removeEventListener('blur', endDragOnBlur)
       controls.removeEventListener('change', changed)
       controls.dispose()

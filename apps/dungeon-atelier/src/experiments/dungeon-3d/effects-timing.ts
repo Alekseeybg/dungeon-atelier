@@ -3,13 +3,20 @@ import type * as THREE from 'three'
 /** Nonblocking GPU queries when supported; CPU submission is never presented as GPU time. */
 export function createEffectsTiming(renderer: THREE.WebGLRenderer) {
   const gl = renderer.getContext() as WebGL2RenderingContext,
-    ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as {
-      TIME_ELAPSED_EXT: number
-      GPU_DISJOINT_EXT: number
-    } | null,
     pending: WebGLQuery[] = []
+  let ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as {
+    TIME_ELAPSED_EXT: number
+    GPU_DISJOINT_EXT: number
+  } | null
   let gpuMs: number | null = null
+  function reset() {
+    if (!gl.isContextLost()) pending.forEach((q) => gl.deleteQuery(q))
+    pending.length = 0
+    gpuMs = null
+    if (!gl.isContextLost()) ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as typeof ext
+  }
   return {
+    reset,
     begin() {
       if (!ext || gl.isContextLost()) return null
       if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
@@ -40,8 +47,7 @@ export function createEffectsTiming(renderer: THREE.WebGLRenderer) {
       return !!ext
     },
     dispose() {
-      pending.forEach((q) => gl.deleteQuery(q))
-      pending.length = 0
+      reset()
     },
   }
 }

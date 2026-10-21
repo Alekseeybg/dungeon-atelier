@@ -6,6 +6,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { createSelectiveBloom } from './selective-bloom'
 import type { DungeonEffects } from './effects-settings'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js'
 
 /** Short-range, depth/normal-aware grounding. No painted wall-border strips or bloom. */
 export function createContactLighting(
@@ -29,7 +30,11 @@ export function createContactLighting(
     })
   let selective: ReturnType<typeof createSelectiveBloom> | undefined,
     size = { width: 1, height: 1 },
-    bloomEnabled = false
+    bloomEnabled = false,
+    occlusionValid = false,
+    occlusionComputations = 0,
+    occlusionReuses = 0
+  const cachedQuad = new FullScreenQuad(ao.copyMaterial)
   bloomBlend.enabled = false
   // Composite the unlit void after exposure/color conversion, keeping its existing color.
   beauty.clearColor = new THREE.Color(0)
@@ -95,6 +100,30 @@ export function createContactLighting(
   ao.pdNoiseTexture.needsUpdate = true
   const renderAO = ao.render.bind(ao)
   ao.render = (r, write, read, delta, mask) => {
+    // Camera, geometry and AO parameters determine occlusion. Flame time and
+    // lighting do not: reuse the denoised field, with the original blend shader.
+    if (occlusionValid) {
+      const autoClear = r.autoClear
+      r.autoClear = false
+      try {
+        r.setRenderTarget(ao.renderToScreen ? null : write)
+        ao.copyMaterial.uniforms.tDiffuse!.value =
+          ao.output === GTAOPass.OUTPUT.Denoise ? ao.pdRenderTarget.texture : read.texture
+        ao.copyMaterial.blending = THREE.NoBlending
+        cachedQuad.material = ao.copyMaterial
+        cachedQuad.render(r)
+        if (ao.output === GTAOPass.OUTPUT.Default) {
+          ao.blendMaterial.uniforms.intensity!.value = ao.blendIntensity
+          ao.blendMaterial.uniforms.tDiffuse!.value = ao.pdRenderTarget.texture
+          cachedQuad.material = ao.blendMaterial
+          cachedQuad.render(r)
+        }
+        occlusionReuses++
+      } finally {
+        r.autoClear = autoClear
+      }
+      return
+    }
     const excluded: THREE.Object3D[] = []
     scene.traverse((node) => {
       if (!(node instanceof THREE.Mesh) || !node.visible) return
@@ -106,12 +135,17 @@ export function createContactLighting(
         node.visible = false
       }
     })
-    const shadowAutoUpdate = r.shadowMap.autoUpdate
+    const shadowAutoUpdate = r.shadowMap.autoUpdate,
+      shadowNeedsUpdate = r.shadowMap.needsUpdate
     r.shadowMap.autoUpdate = false
+    r.shadowMap.needsUpdate = false
     try {
       renderAO(r, write, read, delta, mask)
+      occlusionValid = true
+      occlusionComputations++
     } finally {
       r.shadowMap.autoUpdate = shadowAutoUpdate
+      r.shadowMap.needsUpdate = shadowNeedsUpdate
       excluded.forEach((node) => {
         node.visible = true
       })
@@ -123,7 +157,11 @@ export function createContactLighting(
   composer.addPass(output)
   composer.addPass(experimentalOutput)
   return {
+    invalidate() {
+      occlusionValid = false
+    },
     configure(intensity: number, radius: number, diagnostic = false) {
+      if (ao.gtaoMaterial.uniforms.radius!.value !== radius) occlusionValid = false
       ao.blendIntensity = intensity
       ao.updateGtaoMaterial({ radius })
       ao.output = diagnostic ? GTAOPass.OUTPUT.Denoise : GTAOPass.OUTPUT.Default
@@ -154,9 +192,12 @@ export function createContactLighting(
         intensity: ao.blendIntensity,
         radius: ao.gtaoMaterial.uniforms.radius!.value as number,
         diagnostic: ao.output === GTAOPass.OUTPUT.Denoise,
+        occlusionComputations,
+        occlusionReuses,
       }
     },
     resize(width: number, height: number) {
+      occlusionValid = false
       size = { width, height }
       composer.setSize(width, height)
       selective?.resize(width, height)
@@ -170,6 +211,10 @@ export function createContactLighting(
       selective?.dispose()
       bloomBlend.dispose()
       beauty.dispose()
+      cachedQuad.dispose()
+      // GTAOPass.dispose() does not own these two materials in this Three.js version.
+      ao.gtaoMaterial.dispose()
+      ao.blendMaterial.dispose()
       ao.dispose()
       output.dispose()
       experimentalOutput.dispose()

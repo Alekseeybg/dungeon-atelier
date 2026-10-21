@@ -86,17 +86,25 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
       (doorHeadCutaway ? cutawayCoverage : intactCoverage)(x, z)
 
   // Reuse eight local lights near the inspected area instead of leaving later torches unlit.
-  function updateTorchLights(target = lightTarget) {
+  function updateTorchLights(target = lightTarget, force = false) {
+    if (!force && lightTarget.equals(target)) return false
     lightTarget.copy(target)
     const nearest = [...torchPositions].sort(
       (a, b) =>
         Math.hypot(a.x - target.x, a.z - target.z) - Math.hypot(b.x - target.x, b.z - target.z),
     )
+    let changed = false
     torchLights.forEach((light, index) => {
       const position = nearest[index]
-      light.visible = torchLighting && !!position && index < torchLightBudget
+      const visible = torchLighting && !!position && index < torchLightBudget
+      if (light.visible !== visible || (position && !light.position.equals(position))) {
+        changed = true
+        light.shadow.needsUpdate = true
+      }
+      light.visible = visible
       if (position) light.position.copy(position)
     })
+    return changed
   }
 
   function rebuild() {
@@ -291,7 +299,7 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     architecture.name = 'Masonry, actual portals, stairs and sconces'
     architecture.add(lightGroup, ...stairGroups, restoredWalls, ruinedWalls)
     root.add(architecture)
-    updateTorchLights()
+    updateTorchLights(lightTarget, true)
   }
   rebuild()
   const bounds = new THREE.Box3()
@@ -314,25 +322,30 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     updateTorchLights,
     setTheme,
     setHeight(multiplier: number) {
+      if (height === BASE_WALL_HEIGHT * multiplier) return
       height = BASE_WALL_HEIGHT * multiplier
       rebuild()
       updateBounds()
     },
     setDoorsOpen(value: boolean) {
+      if (open === value) return
       open = value
       rebuild()
     },
     setDoorHeadCutaway(value: boolean) {
+      if (doorHeadCutaway === value) return
       doorHeadCutaway = value
       rebuild()
     },
     setTorchLightBudget(value: number) {
+      if (torchLightBudget === value) return
       torchLightBudget = value
-      updateTorchLights()
+      updateTorchLights(lightTarget, true)
     },
     setTorchLighting(value: boolean) {
+      if (torchLighting === value) return
       torchLighting = value
-      updateTorchLights()
+      updateTorchLights(lightTarget, true)
     },
     get height() {
       return height
