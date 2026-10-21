@@ -2,6 +2,7 @@ import url from '../../../../assets/visual-foundation/wall-sconces-final-v2.png'
 import componentsUrl from '../../../../assets/visual-foundation/north-sconce-components-v1.png'
 import type { Position } from '@dungeon-atelier/core'
 import { project, FOUNDATION } from './model'
+import type { WallProjection } from './model'
 
 export interface MountedTorchArt {
   front: HTMLCanvasElement
@@ -60,15 +61,16 @@ export function drawMountedTorch(
   position: Position,
   face: 'south' | 'east',
   northMount: 'flat' | 'projecting' = 'flat',
+  projection: WallProjection = FOUNDATION,
 ) {
   if (face === 'south' && northMount === 'projecting') {
-    drawNorthMount(c, art, position)
+    drawNorthMount(c, art, position, true, projection)
     return
   }
   const x = position.x * 32,
     y = position.y * 32,
     side = face === 'east',
-    p = project(x + (side ? 26 : 16), y + (side ? 16 : 26), 0.1),
+    p = project(x + (side ? 26 : 16), y + (side ? 16 : 26), 0.1, projection),
     width = side ? 12 : 11,
     height = 23
   c.save()
@@ -88,7 +90,7 @@ export function drawMountedTorch(
           [x + 13, y + 26, 0.52],
         ]
   points.forEach(([a, b, z], i) => {
-    const v = project(a!, b!, z)
+    const v = project(a!, b!, z, projection)
     if (i) plate.lineTo(v.x, v.y)
     else plate.moveTo(v.x, v.y)
   })
@@ -96,7 +98,7 @@ export function drawMountedTorch(
   c.fillStyle = '#0206078c'
   c.fill(plate)
   c.translate(p.x, p.y)
-  c.transform(1, 0, FOUNDATION.side / FOUNDATION.rise, 1, 0, 0)
+  c.transform(1, 0, projection.side / projection.rise, 1, 0, 0)
   c.drawImage(
     side ? art.side : art.front,
     side ? -width * 0.12 : -width / 2,
@@ -113,13 +115,14 @@ export function drawNorthMount(
   art: MountedTorchArt,
   position: Position,
   fire = true,
+  projection: WallProjection = FOUNDATION,
 ) {
   const x = position.x * 32 + 16,
     wall = position.y * 32 + 26
   const face = (points: [number, number, number][], color: string) => {
     c.beginPath()
     points.forEach(([a, b, z], i) => {
-      const p = project(a, b, z)
+      const p = project(a, b, z, projection)
       if (i) c.lineTo(p.x, p.y)
       else c.moveTo(p.x, p.y)
     })
@@ -138,11 +141,11 @@ export function drawNorthMount(
     ],
     '#0206078c',
   )
-  const plate = project(x, wall, 0.1),
+  const plate = project(x, wall, 0.1, projection),
     split = 0.63
   c.save()
   c.translate(plate.x, plate.y)
-  c.transform(1, 0, FOUNDATION.side / FOUNDATION.rise, 1, 0, 0)
+  c.transform(1, 0, projection.side / projection.rise, 1, 0, 0)
   c.drawImage(
     art.front,
     0,
@@ -195,10 +198,10 @@ export function drawNorthMount(
   )
   // Reuse the original forged stem material on the visible return of the bracket.
   // Its affine transform is the same vertical plane as the dimensional upstand.
-  const knee = project(x, wall + 12, 0.31)
+  const knee = project(x, wall + 12, 0.31, projection)
   c.save()
   c.translate(knee.x, knee.y)
-  c.transform(1, 0, FOUNDATION.side / FOUNDATION.rise, 1, 0, 0)
+  c.transform(1, 0, projection.side / projection.rise, 1, 0, 0)
   c.drawImage(
     art.front,
     art.front.width * 0.43,
@@ -206,14 +209,14 @@ export function drawNorthMount(
     art.front.width * 0.14,
     art.front.height * 0.18,
     -1.2,
-    -0.28 * FOUNDATION.rise,
+    -0.28 * projection.rise,
     2.4,
-    0.28 * FOUNDATION.rise,
+    0.28 * projection.rise,
   )
   c.restore()
-  const basket = project(x, wall + 12, 0.59)
+  const basket = project(x, wall + 12, 0.59, projection)
   c.translate(basket.x, basket.y)
-  c.transform(1, 0, FOUNDATION.side / FOUNDATION.rise, 1, 0, 0)
+  c.transform(1, 0, projection.side / projection.rise, 1, 0, 0)
   c.drawImage(art.basket, -5.5, -9.5, 11, 9.5)
   if (fire) drawNorthTorchFlame(c, art.flame)
   // Front band and central upright occlude the flame; back rim remains behind it.

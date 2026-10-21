@@ -18,7 +18,7 @@ import {
   spriteOrigin,
   viewBounds,
 } from './model'
-import type { FoundationScene } from './model'
+import type { FoundationScene, WallProjection } from './model'
 import { capBoundarySegments } from './plane-separation'
 import { CAP_EFFECTS, polishCap, shadeCapJoint } from './cap-polish'
 import type { CapEffect } from './cap-polish'
@@ -38,6 +38,8 @@ import { mountedLightCells } from './finishing-model'
 import type { StairPresentation, StairArrow, StairProfile } from './finishing-model'
 
 export interface FoundationOptions {
+  /** Isolated preview override. Production always uses the approved default. */
+  projection?: WallProjection
   floor?: FoundationFloor
   separation?: boolean
   treatment?: FoundationTreatment
@@ -69,6 +71,7 @@ interface ArchitecturalSprite {
   y: number
 }
 interface BuiltScene {
+  projection: WallProjection
   scene: FoundationScene
   plan: ReturnType<typeof createArchitecturePlan>
   atlas: ArchitecturalSprite[]
@@ -92,11 +95,18 @@ function polygon(points: Position[]) {
   path.closePath()
   return path
 }
-function plane(a: Position, b: Position, height = 1) {
-  return projectedFace(a, b, height)
+function plane(a: Position, b: Position, height = 1, projection: WallProjection = P) {
+  return projectedFace(a, b, height, projection)
 }
-function rectangle(x: number, y: number, width: number, height: number, elevation = 0) {
-  return polygon(projectedRectangle(x, y, width, height, elevation))
+function rectangle(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  elevation = 0,
+  projection: WallProjection = P,
+) {
+  return polygon(projectedRectangle(x, y, width, height, elevation, projection))
 }
 function patternFace(
   c: CanvasRenderingContext2D,
@@ -105,6 +115,7 @@ function patternFace(
   start: number,
   length: number,
   shade = false,
+  projection: WallProjection = P,
 ) {
   const a = points[0]!,
     b = points[1]!,
@@ -117,18 +128,18 @@ function patternFace(
   c.transform(
     ux,
     uy,
-    (d.x - a.x) / P.rise,
-    (d.y - a.y) / P.rise,
+    (d.x - a.x) / projection.rise,
+    (d.y - a.y) / projection.rise,
     a.x - ux * start,
     a.y - uy * start,
   )
   c.fillStyle = '#1b2023'
-  c.fillRect(start, 0, length, P.rise)
+  c.fillRect(start, 0, length, projection.rise)
   c.fillStyle = pattern
-  c.fillRect(start, 0, length, P.rise)
+  c.fillRect(start, 0, length, projection.rise)
   if (shade) {
     c.fillStyle = '#07101c36'
-    c.fillRect(start, 0, length, P.rise)
+    c.fillRect(start, 0, length, projection.rise)
   }
   c.restore()
   return path
@@ -351,6 +362,12 @@ function buildArchitecture(
   options: FoundationOptions,
   copingArt?: CopingArt,
 ) {
+  const projection = options.projection ?? P,
+    extraX = projection.side === P.side ? 0 : Math.ceil(Math.max(0, projection.side - P.side)) + 2,
+    extraY = projection.rise === P.rise ? 0 : Math.ceil(Math.max(0, projection.rise - P.rise)) + 2,
+    spriteWidth = 50 + extraX,
+    spriteHeight = 60 + extraY,
+    anchor = { x: 12 + extraX, y: 29 + extraY }
   const items = [
     ...plan.walls.map((wall) => ({ x: wall.x, y: wall.y, wall })),
     ...plan.doors.map((door) => ({ x: door.position.x, y: door.position.y, door })),
@@ -375,10 +392,10 @@ function buildArchitecture(
     const x = item.x * 32,
       y = item.y * 32,
       origin = spriteOrigin(item.x, item.y)
-    const image = canvas(100, 120),
+    const image = canvas(spriteWidth * 2, spriteHeight * 2),
       c = image.getContext('2d')!
     c.scale(2, 2)
-    c.translate(12 - origin.x, 29 - origin.y)
+    c.translate(anchor.x - origin.x, anchor.y - origin.y)
     c.imageSmoothingQuality = 'high'
     const isDoor = 'door' in item,
       mask = isDoor ? (item.door.orientation === 'north-south' ? 10 : 5) : item.wall.mask
@@ -389,8 +406,12 @@ function buildArchitecture(
         const points = plane(
           { x: x + edge.x, y: y + edge.y },
           { x: x + edge.x, y: y + edge.y + edge.height },
+          1,
+          projection,
         )
-        silhouette.addPath(patternFace(c, art.face, points, y + edge.y, edge.height, true))
+        silhouette.addPath(
+          patternFace(c, art.face, points, y + edge.y, edge.height, true, projection),
+        )
         if (
           options.capPolish &&
           options.separation !== false &&
@@ -402,8 +423,12 @@ function buildArchitecture(
         const points = plane(
           { x: x + edge.x, y: y + edge.y },
           { x: x + edge.x + edge.width, y: y + edge.y },
+          1,
+          projection,
         )
-        silhouette.addPath(patternFace(c, art.face, points, x + edge.x, edge.width))
+        silhouette.addPath(
+          patternFace(c, art.face, points, x + edge.x, edge.width, false, projection),
+        )
         if (
           options.capPolish &&
           options.separation !== false &&
@@ -412,11 +437,19 @@ function buildArchitecture(
           shadeCapJoint(c, points)
       }
     } else {
-      const surface = doorSurface(item.door.position, scene.facings[item.door.id]!),
-        points = plane(surface.a, surface.b)
+      const surface = doorSurface(item.door.position, scene.facings[item.door.id]!, projection),
+        points = plane(surface.a, surface.b, 1, projection)
       silhouette.addPath(polygon(points))
       if (item.door.type === 'secret') {
-        patternFace(c, art.face, points, (surface.horizontal ? x : y) - 6, 44, !surface.horizontal)
+        patternFace(
+          c,
+          art.face,
+          points,
+          (surface.horizontal ? x : y) - 6,
+          44,
+          !surface.horizontal,
+          projection,
+        )
       } else {
         const doorOpen = options.doors === 'open' || options.openDoorIds?.includes(item.door.id)
         const sideDefined = !surface.horizontal && options.sideDoors === 'defined',
@@ -439,15 +472,15 @@ function buildArchitecture(
     }
     const cap = new Path2D()
     for (const rect of wallCapRects(mask, corner, 32))
-      cap.addPath(rectangle(x + rect.x, y + rect.y, rect.width, rect.height, 1))
+      cap.addPath(rectangle(x + rect.x, y + rect.y, rect.width, rect.height, 1, projection))
     if (options.capProfile === 'chamfered' && coping === 'hewn') {
       /* Global mitered profile layer follows the faces. */
     } else if (coping !== 'current' && copingSurface)
-      drawRaisedCoping(c, nodes[index]!, copingSurface, coping)
+      drawRaisedCoping(c, nodes[index]!, copingSurface, coping, projection)
     else {
       c.save()
       c.clip(cap)
-      c.transform(1, 0, 0, P.depth, -P.side, -P.rise)
+      c.transform(1, 0, 0, P.depth, -projection.side, -projection.rise)
       c.fillStyle = '#323334'
       c.fillRect(x, y, 32, 32)
       c.fillStyle = art.cap
@@ -460,8 +493,8 @@ function buildArchitecture(
         c.lineWidth = 1.1
         c.lineCap = 'square'
         for (const edge of capBoundarySegments(wallCapRects(mask, corner, 32))) {
-          const a = project(x + edge.ax, y + edge.ay, 1),
-            b = project(x + edge.bx, y + edge.by, 1)
+          const a = project(x + edge.ax, y + edge.ay, 1, projection),
+            b = project(x + edge.bx, y + edge.by, 1, projection)
           c.strokeStyle = edge.light ? '#ede3c659' : '#121b20b0'
           c.beginPath()
           c.moveTo(a.x, a.y)
@@ -471,12 +504,26 @@ function buildArchitecture(
         c.restore()
       }
       if (options.capPolish && options.separation !== false)
-        polishCap(c, cap, wallCapRects(mask, corner, 32), x, y, art.cap, options.capEffects)
+        polishCap(
+          c,
+          cap,
+          wallCapRects(mask, corner, 32),
+          x,
+          y,
+          art.cap,
+          options.capEffects,
+          projection,
+        )
     }
     silhouette.addPath(cap)
     if (isDoor && item.door.type === 'secret') {
-      const surface = doorSurface(item.door.position, scene.facings[item.door.id]!),
-        p = project((surface.a.x + surface.b.x) / 2, (surface.a.y + surface.b.y) / 2, 0.4)
+      const surface = doorSurface(item.door.position, scene.facings[item.door.id]!, projection),
+        p = project(
+          (surface.a.x + surface.b.x) / 2,
+          (surface.a.y + surface.b.y) / 2,
+          0.4,
+          projection,
+        )
       c.fillStyle = '#0b2b31dd'
       c.fillRect(p.x - 5, p.y - 7, 10, 13)
       c.fillStyle = '#99e6dd'
@@ -489,11 +536,11 @@ function buildArchitecture(
         ? `door.${scene.facings[item.door.id]}.${options.doors ?? 'closed'}`
         : `wall.${mask}.${corner}.${item.x}.${item.y}`,
       atlas: 'visual-foundation-scene-v1',
-      source: { x: 0, y: 0, width: 100, height: 120 },
+      source: { x: 0, y: 0, width: spriteWidth * 2, height: spriteHeight * 2 },
       footprint: { width: 1, height: 1 },
-      width: 50,
-      height: 60,
-      anchor: { x: 12, y: 29 },
+      width: spriteWidth,
+      height: spriteHeight,
+      anchor,
       offset: { x: 0, y: 0 },
       layer: 'architecture',
       connectivityMask: mask,
@@ -502,11 +549,14 @@ function buildArchitecture(
   })
   // Keep large generated-map review atlases below browser canvas dimension limits.
   const columns = sprites.length > 256 ? 32 : 8
-  const atlas = canvas(columns * 100, Math.ceil(sprites.length / columns) * 120),
+  const atlas = canvas(
+      columns * spriteWidth * 2,
+      Math.ceil(sprites.length / columns) * spriteHeight * 2,
+    ),
     target = atlas.getContext('2d')!
   sprites.forEach((sprite, i) => {
-    const x = (i % columns) * 100,
-      y = Math.floor(i / columns) * 120
+    const x = (i % columns) * spriteWidth * 2,
+      y = Math.floor(i / columns) * spriteHeight * 2
     const source = sprite.image
     target.drawImage(source, x, y)
     sprite.definition.source.x = x
@@ -532,7 +582,18 @@ async function built(
   source?: FoundationScene,
   material?: FoundationArt,
 ) {
-  const key = `${options.treatment ?? 'ruins'}:${options.doors ?? 'closed'}:${options.secret ?? 'none'}:${options.separation !== false}:${options.floor ?? 'refined'}:${!!options.capPolish}:${options.capEffects?.join(',') ?? 'all'}:${options.coping ?? 'current'}:${options.capProfile ?? 'raised'}:${options.capFinish ?? 'soft'}:${options.stairs ?? 'none'}:${options.torches ?? 'current'}:${options.sideDoors ?? 'legacy'}`
+  const projection = Object.freeze({ ...(options.projection ?? P) })
+  if (
+    !Number.isFinite(projection.side) ||
+    projection.side < 0 ||
+    projection.side > 24 ||
+    !Number.isFinite(projection.rise) ||
+    projection.rise < 12 ||
+    projection.rise > 40
+  )
+    throw new Error('Projection study settings are outside the supported range.')
+  options = { ...options, projection }
+  const key = `${projection.side}:${projection.rise}:${options.treatment ?? 'ruins'}:${options.doors ?? 'closed'}:${options.secret ?? 'none'}:${options.separation !== false}:${options.floor ?? 'refined'}:${!!options.capPolish}:${options.capEffects?.join(',') ?? 'all'}:${options.coping ?? 'current'}:${options.capProfile ?? 'raised'}:${options.capFinish ?? 'soft'}:${options.stairs ?? 'none'}:${options.torches ?? 'current'}:${options.sideDoors ?? 'legacy'}`
   const cached = source || material ? undefined : scenes.get(key)
   if (cached) return cached
   const scene =
@@ -546,6 +607,7 @@ async function built(
     scene,
     plan,
     art,
+    projection,
     atlas: buildArchitecture(
       scene,
       plan,
@@ -576,6 +638,7 @@ async function built(
       plan.floor,
       await loadCopingArt(art.treatment),
       options.capFinish,
+      projection,
     )
   // Comparison holds the accepted floor contact and broad edge tone constant.
   const contactSource =
@@ -603,6 +666,7 @@ function drawArchitecture(
   data: BuiltScene,
   options?: FoundationOptions,
 ) {
+  const projection = data.projection
   const stairs = options?.depthSortedStairs
     ? [...data.plan.floor.stairs].sort((a, b) => a.position.y - b.position.y)
     : []
@@ -616,6 +680,7 @@ function drawArchitecture(
         stair,
         options.stairs,
         options.stairProfile,
+        projection,
       )
   }
   for (const sprite of data.atlas) {
@@ -638,9 +703,9 @@ function drawArchitecture(
   if (options?.sideDoors === 'defined')
     for (const door of data.plan.doors) {
       if (door.orientation !== 'east-west' || door.type === 'secret') continue
-      const surface = doorSurface(door.position, data.scene.facings[door.id]!),
+      const surface = doorSurface(door.position, data.scene.facings[door.id]!, projection),
         open = options.doors === 'open' || options.openDoorIds?.includes(door.id)
-      drawDefinedSideDoorDetail(c, data.art, plane(surface.a, surface.b), !open)
+      drawDefinedSideDoorDetail(c, data.art, plane(surface.a, surface.b, 1, projection), !open)
     }
 }
 /** One union silhouette avoids dark overlaps at corners and seams between connected tiles. */
@@ -854,7 +919,8 @@ export async function renderFoundation(
   return paintFoundation(await built(options, source, material), options)
 }
 function paintFoundation(data: BuiltScene, options: FoundationOptions, result = canvas(1, 1)) {
-  const bounds = viewBounds(data.plan.floor)
+  const projection = data.projection,
+    bounds = viewBounds(data.plan.floor)
   result.width = bounds.width * 2
   result.height = bounds.height * 2
   const c = result.getContext('2d')!
@@ -877,6 +943,7 @@ function paintFoundation(data: BuiltScene, options: FoundationOptions, result = 
         stair,
         options.stairs,
         options.stairProfile,
+        projection,
       )
   if (options.stairs)
     for (const stair of data.plan.floor.stairs)
@@ -891,6 +958,7 @@ function paintFoundation(data: BuiltScene, options: FoundationOptions, result = 
           stair,
           options.stairArrow,
           data.markers?.get(stair.id),
+          projection,
         )
   drawArchitecture(c, data, options)
   if (data.chamfer) {
@@ -903,7 +971,7 @@ function paintFoundation(data: BuiltScene, options: FoundationOptions, result = 
     for (const stair of data.plan.floor.stairs) {
       const marker = data.markers?.get(stair.id)
       if (marker?.plane === 'wall')
-        drawStairMarker(c, data.art, data.plan.floor, stair, options.stairArrow, marker)
+        drawStairMarker(c, data.art, data.plan.floor, stair, options.stairArrow, marker, projection)
     }
   if (options.lighting !== false)
     illuminate(
@@ -927,10 +995,11 @@ function paintFoundation(data: BuiltScene, options: FoundationOptions, result = 
         torch,
         data.scene.torchFacings?.[`${torch.x},${torch.y}`] ?? 'south',
         options.northTorchMount,
+        projection,
       )
       continue
     }
-    const p = project(torch.x * 32 + 16, torch.y * 32 + 26, 0.85)
+    const p = project(torch.x * 32 + 16, torch.y * 32 + 26, 0.85, projection)
     c.drawImage(data.art.torch, p.x - 4.5, p.y - 6, 9, 23)
   }
   if (options.grid) {
@@ -971,9 +1040,10 @@ export async function composeFoundation(
   options: FoundationOptions,
   assignments = new Map<number, FoundationFloor>(),
 ) {
-  const data = await built(options, source)
+  const data = await built(options, source),
+    projection = data.projection
   try {
-    data.markers = projectedStairMarkers(data.plan.floor, data.plan)
+    data.markers = projectedStairMarkers(data.plan.floor, data.plan, projection)
     const patterns = new Map<FoundationFloor, CanvasPattern>()
     await Promise.all(
       [...new Set(assignments.values())].map(async (f) => {
@@ -1013,7 +1083,7 @@ export async function composeFoundation(
         c.restore()
         const stair = data.plan.floor.stairs.find((s) => s.position.x === x && s.position.y === y)
         if (stair && options.stairs)
-          drawFoundationStair(c, art, stair, options.stairs, options.stairProfile)
+          drawFoundationStair(c, art, stair, options.stairs, options.stairProfile, projection)
         if (options.stairs)
           for (const s of data.plan.floor.stairs)
             if (
@@ -1027,6 +1097,7 @@ export async function composeFoundation(
                 s,
                 options.stairArrow,
                 data.markers?.get(s.id),
+                projection,
               )
         c.restore()
       },
@@ -1066,7 +1137,7 @@ export async function foundationInventory(options: FoundationOptions = {}) {
   return {
     treatment: data.art.treatment,
     floorTreatment: data.art.floorTreatment,
-    projection: P,
+    projection: { ...P, ...data.projection },
     sourceSizes: data.art.sourceSizes,
     spriteCount: data.atlas.length,
     geometryIds: [

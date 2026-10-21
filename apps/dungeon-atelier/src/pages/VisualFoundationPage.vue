@@ -22,6 +22,7 @@
             }}
           </div>
           <template #action>
+            <q-btn flat no-caps label="Projection playground" to="/visual-foundation/projection" />
             <q-btn
               flat
               no-caps

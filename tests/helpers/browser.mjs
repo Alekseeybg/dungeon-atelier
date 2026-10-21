@@ -1,7 +1,10 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
-import os from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+export const browserProfileRoot = fileURLToPath(
+  new URL('../../.cache/browser-tests/', import.meta.url),
+)
 export const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 export async function poll(action, label) {
   for (let i = 0; i < 150; i++) {
@@ -19,7 +22,8 @@ export async function browserSession(url) {
     (process.platform === 'win32'
       ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
       : 'google-chrome')
-  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-browser-'))
+  fs.mkdirSync(browserProfileRoot, { recursive: true })
+  const profile = fs.mkdtempSync(path.join(browserProfileRoot, 'session-'))
   const child = spawn(
     chrome,
     [
@@ -34,10 +38,46 @@ export async function browserSession(url) {
     { windowsHide: true, stdio: 'ignore' },
   )
   let socket, launchError
+  const exited = new Promise((resolve) => {
+    child.once('exit', resolve)
+    child.once('error', resolve)
+  })
+  let closing
+  const close = () => {
+    if (closing) return closing
+    closing = (async () => {
+      // Ask Chrome to close its own subprocesses and release profile locks first.
+      if (socket?.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ id: -1, method: 'Browser.close' }))
+      }
+      await new Promise((resolve) => {
+        const timer = setTimeout(() => {
+          child.kill()
+          resolve()
+        }, 1500)
+        exited.then(() => {
+          clearTimeout(timer)
+          resolve()
+        })
+      })
+      socket?.close()
+      await fs.promises.rm(profile, {
+        recursive: true,
+        force: true,
+        maxRetries: 10,
+        retryDelay: 100,
+      })
+    })()
+    return closing
+  }
   child.on('error', (error) => {
     launchError = error
   })
   try {
+    await new Promise((resolve, reject) => {
+      child.once('spawn', resolve)
+      child.once('error', reject)
+    })
     const port = await poll(() => {
       if (launchError) throw launchError
       return (
@@ -99,14 +139,11 @@ export async function browserSession(url) {
       send,
       evaluate,
       errors,
-      close: () => {
-        socket.close()
-        child.kill()
-      },
+      profileDirectory: profile,
+      close,
     }
   } catch (error) {
-    socket?.close()
-    child.kill()
+    await close()
     throw error
   }
 }

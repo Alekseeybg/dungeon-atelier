@@ -1,0 +1,47 @@
+import type * as THREE from 'three'
+
+/** Nonblocking GPU queries when supported; CPU submission is never presented as GPU time. */
+export function createEffectsTiming(renderer: THREE.WebGLRenderer) {
+  const gl = renderer.getContext() as WebGL2RenderingContext,
+    ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as {
+      TIME_ELAPSED_EXT: number
+      GPU_DISJOINT_EXT: number
+    } | null,
+    pending: WebGLQuery[] = []
+  let gpuMs: number | null = null
+  return {
+    begin() {
+      if (!ext || gl.isContextLost()) return null
+      if (gl.getParameter(ext.GPU_DISJOINT_EXT)) {
+        pending.forEach((q) => gl.deleteQuery(q))
+        pending.length = 0
+        gpuMs = null
+      }
+      while (pending.length && gl.getQueryParameter(pending[0]!, gl.QUERY_RESULT_AVAILABLE)) {
+        const q = pending.shift()!
+        gpuMs = Number(gl.getQueryParameter(q, gl.QUERY_RESULT)) / 1e6
+        gl.deleteQuery(q)
+      }
+      if (pending.length >= 3) return null
+      const query = gl.createQuery()
+      if (query) gl.beginQuery(ext.TIME_ELAPSED_EXT, query)
+      return query
+    },
+    end(query: WebGLQuery | null) {
+      if (ext && query && !gl.isContextLost()) {
+        gl.endQuery(ext.TIME_ELAPSED_EXT)
+        pending.push(query)
+      }
+    },
+    get gpuMs() {
+      return gpuMs
+    },
+    get supported() {
+      return !!ext
+    },
+    dispose() {
+      pending.forEach((q) => gl.deleteQuery(q))
+      pending.length = 0
+    },
+  }
+}

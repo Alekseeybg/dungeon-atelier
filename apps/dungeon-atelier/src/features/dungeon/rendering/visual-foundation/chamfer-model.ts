@@ -79,16 +79,21 @@ export function chamferFacets(source: CapEdge[]): ChamferFacet[] {
   })
 }
 /** Affine ground-UV -> screen mapping of a genuine sloped plane, not a vertical extrusion. */
-export function facetTransform(edge: CapEdge, depth: number, side: number) {
+export function facetTransform(
+  edge: CapEdge,
+  depth: number,
+  side: number,
+  rise: number = CHAMFER.wallHeight,
+) {
   const k = CHAMFER.drop / (CHAMFER.wallHeight * CHAMFER.width),
     z = 1 - CHAMFER.drop / CHAMFER.wallHeight,
     dot = edge.nx * edge.ax + edge.ny * edge.ay
   return {
     a: 1 + side * k * edge.nx,
-    b: CHAMFER.wallHeight * k * edge.nx,
+    b: rise * k * edge.nx,
     c: side * k * edge.ny,
-    d: depth + CHAMFER.wallHeight * k * edge.ny,
+    d: depth + rise * k * edge.ny,
     e: -side * z - side * k * dot,
-    f: -CHAMFER.wallHeight * z - CHAMFER.wallHeight * k * dot,
+    f: -rise * z - rise * k * dot,
   }
 }

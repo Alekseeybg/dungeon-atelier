@@ -7,12 +7,13 @@ import type { CopingArt } from './coping-art'
 import { buildCopingSurface } from './coping-renderer'
 import { buildCutCopingSurface } from './cut-coping-renderer'
 import { FOUNDATION as P, project, viewBounds } from './model'
+import type { WallProjection } from './model'
 import { CHAMFER, chamferFacets, facetTransform } from './chamfer-model'
 import type { CapEdge, ProfilePoint } from './chamfer-model'
-function polygon(points: ProfilePoint[]) {
+function polygon(points: ProfilePoint[], projection: WallProjection = P) {
   const path = new Path2D()
   points.forEach((p, i) => {
-    const v = project(p.x, p.y, p.z)
+    const v = project(p.x, p.y, p.z, projection)
     if (i) path.lineTo(v.x, v.y)
     else path.moveTo(v.x, v.y)
   })
@@ -25,6 +26,7 @@ export function buildCapChamfer(
   floor: DungeonFloor,
   art: CopingArt,
   finish: 'soft' | 'cut' = 'soft',
+  projection: WallProjection = P,
 ) {
   const edges: CapEdge[] = [],
     cap = new Path2D()
@@ -34,12 +36,15 @@ export function buildCapChamfer(
       rects = wallCapRects(node.mask, node.corner, 32)
     for (const r of rects)
       cap.addPath(
-        polygon([
-          { x: x + r.x, y: y + r.y, z: 1 },
-          { x: x + r.x + r.width, y: y + r.y, z: 1 },
-          { x: x + r.x + r.width, y: y + r.y + r.height, z: 1 },
-          { x: x + r.x, y: y + r.y + r.height, z: 1 },
-        ]),
+        polygon(
+          [
+            { x: x + r.x, y: y + r.y, z: 1 },
+            { x: x + r.x + r.width, y: y + r.y, z: 1 },
+            { x: x + r.x + r.width, y: y + r.y + r.height, z: 1 },
+            { x: x + r.x, y: y + r.y + r.height, z: 1 },
+          ],
+          projection,
+        ),
       )
     for (const e of capBoundarySegments(rects)) {
       const vertical = e.ax === e.bx,
@@ -62,11 +67,11 @@ export function buildCapChamfer(
   c.translate(bounds.origin.x, bounds.origin.y)
   const exclusions = new Path2D()
   exclusions.rect(-100, -100, bounds.width + 200, bounds.height + 200)
-  for (const f of facets) exclusions.addPath(polygon(f.footprint))
+  for (const f of facets) exclusions.addPath(polygon(f.footprint, projection))
   c.save()
   c.clip(cap)
   c.clip(exclusions, 'evenodd')
-  c.transform(1, 0, 0, P.depth, -P.side, -P.rise)
+  c.transform(1, 0, 0, P.depth, -projection.side, -projection.rise)
   c.drawImage(
     surface.top,
     -surface.padding,
@@ -76,8 +81,8 @@ export function buildCapChamfer(
   )
   c.restore()
   for (const facet of facets) {
-    const path = polygon(facet.points),
-      t = facetTransform(facet.edge, P.depth, P.side)
+    const path = polygon(facet.points, projection),
+      t = facetTransform(facet.edge, P.depth, projection.side, projection.rise)
     c.save()
     c.clip(path)
     c.transform(t.a, t.b, t.c, t.d, t.e, t.f)
@@ -93,8 +98,13 @@ export function buildCapChamfer(
     // directional lift that retains texture and mortar rather than a pale band.
     const mx = (facet.edge.ax + facet.edge.bx) / 2,
       my = (facet.edge.ay + facet.edge.by) / 2,
-      a = project(mx - facet.edge.nx * CHAMFER.width, my - facet.edge.ny * CHAMFER.width, 1),
-      b = project(mx, my, 1 - CHAMFER.drop / CHAMFER.wallHeight),
+      a = project(
+        mx - facet.edge.nx * CHAMFER.width,
+        my - facet.edge.ny * CHAMFER.width,
+        1,
+        projection,
+      ),
+      b = project(mx, my, 1 - CHAMFER.drop / CHAMFER.wallHeight, projection),
       exposure = 0.125 - 0.025 * (facet.edge.nx + facet.edge.ny),
       light = c.createLinearGradient(a.x, a.y, facet.edge.nx ? b.x : a.x, facet.edge.ny ? b.y : a.y)
     light.addColorStop(0, `rgba(212,205,188,${exposure + 0.03})`)
@@ -114,8 +124,8 @@ export function buildCapChamfer(
       ] as const) {
         const a = facet.points[first]!,
           b = facet.points[last]!,
-          from = project(a.x, a.y, a.z),
-          to = project(b.x, b.y, b.z)
+          from = project(a.x, a.y, a.z, projection),
+          to = project(b.x, b.y, b.z, projection)
         c.lineWidth = 0.65
         c.strokeStyle = color
         c.beginPath()

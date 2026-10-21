@@ -1,5 +1,6 @@
 import type { Position } from '@dungeon-atelier/core'
 import { FOUNDATION as P } from './model'
+import type { WallProjection } from './model'
 import { capBoundarySegments } from './plane-separation'
 
 export type CapEffect = 'highlights' | 'occlusion' | 'wear' | 'shading'
@@ -44,6 +45,7 @@ export function polishCap(
   y: number,
   pattern: CanvasPattern,
   effects: CapEffect[] = CAP_EFFECTS,
+  projection: WallProjection = P,
 ) {
   const edges = capBoundarySegments(rects),
     pixels = textureField(pattern)
@@ -56,7 +58,7 @@ export function polishCap(
   c.clip(cap)
   // Preserve the existing silhouette/coverage, including antialiased edge pixels.
   c.globalCompositeOperation = 'source-atop'
-  c.transform(1, 0, 0, P.depth, -P.side, -P.rise)
+  c.transform(1, 0, 0, P.depth, -projection.side, -projection.rise)
   c.lineCap = 'butt'
   for (const edge of edges) {
     const vertical = edge.ax === edge.bx,

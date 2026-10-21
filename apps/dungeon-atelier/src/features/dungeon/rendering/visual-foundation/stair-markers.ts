@@ -1,6 +1,7 @@
 import type { DungeonFloor, Staircase } from '@dungeon-atelier/core'
 import type { FoundationArt } from './art'
 import { FOUNDATION } from './model'
+import type { WallProjection } from './model'
 import { stairArrowOutline, stairMarkerPlacement } from './finishing-model'
 import type { StairArrow } from './finishing-model'
 
@@ -18,6 +19,7 @@ export function drawStairMarker(
   stair: Staircase,
   style: StairArrow = 'none',
   placement?: ReturnType<typeof stairMarkerPlacement>,
+  projection: WallProjection = FOUNDATION,
 ) {
   if (style === 'none') return
   const box = placement ?? stairMarkerPlacement(floor, stair)
@@ -41,8 +43,8 @@ export function drawStairMarker(
   plaque.closePath()
   c.save()
   if (box.plane === 'wall')
-    c.transform(1, 0, 0, 1, -FOUNDATION.side, y * FOUNDATION.depth - y - FOUNDATION.rise)
-  else c.transform(1, 0, 0, FOUNDATION.depth, -FOUNDATION.side * 0.035, -FOUNDATION.rise * 0.035)
+    c.transform(1, 0, 0, 1, -projection.side, y * FOUNDATION.depth - y - projection.rise)
+  else c.transform(1, 0, 0, FOUNDATION.depth, -projection.side * 0.035, -projection.rise * 0.035)
   // A restrained stone carrier separates the level symbol from the physical stair flight.
   c.fillStyle = '#0b1314'
   c.lineWidth = 1.2

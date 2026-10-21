@@ -1,5 +1,6 @@
 import { wallCapRects } from '../architecture-model'
 import { FOUNDATION as P } from './model'
+import type { WallProjection } from './model'
 import type { CopingArt } from './coping-art'
 import type { CopingBlock, CopingNode, CopingStudy } from './coping-model'
 
@@ -131,15 +132,16 @@ export function drawRaisedCoping(
   node: CopingNode,
   surface: CopingSurface,
   study: Exclude<CopingStudy, 'current'>,
+  projection: WallProjection = P,
 ) {
   const x = node.x * 32,
     y = node.y * 32,
     sx = (x + surface.padding) * 2,
     sy = (y + surface.padding) * 2,
     thickness = study === 'hewn' ? 2.8 : 3.8,
-    drop = thickness / P.rise
+    drop = thickness / projection.rise
   c.save()
-  c.transform(1, 0, 0, P.depth, -P.side, -P.rise)
+  c.transform(1, 0, 0, P.depth, -projection.side, -projection.rise)
   for (let step = 8; step >= 1; step--) {
     const t = step / 8
     c.drawImage(
@@ -148,7 +150,7 @@ export function drawRaisedCoping(
       sy,
       64,
       64,
-      x + P.side * drop * t,
+      x + projection.side * drop * t,
       y + (thickness / P.depth) * t,
       32,
       32,

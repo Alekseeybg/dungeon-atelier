@@ -10,6 +10,11 @@ export const FOUNDATION = Object.freeze({
   density: 2,
   padding: 32,
 })
+/** Per-render study settings; the production projection remains immutable. */
+export interface WallProjection {
+  readonly side: number
+  readonly rise: number
+}
 export type Facing = 'north' | 'south' | 'east' | 'west'
 export interface FoundationScene {
   floor: DungeonFloor
@@ -18,10 +23,15 @@ export interface FoundationScene {
   torchFacings?: Record<string, 'south' | 'east'>
   weathered: { x: number; y: number; width: number; height: number }
 }
-export function project(x: number, y: number, elevation = 0): Position {
+export function project(
+  x: number,
+  y: number,
+  elevation = 0,
+  projection: WallProjection = FOUNDATION,
+): Position {
   return {
-    x: x - FOUNDATION.side * elevation,
-    y: y * FOUNDATION.depth - FOUNDATION.rise * elevation,
+    x: x - projection.side * elevation,
+    y: y * FOUNDATION.depth - projection.rise * elevation,
   }
 }
 export function unprojectGround(x: number, y: number): Position {
@@ -37,7 +47,11 @@ export function viewBounds(floor: DungeonFloor) {
     origin: { x: FOUNDATION.padding, y: FOUNDATION.padding },
   }
 }
-export function doorSurface(position: Position, facing: Facing) {
+export function doorSurface(
+  position: Position,
+  facing: Facing,
+  projection: WallProjection = FOUNDATION,
+) {
   const x = position.x * 32,
     y = position.y * 32
   const horizontal = facing === 'north' || facing === 'south'
@@ -51,9 +65,9 @@ export function doorSurface(position: Position, facing: Facing) {
     a,
     b,
     horizontal,
-    topLeft: project(a.x, a.y, 1),
-    topRight: project(b.x, b.y, 1),
-    bottomLeft: project(a.x, a.y),
+    topLeft: project(a.x, a.y, 1, projection),
+    topRight: project(b.x, b.y, 1, projection),
+    bottomLeft: project(a.x, a.y, 0, projection),
   }
 }
 /** One-room art fixture, not a serialized/generated floor. No generator calls. */

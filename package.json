@@ -21,6 +21,8 @@
     "verify:replay": "npm run build:core && node scripts/reproduce.mjs",
     "verify:browser": "node scripts/verify-browser.mjs",
     "verify:foundation": "node scripts/verify-visual-foundation.mjs",
+    "verify:projection": "node scripts/verify-projection-study.mjs",
+    "verify:3d": "node --experimental-strip-types scripts/verify-dungeon-3d.mjs",
     "verify:masonry": "node scripts/verify-masonry.mjs",
     "verify:readability": "node scripts/verify-readability.mjs",
     "verify:floors": "node scripts/verify-floors.mjs",

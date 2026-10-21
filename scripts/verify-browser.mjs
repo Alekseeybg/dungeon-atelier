@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict'
-import { spawn } from 'node:child_process'
 import fs from 'node:fs'
-import os from 'node:os'
 import path from 'node:path'
 import { format, resolveConfig } from 'prettier'
+import { browserSession, poll as until, pause } from '../tests/helpers/browser.mjs'
 import {
   generateDungeon,
   DEFAULT_CONFIG,
@@ -15,103 +14,9 @@ const option = (name, fallback) => (args.includes(name) ? args[args.indexOf(name
 const url = option('--url', 'http://localhost:9000')
 const output = path.resolve(option('--output', 'reports/verification/browser'))
 fs.mkdirSync(output, { recursive: true })
-const chrome =
-  process.env.CHROME_PATH ||
-  (process.platform === 'win32'
-    ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
-    : 'google-chrome')
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'atelier-browser-'))
-const processHandle = spawn(
-  chrome,
-  [
-    '--headless=new',
-    '--disable-gpu',
-    '--no-first-run',
-    '--no-default-browser-check',
-    '--remote-debugging-port=0',
-    `--user-data-dir=${profile}`,
-    'about:blank',
-  ],
-  { windowsHide: true, stdio: 'ignore' },
-)
-let socket
-let launchError
-processHandle.on('error', (error) => {
-  launchError = error
-})
-const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-async function until(action, label) {
-  for (let i = 0; i < 150; i++) {
-    if (launchError) throw launchError
-    try {
-      const value = await action()
-      if (value) return value
-    } catch {
-      /* Browser/server still starting. */
-    }
-    await pause(200)
-  }
-  throw new Error(`Timed out: ${label}`)
-}
+const browser = await browserSession(url)
 try {
-  const port = await until(
-    () =>
-      fs.existsSync(path.join(profile, 'DevToolsActivePort')) &&
-      fs.readFileSync(path.join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0],
-    'Chrome startup',
-  )
-  const pages = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()
-  socket = new WebSocket(pages.find((page) => page.type === 'page').webSocketDebuggerUrl)
-  await new Promise((resolve, reject) => {
-    socket.onopen = resolve
-    socket.onerror = reject
-  })
-  let id = 0
-  const pending = new Map()
-  const runtimeErrors = []
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data)
-    if (message.method === 'Runtime.exceptionThrown')
-      runtimeErrors.push(message.params.exceptionDetails)
-    const entry = pending.get(message.id)
-    if (entry) {
-      clearTimeout(entry.timer)
-      pending.delete(message.id)
-      message.error
-        ? entry.reject(new Error(JSON.stringify(message.error)))
-        : entry.resolve(message.result)
-    }
-  }
-  function send(method, params = {}) {
-    return new Promise((resolve, reject) => {
-      const messageId = ++id
-      const timer = setTimeout(() => {
-        pending.delete(messageId)
-        reject(new Error(`CDP timeout: ${method}`))
-      }, 30000)
-      pending.set(messageId, { resolve, reject, timer })
-      socket.send(JSON.stringify({ id: messageId, method, params }))
-    })
-  }
-  async function evaluate(expression) {
-    const result = await send('Runtime.evaluate', {
-      expression,
-      awaitPromise: true,
-      returnByValue: true,
-    })
-    if (result.exceptionDetails) throw new Error(JSON.stringify(result.exceptionDetails))
-    return result.result.value
-  }
-  await send('Runtime.enable')
-  await send('Page.enable')
-  await send('Emulation.setDeviceMetricsOverride', {
-    width: 1920,
-    height: 1080,
-    deviceScaleFactor: 1,
-    mobile: false,
-  })
-  await send('Page.navigate', { url })
-  await until(() => evaluate("!!document.querySelector('.dungeon-canvas')"), 'Dungeon app')
+  const { send, evaluate, errors: runtimeErrors } = browser
   await evaluate(`(async()=>{
     window.verification = {
       store: (await import('/src/stores/dungeon.ts')).useDungeonStore(),
@@ -340,7 +245,5 @@ try {
   )
   console.log(JSON.stringify(report, null, 2))
 } finally {
-  socket?.close()
-  processHandle.kill()
-  // Keep the isolated profile in the OS temp directory: Chrome may still be flushing it.
+  await browser.close()
 }

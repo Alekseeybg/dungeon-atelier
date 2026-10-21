@@ -9,6 +9,15 @@ import {
   viewBounds,
 } from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/model.ts'
 import { wallCapRects } from '../apps/dungeon-atelier/src/features/dungeon/rendering/architecture-model.ts'
+import {
+  VIEW_ANGLES,
+  viewAngleTransform,
+  projectionBeforeTurn,
+} from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/view-angle.ts'
+import {
+  projectedFace,
+  projectedRectangle,
+} from '../apps/dungeon-atelier/src/features/dungeon/rendering/visual-foundation/projected-geometry.ts'
 
 test('foundation fixture is deterministic, isolated, and has four correctly connected room entrances', () => {
   const a = createFoundationScene(),
@@ -46,6 +55,35 @@ test('one affine height convention applies to every architectural point without 
     assert.equal(project(x, y + 32).y - ground.y, 26)
   }
 })
+
+test('independent projection studies keep door planes joined to masonry and leave production geometry unchanged', () => {
+  const scene = createFoundationScene(),
+    before = JSON.stringify(scene),
+    baseline = scene.floor.doors.map((door) => doorSurface(door.position, scene.facings[door.id]))
+  for (const side of [6, 9, 12, 15])
+    for (const rise of [20, 24, 28, 32]) {
+      const projection = Object.freeze({ side, rise })
+      for (const door of scene.floor.doors) {
+        const surface = doorSurface(door.position, scene.facings[door.id], projection),
+          face = projectedFace(surface.a, surface.b, 1, projection)
+        assert.deepEqual(face[0], surface.topLeft)
+        assert.deepEqual(face[1], surface.topRight)
+        assert.deepEqual(face[3], surface.bottomLeft)
+        const top = projectedRectangle(surface.a.x, surface.a.y, 1, 1, 1, projection)
+        assert.deepEqual(top[0], face[0])
+        assert.deepEqual(project(surface.a.x, surface.a.y, 0, projection), surface.bottomLeft)
+        assert.equal(surface.bottomLeft.x - surface.topLeft.x, side)
+        assert.equal(surface.bottomLeft.y - surface.topLeft.y, rise)
+      }
+    }
+  assert.deepEqual(
+    scene.floor.doors.map((door) => doorSurface(door.position, scene.facings[door.id])),
+    baseline,
+  )
+  assert.equal(JSON.stringify(scene), before)
+  assert.equal(FOUNDATION.side, 6)
+  assert.equal(FOUNDATION.rise, 24)
+})
 test('door frames occupy the visible wall surfaces instead of the wall centerline', () => {
   const scene = createFoundationScene(),
     before = JSON.stringify(scene)
@@ -62,6 +100,38 @@ test('door frames occupy the visible wall surfaces instead of the wall centerlin
     }
   }
   assert.equal(JSON.stringify(scene), before)
+})
+
+test('view-angle studies rotate the ground axes while keeping wall lift upright and widening side door faces', () => {
+  let previousArea = 0
+  for (const angle of VIEW_ANGLES) {
+    const t = viewAngleTransform(angle),
+      turn = (p) => ({ x: t.a * p.x + t.c * p.y, y: t.b * p.x + t.d * p.y })
+    for (const rise of [20, 24, 28, 32]) {
+      const projection = projectionBeforeTurn({ side: 6, rise }, angle),
+        ground = turn(project(352, 192, 0, projection)),
+        wall = turn(project(352, 192, 1, projection))
+      assert(Math.abs(ground.x - wall.x - 6) < 1e-10)
+      assert(Math.abs(ground.y - wall.y - rise) < 1e-10)
+      const xAxis = turn(project(32, 0, 0, projection)),
+        yAxis = turn(project(0, 32, 0, projection))
+      if (angle > 0) {
+        assert(xAxis.y > 0)
+        assert(yAxis.x < 0)
+      }
+      assert(Math.abs(xAxis.x * yAxis.y - xAxis.y * yAxis.x - 32 * 26) < 1e-10)
+    }
+    const projection = projectionBeforeTurn({ side: 6, rise: 24 }, angle),
+      surface = doorSurface({ x: 6, y: 11 }, 'west', projection),
+      a = turn(surface.topLeft),
+      b = turn(surface.topRight),
+      d = turn(surface.bottomLeft),
+      area = Math.abs((b.x - a.x) * (d.y - a.y) - (b.y - a.y) * (d.x - a.x))
+    assert(area > previousArea)
+    previousArea = area
+  }
+  assert.deepEqual(projectionBeforeTurn({ side: 6, rise: 24 }, 0), { side: 6, rise: 24 })
+  for (const angle of [-1, 16, NaN, Infinity]) assert.throws(() => viewAngleTransform(angle))
 })
 test('joined cap arms remain coincident under projection at horizontal and vertical tile boundaries', () => {
   for (const [mask, neighbor, dx, dy] of [

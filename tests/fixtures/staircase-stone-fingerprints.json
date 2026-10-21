@@ -1,0 +1,202 @@
+[
+  {
+    "form": "switchback",
+    "direction": "up",
+    "height": 2,
+    "hashes": {
+      "masonry": {
+        "position": 3535016305,
+        "normal": 1317730333,
+        "uv": 2478022917,
+        "color": 2462673333
+      },
+      "frame": {
+        "position": 3890740396,
+        "normal": 1875917564,
+        "uv": 2948161873,
+        "color": 1988850341
+      },
+      "stairEdge": {
+        "position": 2701576876,
+        "normal": 756141492,
+        "uv": 3941508869,
+        "color": 1103882341
+      }
+    }
+  },
+  {
+    "form": "switchback",
+    "direction": "up",
+    "height": 3.5,
+    "hashes": {
+      "masonry": {
+        "position": 457178009,
+        "normal": 4242481013,
+        "uv": 2341211098,
+        "color": 635567277
+      },
+      "frame": {
+        "position": 52460292,
+        "normal": 3685658716,
+        "uv": 2119589637,
+        "color": 3224820293
+      },
+      "stairEdge": {
+        "position": 55477384,
+        "normal": 2634117588,
+        "uv": 3398772753,
+        "color": 3410110213
+      }
+    }
+  },
+  {
+    "form": "switchback",
+    "direction": "down",
+    "height": 2,
+    "hashes": {
+      "masonry": {
+        "position": 3754969365,
+        "normal": 3001363501,
+        "uv": 397687665,
+        "color": 3512373597
+      },
+      "frame": {
+        "position": 1881488025,
+        "normal": 1587044669,
+        "uv": 4289108051,
+        "color": 2685208741
+      },
+      "stairEdge": {
+        "position": 2729821285,
+        "normal": 2869299837,
+        "uv": 1899245529,
+        "color": 2819113253
+      }
+    }
+  },
+  {
+    "form": "switchback",
+    "direction": "down",
+    "height": 3.5,
+    "hashes": {
+      "masonry": {
+        "position": 1174785309,
+        "normal": 2071105997,
+        "uv": 1531255289,
+        "color": 3227238373
+      },
+      "frame": {
+        "position": 224511453,
+        "normal": 4158050653,
+        "uv": 3981943163,
+        "color": 3045682521
+      },
+      "stairEdge": {
+        "position": 3540852673,
+        "normal": 2128156317,
+        "uv": 4270634236,
+        "color": 3577123833
+      }
+    }
+  },
+  {
+    "form": "straight",
+    "direction": "up",
+    "height": 2,
+    "hashes": {
+      "masonry": {
+        "position": 1715395541,
+        "normal": 3036709485,
+        "uv": 2776285569,
+        "color": 1097098677
+      },
+      "frame": {
+        "position": 801571687,
+        "normal": 733575677,
+        "uv": 391172916,
+        "color": 1009434009
+      },
+      "stairEdge": {
+        "position": 3499723199,
+        "normal": 2509384493,
+        "uv": 1599960148,
+        "color": 3041647225
+      }
+    }
+  },
+  {
+    "form": "straight",
+    "direction": "up",
+    "height": 3.5,
+    "hashes": {
+      "masonry": {
+        "position": 464378717,
+        "normal": 3226798421,
+        "uv": 2752385250,
+        "color": 4096099893
+      },
+      "frame": {
+        "position": 2263145268,
+        "normal": 2532063501,
+        "uv": 156742730,
+        "color": 1082230581
+      },
+      "stairEdge": {
+        "position": 85410712,
+        "normal": 2322964989,
+        "uv": 93418874,
+        "color": 4178818293
+      }
+    }
+  },
+  {
+    "form": "straight",
+    "direction": "down",
+    "height": 2,
+    "hashes": {
+      "masonry": {
+        "position": 4156663593,
+        "normal": 188327109,
+        "uv": 3108457033,
+        "color": 1399226133
+      },
+      "frame": {
+        "position": 4074545869,
+        "normal": 3041270157,
+        "uv": 1954668309,
+        "color": 2750150577
+      },
+      "stairEdge": {
+        "position": 770591709,
+        "normal": 4170080397,
+        "uv": 3570871370,
+        "color": 3716191249
+      }
+    }
+  },
+  {
+    "form": "straight",
+    "direction": "down",
+    "height": 3.5,
+    "hashes": {
+      "masonry": {
+        "position": 2787681241,
+        "normal": 2334443893,
+        "uv": 2009123279,
+        "color": 591795413
+      },
+      "frame": {
+        "position": 3095237526,
+        "normal": 655956893,
+        "uv": 3957012333,
+        "color": 2288643497
+      },
+      "stairEdge": {
+        "position": 2018117042,
+        "normal": 319929309,
+        "uv": 2385766843,
+        "color": 836785225
+      }
+    }
+  }
+]
