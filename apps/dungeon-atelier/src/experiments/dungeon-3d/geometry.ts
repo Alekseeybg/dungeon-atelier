@@ -4,6 +4,8 @@ import type { RuinsPlacement } from './ruins-placement.ts'
 
 /** Merge static geometry per material, retaining coherent world-space texture coordinates. */
 export class GeometryBatches {
+  /** Optional grid cell owning a door/torch; -1 means ordinary spatial masonry. */
+  walkOwner = -1
   private batches = new Map<THREE.Material, THREE.BufferGeometry[]>()
   add(
     material: THREE.Material,
@@ -84,6 +86,10 @@ export class GeometryBatches {
       colors.fill(tint, i * 3, i * 3 + 3)
     }
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+    geometry.setAttribute(
+      'walkOwner',
+      new THREE.BufferAttribute(new Float32Array(positions.count).fill(this.walkOwner), 1),
+    )
     geometry.setAttribute('ruinsUv', new THREE.BufferAttribute(ruleUv, 2))
     geometry.setAttribute('ruinsRule', new THREE.BufferAttribute(rule, 1))
     geometry.setAttribute('ruinsTone', new THREE.BufferAttribute(ruleTone, 1))

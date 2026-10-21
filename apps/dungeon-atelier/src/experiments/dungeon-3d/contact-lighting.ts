@@ -7,6 +7,7 @@ import { createSelectiveBloom } from './selective-bloom'
 import type { DungeonEffects } from './effects-settings'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
 import { FullScreenQuad } from 'three/addons/postprocessing/Pass.js'
+import type { WalkVisibility } from './walk-visibility'
 
 /** Short-range, depth/normal-aware grounding. No painted wall-border strips or bloom. */
 export function createContactLighting(
@@ -14,6 +15,7 @@ export function createContactLighting(
   scene: THREE.Scene,
   camera: THREE.Camera,
   fire: THREE.ShaderMaterial,
+  visibility?: WalkVisibility,
 ) {
   const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 }),
     composer = new EffectComposer(renderer, target),
@@ -35,6 +37,7 @@ export function createContactLighting(
     occlusionComputations = 0,
     occlusionReuses = 0
   const cachedQuad = new FullScreenQuad(ao.copyMaterial)
+  visibility?.material(ao.normalMaterial)
   bloomBlend.enabled = false
   // Composite the unlit void after exposure/color conversion, keeping its existing color.
   beauty.clearColor = new THREE.Color(0)
@@ -178,7 +181,7 @@ export function createContactLighting(
         : 0
       if (bloomEnabled) {
         if (!selective) {
-          selective = createSelectiveBloom(renderer, scene, camera, fire)
+          selective = createSelectiveBloom(renderer, scene, camera, fire, visibility)
           selective.resize(size.width, size.height)
         }
         selective.configure(settings.bloomStrength, settings.bloomRadius, settings.bloomThreshold)

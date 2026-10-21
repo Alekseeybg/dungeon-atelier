@@ -2,7 +2,7 @@ import { reactive, watch } from 'vue'
 import { isWalkable } from '@dungeon-atelier/core'
 import type { DungeonFloor, Position } from '@dungeon-atelier/core'
 
-export type WalkAction = 'toggle' | 'reset' | 'forward' | 'back' | 'left' | 'right'
+export type WalkAction = 'toggle' | 'reset' | 'forward' | 'back' | 'left' | 'right' | 'around'
 export interface WalkState {
   active: boolean
   position: Position | null
@@ -70,8 +70,8 @@ export function useDungeonWalk(getFloor: () => DungeonFloor | null) {
       reset()
       return
     }
-    if (action === 'left' || action === 'right') {
-      state.heading = (state.heading + (action === 'left' ? 3 : 1)) % 4
+    if (action === 'left' || action === 'right' || action === 'around') {
+      state.heading = (state.heading + (action === 'left' ? 3 : action === 'around' ? 2 : 1)) % 4
       state.message = `Facing ${HEADING_NAMES[state.heading]}.`
       reveal()
       return

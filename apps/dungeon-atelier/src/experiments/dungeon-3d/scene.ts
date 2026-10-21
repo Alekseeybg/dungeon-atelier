@@ -80,6 +80,7 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     lightTarget = new THREE.Vector3()
   let torchLighting = true,
     torchLightBudget = 8
+  let torchVisible: ((x: number, z: number) => boolean) | undefined
   const intactCoverage = createCapOccupancy(plan),
     cutawayCoverage = createCapOccupancy(plan, true),
     capOccupied = (x: number, z: number) =>
@@ -89,10 +90,15 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
   function updateTorchLights(target = lightTarget, force = false) {
     if (!force && lightTarget.equals(target)) return false
     lightTarget.copy(target)
-    const nearest = [...torchPositions].sort(
-      (a, b) =>
-        Math.hypot(a.x - target.x, a.z - target.z) - Math.hypot(b.x - target.x, b.z - target.z),
-    )
+    const nearest = torchPositions
+      .filter((_, index) => {
+        const mount = plan.mounts.torches[index]!
+        return !torchVisible || torchVisible(mount.x, mount.y)
+      })
+      .sort(
+        (a, b) =>
+          Math.hypot(a.x - target.x, a.z - target.z) - Math.hypot(b.x - target.x, b.z - target.z),
+      )
     let changed = false
     torchLights.forEach((light, index) => {
       const position = nearest[index]
@@ -224,6 +230,7 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     setTheme(activeTheme)
 
     for (const door of plan.doors) {
+      batch.walkOwner = door.position.y * plan.floor.width + door.position.x
       const parent = matrix(door.x, 0, door.z, door.rotation),
         opening = height * 0.84,
         width = 0.76,
@@ -268,6 +275,8 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     const stairGroups: THREE.Group[] = []
     for (const stair of staircaseLayouts) {
       const stairBatch = new GeometryBatches()
+      const logical = plan.stairs.find((item) => item.id === stair.id)!
+      stairBatch.walkOwner = logical.position.y * plan.floor.width + logical.position.x
       staircaseProof.push(addStoneStaircase(stairBatch, materials, stair, height, plan.floor.seed))
       const group = stairBatch.finish()
       group.name = `Architectural staircase ${stair.direction}`
@@ -276,6 +285,7 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     }
     const lightGroup = new THREE.Group()
     for (const torch of plan.mounts.torches) {
+      batch.walkOwner = torch.y * plan.floor.width + torch.x
       const facing = plan.mounts.facings[`${torch.x},${torch.y}`],
         side = facing === 'east',
         parent = matrix(
@@ -320,6 +330,10 @@ export function buildDungeon3D(plan: Dungeon3DPlan, materials: Dungeon3DMaterial
     torchLights,
     torchPositions,
     updateTorchLights,
+    setTorchVisibility(predicate?: (x: number, z: number) => boolean) {
+      torchVisible = predicate
+      updateTorchLights(lightTarget, true)
+    },
     setTheme,
     setHeight(multiplier: number) {
       if (height === BASE_WALL_HEIGHT * multiplier) return

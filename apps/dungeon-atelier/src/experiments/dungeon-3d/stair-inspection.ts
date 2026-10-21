@@ -15,6 +15,7 @@ export function createStairInspection(
   height: () => number,
   invalidate: () => void,
   onSelection?: (id: string | null) => void,
+  isVisible: (point: THREE.Vector3) => boolean = () => true,
 ) {
   const label = document.createElement('div'),
     caster = new THREE.Raycaster()
@@ -41,7 +42,7 @@ export function createStairInspection(
       camera,
     )
     // The closest actual surface wins: floors and walls occlude stairs normally.
-    let node = caster.intersectObject(root, true)[0]?.object
+    let node = caster.intersectObject(root, true).find((hit) => isVisible(hit.point))?.object
     while (node) {
       if (typeof node.userData.stairId === 'string') return node.userData.stairId
       node = node.parent ?? undefined

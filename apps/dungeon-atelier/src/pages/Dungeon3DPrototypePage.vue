@@ -81,6 +81,7 @@
               v-model="compare"
               label="Compare with Canvas"
               aria-label="3D Canvas comparison"
+              :disable="walk.state.active"
             />
           </div>
           <div class="text-caption text-grey-5 q-mt-sm">
@@ -95,6 +96,24 @@
         <div class="prototype-layout">
           <q-card flat bordered class="prototype-controls q-pa-md">
             <h2 class="text-subtitle1 q-mt-none">Camera &amp; architecture</h2>
+            <q-toggle
+              :model-value="walk.state.active"
+              :disable="busy"
+              label="Walk Mode"
+              aria-label="3D Walk Mode"
+              @update:model-value="toggleWalk"
+            />
+            <div v-if="walk.state.active" class="q-mb-md">
+              <p class="text-caption q-my-sm">
+                Up / W: move forward. Left / A and Right / D: turn in place. Down / S: turn around.
+                Changing elevation exits Walk Mode. Click the view to focus movement.
+              </p>
+              <div class="row q-gutter-sm">
+                <q-btn outline dense no-caps label="Center player" @click="centerPlayer" />
+                <q-btn flat dense no-caps label="Restart walk" @click="restartWalk" />
+              </div>
+              <p role="status" class="text-caption q-my-sm">{{ walk.state.message }}</p>
+            </div>
             <q-select
               v-model="theme"
               :options="themeOptions"
@@ -229,15 +248,15 @@
               @click="download"
             />
           </q-card>
-          <div class="viewports" :class="{ 'viewports--compare': compare }">
+          <div class="viewports" :class="{ 'viewports--compare': compare && !walk.state.active }">
             <q-card flat bordered class="viewport-card">
               <q-card-section class="row items-center q-py-sm"
                 ><div class="col">Three.js · real geometry</div>
                 <q-spinner v-if="busy" color="primary"
               /></q-card-section>
-              <div ref="host" class="three-viewport" :aria-busy="busy" />
+              <div ref="host" class="three-viewport" :aria-busy="busy" @keydown="walkKey" />
             </q-card>
-            <q-card v-if="compare" flat bordered class="viewport-card">
+            <q-card v-if="compare && !walk.state.active" flat bordered class="viewport-card">
               <q-card-section class="q-py-sm"
                 >Approved Canvas · identical source floor</q-card-section
               >
@@ -298,6 +317,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { copyToClipboard } from 'quasar'
 import * as THREE from 'three'
+import { useDungeonWalk } from '../features/dungeon/exploration/useDungeonWalk'
+import type { WalkAction } from '../features/dungeon/exploration/useDungeonWalk'
 import DungeonEffectsPanel from '../experiments/dungeon-3d/DungeonEffectsPanel.vue'
 import {
   BASELINE_EFFECTS,
@@ -383,6 +404,67 @@ const theme = ref<Dungeon3DTheme>(DEFAULT_3D_THEME),
   floor = shallowRef<DungeonFloor>(),
   metrics = shallowRef<PrototypeMetrics>(),
   currentPlan = shallowRef<Dungeon3DViewport['plan']>()
+const walk = useDungeonWalk(() => floor.value ?? null)
+let walkViewBefore: { elevation: number; cutaway: boolean } | undefined
+function exitWalk(restoreElevation: boolean) {
+  if (!walk.state.active) return
+  walk.command('toggle')
+  if (walkViewBefore) {
+    doorHeadCutaway.value = walkViewBefore.cutaway
+    if (restoreElevation) {
+      elevation.value = walkViewBefore.elevation
+      viewport?.setCamera(elevation.value, rotation.value)
+    }
+    walkViewBefore = undefined
+  }
+}
+function centerPlayer() {
+  const position = walk.state.position
+  focus.value = 'map'
+  if (position) viewport?.focus(position.x, position.y, 8)
+  viewport?.renderer.domElement.focus({ preventScroll: true })
+}
+function toggleWalk() {
+  if (walk.state.active) {
+    exitWalk(true)
+    viewport?.fit()
+    return
+  }
+  walkViewBefore = { elevation: elevation.value, cutaway: doorHeadCutaway.value }
+  elevation.value = 90
+  doorHeadCutaway.value = true
+  walk.command('toggle')
+  viewport?.setCamera(90, rotation.value)
+  centerPlayer()
+}
+function restartWalk() {
+  walk.command('reset')
+  centerPlayer()
+}
+function walkKey(event: KeyboardEvent) {
+  if (!walk.state.active || busy.value || event.altKey || event.ctrlKey || event.metaKey) return
+  const action = (
+    {
+      arrowup: 'forward',
+      w: 'forward',
+      arrowright: 'right',
+      d: 'right',
+      arrowdown: 'around',
+      s: 'around',
+      arrowleft: 'left',
+      a: 'left',
+    } as Record<string, WalkAction>
+  )[event.key.toLowerCase()]
+  if (action === undefined) return
+  event.preventDefault()
+  walk.command(action)
+}
+watch(
+  () => [walk.state.active, walk.state.position, walk.state.heading, walk.state.explored],
+  () => {
+    viewport?.setWalk(walk.state)
+  },
+)
 const themeOptions = Object.entries(DUNGEON_3D_THEMES).map(([value, config]) => ({
   value,
   label: config.label,
@@ -400,26 +482,31 @@ const focusOptions = computed(() => {
     plan = currentPlan.value
   if (!plan || !floor.value) return options
   const largest = [...floor.value.rooms].sort((a, b) => b.width * b.height - a.width * a.height)[0]
-  if (largest) options.push({ value: `room:${largest.id}`, label: 'Largest chamber' })
+  const known = (x: number, y: number) =>
+    !walk.state.active || walk.state.explored.has(y * floor.value!.width + x)
+  if (largest && !walk.state.active)
+    options.push({ value: `room:${largest.id}`, label: 'Largest chamber' })
   for (const facing of ['north', 'south', 'east', 'west']) {
     const door = plan.doors.find((d) => d.type === 'regular' && d.facing === facing)
-    if (door)
+    if (door && known(door.position.x, door.position.y))
       options.push({
         value: `door:${door.id}`,
         label: `${facing[0]!.toUpperCase()}${facing.slice(1)} doorway`,
       })
   }
-  for (const stair of plan.stairs)
+  for (const stair of plan.stairs) {
+    if (!known(stair.position.x, stair.position.y)) continue
     options.push({
       value: `stair:${stair.id}`,
       label: `${stair.direction === 'up' ? 'Upward' : 'Downward'} staircase`,
     })
+  }
   return options
 })
 async function paintComparison() {
   const id = ++comparisonRevision,
     source = floor.value
-  if (!source || !compare.value) return
+  if (!source || !compare.value || walk.state.active) return
   const image = await createMapCanvasAsync(source, false, 'ancient', {
     revealSecrets: revealSecrets.value,
     ancient: { doorsOpen: doorsOpen.value, lighting: torchLighting.value },
@@ -462,6 +549,7 @@ async function load(reuse = false) {
           zoom.value = value.zoom
           elevation.value = value.elevation
           rotation.value = value.rotation
+          if (!busy.value && walk.state.active && value.elevation !== 90) exitWalk(false)
         }
       },
       (stairId) => {
@@ -485,6 +573,7 @@ async function load(reuse = false) {
     next.setWireframe(wireframe.value)
     next.setTheme(theme.value)
     next.setEffects(effects.value)
+    next.setWalk(walk.state)
     focus.value = 'map'
     await paintComparison()
   } catch (cause) {
@@ -494,6 +583,7 @@ async function load(reuse = false) {
   }
 }
 function updateCamera() {
+  if (walk.state.active && elevation.value !== 90) exitWalk(false)
   viewport?.setCamera(elevation.value, rotation.value)
 }
 function updateZoom(value: number | null) {
@@ -506,6 +596,7 @@ function fit() {
   viewport?.selectStair(null)
 }
 function resetCamera() {
+  exitWalk(false)
   elevation.value = DEFAULT_CAMERA.elevation
   rotation.value = 0
   zoom.value = 1
@@ -595,6 +686,13 @@ async function copyDebugSettings() {
         flameFlicker: flameAnimation.value,
         wireframe: wireframe.value,
       },
+      walk: {
+        active: walk.state.active,
+        position: walk.state.position,
+        heading: walk.state.heading,
+        steps: walk.state.steps,
+        exploredTiles: walk.state.explored.size,
+      },
       effects: { ...effects.value },
       environment: {
         browser: navigator.userAgent,
@@ -618,7 +716,10 @@ watch(revealSecrets, () => {
   void load(true)
 })
 watch(theme, (value) => viewport?.setTheme(value))
-watch(height, (value) => viewport?.setHeight(value))
+watch(height, (value) => {
+  viewport?.setHeight(value)
+  if (walk.state.active) viewport?.setWalk(walk.state)
+})
 watch(doorsOpen, (value) => {
   viewport?.setDoorsOpen(value)
   void paintComparison()
@@ -646,6 +747,12 @@ onBeforeUnmount(() => {
   viewport = undefined
 })
 defineExpose({
+  getWalkState: () => ({
+    ...walk.state,
+    explored: [...walk.state.explored],
+    visible: [...walk.state.visible],
+    marker: viewport?.walkProof(),
+  }),
   resetEffects,
   applyEffectsPreset: applyPreset,
   measureEffects: (frames = 30) => viewport?.measurePerformance(frames),

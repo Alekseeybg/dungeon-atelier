@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
+import type { WalkVisibility } from './walk-visibility'
 
 /** Half-resolution emissive-only bloom. Black architecture retains depth occlusion. */
 export function createSelectiveBloom(
@@ -9,6 +10,7 @@ export function createSelectiveBloom(
   scene: THREE.Scene,
   camera: THREE.Camera,
   fire: THREE.ShaderMaterial,
+  visibility?: WalkVisibility,
 ) {
   const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }),
     composer = new EffectComposer(renderer, target),
@@ -18,6 +20,8 @@ export function createSelectiveBloom(
     flame = fire.clone(),
     emissive = new Map<THREE.MeshStandardMaterial, THREE.MeshBasicMaterial>()
   flame.uniforms.flameClock = fire.uniforms.flameClock!
+  visibility?.material(black)
+  visibility?.material(flame)
   flame.fragmentShader = flame.fragmentShader.replace(
     'gl_FragColor=vec4(color,',
     'gl_FragColor=vec4(color*3.0,',
@@ -46,6 +50,7 @@ export function createSelectiveBloom(
           toneMapped: false,
         })
         emissive.set(material, found)
+        visibility?.material(found)
       }
       // Read current emission each frame; never cache experimental roughness,
       // normals or lighting in the bloom source when sliders are changed.

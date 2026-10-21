@@ -12,8 +12,12 @@ import { createStairInspection } from './stair-inspection'
 import { stairPoint, stairLevels } from './stair-layout'
 import { createDungeon3DThemeMaterials } from './theme-materials'
 import { DUNGEON_3D_THEMES, type Dungeon3DTheme } from './themes'
+import { createWalkVisibility } from './walk-visibility'
+import { createWalkMarker } from './walk-marker'
+import type { WalkState } from '../../features/dungeon/exploration/useDungeonWalk'
 
 export const DEFAULT_CAMERA = Object.freeze({ elevation: 68, rotation: 0, referenceAzimuth: 12 })
+const WALK_FOLLOW_DEAD_ZONE = 0.65
 export const prototypeLifecycle = { activeViewports: 0 }
 export interface PrototypeMetrics {
   meshes: number
@@ -89,11 +93,26 @@ export async function createDungeon3DViewport(
     renderer.domElement.remove()
     throw error
   }
-  const contactLighting = createContactLighting(renderer, scene, camera, materials.fire),
+  const walkVisibility = createWalkVisibility(plan.floor.width, plan.floor.height),
+    walkMarker = createWalkMarker(),
+    contactLighting = createContactLighting(
+      renderer,
+      scene,
+      camera,
+      materials.fire,
+      walkVisibility,
+    ),
     materialEffects = createEffectsMaterials(
       new Set([materials.wood, materials.selectedDoor.oak, materials.selectedDoor.darkOak]),
     )
   let effectSettings: DungeonEffects = { ...BASELINE_EFFECTS }
+  let walkState: WalkState | undefined
+  let followTarget: THREE.Vector3 | null = null,
+    previousWalkCell: string | undefined,
+    previousFollowTime = 0
+  const cancelFollow = () => {
+    followTarget = null
+  }
   const timing = createEffectsTiming(renderer),
     frameTimes: number[] = []
   let lastRenderMs = 0,
@@ -138,6 +157,8 @@ export async function createDungeon3DViewport(
   fill.position.set(center.x + 10, 7, center.z + 10)
   fill.target.position.copy(center)
   scene.add(dungeon.root, ambient, sun, sun.target, fill, fill.target)
+  scene.add(walkMarker.root)
+  walkVisibility.apply(walkMarker.root)
   controls.enableRotate = false
   controls.enableDamping = false
   controls.screenSpacePanning = false
@@ -254,6 +275,7 @@ export async function createDungeon3DViewport(
     dirty = true
   }
   function fit() {
+    cancelFollow()
     controls.target.copy(dungeon.bounds.getCenter(new THREE.Vector3())).setY(0)
     camera.zoom = 1
     positionCamera()
@@ -297,6 +319,7 @@ export async function createDungeon3DViewport(
   }
   function render() {
     if (disposed || contextLost) return
+    if (walkState?.active) walkVisibility.apply(dungeon.root)
     const start = performance.now(),
       query = timing.begin()
     frameTimes.push(start)
@@ -329,6 +352,7 @@ export async function createDungeon3DViewport(
     dirty = true
   }
   controls.addEventListener('change', changed)
+  controls.addEventListener('start', cancelFollow)
   // OrbitControls owns ground-plane pan, wheel zoom and touch. Only the two
   // deliberately separated mouse rotation axes need a small pointer adapter.
   const canvas = renderer.domElement
@@ -353,15 +377,21 @@ export async function createDungeon3DViewport(
     canvas,
     camera,
     dungeon.root,
-    () => dungeon.staircaseProof,
+    () =>
+      dungeon.staircaseProof.filter((stair) => {
+        const logical = plan.stairs.find((item) => item.id === stair.id)!
+        return walkVisibility.known(logical.position.x, logical.position.y)
+      }),
     () => dungeon.height,
     () => {
       dirty = true
     },
     onStairSelection,
+    (point) => walkVisibility.known(point.x, point.z),
   )
   let drag: { pointer: number; button: number; x: number; y: number } | undefined
   function pointerDown(event: PointerEvent) {
+    cancelFollow()
     if (drag) {
       event.preventDefault()
       event.stopImmediatePropagation()
@@ -418,6 +448,16 @@ export async function createDungeon3DViewport(
   prototypeLifecycle.activeViewports++
   renderer.setAnimationLoop((time) => {
     if (document.hidden || contextLost) return
+    const followDelta = Math.min(50, Math.max(0, time - previousFollowTime))
+    previousFollowTime = time
+    if (followTarget && walkState?.active) {
+      controls.target.lerp(followTarget, 1 - Math.exp(-followDelta / 140))
+      if (controls.target.distanceToSquared(followTarget) < 0.00001) {
+        controls.target.copy(followTarget)
+        followTarget = null
+      }
+      positionCamera()
+    }
     const flameFrame = flameAnimation ? advanceFlameFrame(time, lastFlameFrame) : null
     if (flameFrame !== null) {
       materials.flameClock.value = time / 1000
@@ -427,6 +467,64 @@ export async function createDungeon3DViewport(
     if (dirty) render()
   })
   return {
+    setWalk(state: WalkState) {
+      walkState = state
+      walkVisibility.update(state)
+      walkVisibility.apply(dungeon.root)
+      dungeon.setTorchVisibility(state.active ? walkVisibility.known : undefined)
+      walkMarker.root.visible = state.active && !!state.position
+      if (!state.active) {
+        cancelFollow()
+        previousWalkCell = undefined
+      }
+      if (state.position) {
+        const x = state.position.x + 0.5,
+          z = state.position.y + 0.5
+        // Floors and stairs support the marker; door lintels must not lift it onto a cap.
+        const supports: THREE.Object3D[] = [dungeon.floorGroup]
+        dungeon.root.traverse((node) => {
+          if (node.userData.stairId) supports.push(node)
+        })
+        dungeon.root.updateMatrixWorld(true)
+        const hit = new THREE.Raycaster(
+          new THREE.Vector3(x, dungeon.height + 3, z),
+          new THREE.Vector3(0, -1, 0),
+        )
+          .intersectObjects(supports, true)
+          .find((item) => walkVisibility.known(item.point.x, item.point.z))
+        walkMarker.root.position.set(x, (hit?.point.y ?? 0.04) + 0.012, z)
+        // The compass stays grid-aligned while its sculpted spear turns.
+        walkMarker.pointer.rotation.y = (-state.heading * Math.PI) / 2
+        const cell = `${state.position.x},${state.position.y}`
+        if (state.active && previousWalkCell !== undefined && previousWalkCell !== cell) {
+          camera.updateMatrixWorld()
+          const projected = walkMarker.root.position.clone().project(camera),
+            edge = projected.clone()
+          edge.x = THREE.MathUtils.clamp(edge.x, -WALK_FOLLOW_DEAD_ZONE, WALK_FOLLOW_DEAD_ZONE)
+          edge.y = THREE.MathUtils.clamp(edge.y, -WALK_FOLLOW_DEAD_ZONE, WALK_FOLLOW_DEAD_ZONE)
+          if (edge.x !== projected.x || edge.y !== projected.y) {
+            const correction = projected.unproject(camera).sub(edge.unproject(camera))
+            followTarget = controls.target
+              .clone()
+              .add(new THREE.Vector3(correction.x, 0, correction.z))
+          } else {
+            cancelFollow()
+          }
+        }
+        previousWalkCell = state.active ? cell : undefined
+      }
+      inspection.select(null)
+      inspection.invalidatePick()
+      invalidateOcclusion()
+      invalidateShadows()
+      dirty = true
+    },
+    walkProof: () => ({
+      active: !!walkState?.active,
+      marker: walkMarker.root.position.toArray(),
+      heading: walkState?.heading,
+    }),
+    isExplored: walkVisibility.known,
     plan,
     camera,
     renderer,
@@ -512,11 +610,13 @@ export async function createDungeon3DViewport(
       })
     },
     setCamera(nextElevation: number, nextRotation: number) {
+      cancelFollow()
       elevation = THREE.MathUtils.clamp(nextElevation, 25, 90)
       rotation = THREE.MathUtils.clamp(nextRotation, -180, 180)
       positionCamera()
     },
     setZoom(value: number) {
+      cancelFollow()
       metricsDirty = true
       camera.zoom = THREE.MathUtils.clamp(value, 0.5, 9)
       camera.updateProjectionMatrix()
@@ -610,6 +710,7 @@ export async function createDungeon3DViewport(
       fit()
     },
     focus(x: number, z: number, width = 5, targetHeight = 0) {
+      cancelFollow()
       controls.target.set(x + 0.5, targetHeight, z + 0.5)
       fittedSpan = width
       fittedWidth = 0
@@ -770,6 +871,7 @@ export async function createDungeon3DViewport(
       canvas.removeEventListener('webglcontextrestored', onContextRestored)
       window.removeEventListener('blur', endDragOnBlur)
       controls.removeEventListener('change', changed)
+      controls.removeEventListener('start', cancelFollow)
       controls.dispose()
       renderer.setAnimationLoop(null)
       dungeon.dispose()
@@ -778,6 +880,8 @@ export async function createDungeon3DViewport(
       timing.dispose()
       materialEffects.dispose()
       contactLighting.dispose()
+      walkVisibility.dispose()
+      walkMarker.dispose()
       sun.shadow.dispose()
       renderer.dispose()
       renderer.forceContextLoss()
