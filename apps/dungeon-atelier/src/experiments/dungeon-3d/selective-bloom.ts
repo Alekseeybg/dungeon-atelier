@@ -23,6 +23,9 @@ export function createSelectiveBloom(
     'gl_FragColor=vec4(color*3.0,',
   )
   composer.renderToScreen = false
+  // We consume the separate glow texture, never the bloom pass's additive
+  // write-back into its input buffer. Keep all extraction/blur/composite steps.
+  bloom.blendMaterial.visible = false
   beauty.clearColor = new THREE.Color(0)
   beauty.clearAlpha = 0
   composer.addPass(beauty)
@@ -55,6 +58,34 @@ export function createSelectiveBloom(
     }
     return black
   }
+  type BloomMesh = THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>
+  interface MaterialSwap {
+    mesh: BloomMesh
+    original: THREE.Material | THREE.Material[]
+    replacement: THREE.Material | THREE.Material[]
+  }
+  const cachedSwaps = new WeakMap<BloomMesh, MaterialSwap>(),
+    swaps: MaterialSwap[] = []
+  function swapMaterial(node: THREE.Object3D) {
+    if (!(node instanceof THREE.Mesh)) return
+    const mesh = node as BloomMesh,
+      original = mesh.material
+    let swap = cachedSwaps.get(mesh)
+    if (!swap) {
+      swap = { mesh, original, replacement: black }
+      cachedSwaps.set(mesh, swap)
+    }
+    swap.original = original
+    if (Array.isArray(original)) {
+      if (!Array.isArray(swap.replacement)) swap.replacement = []
+      swap.replacement.length = original.length
+      for (let i = 0; i < original.length; i++) swap.replacement[i] = source(original[i]!)
+    } else {
+      swap.replacement = source(original)
+    }
+    mesh.material = swap.replacement
+    swaps.push(swap)
+  }
   return {
     get texture() {
       return bloom.renderTargetsHorizontal[0]!.texture
@@ -68,25 +99,20 @@ export function createSelectiveBloom(
       composer.setSize(Math.max(1, Math.ceil(width / 2)), Math.max(1, Math.ceil(height / 2)))
     },
     render() {
-      const restoreMaterials: (() => void)[] = [],
-        auto = renderer.shadowMap.autoUpdate,
+      const auto = renderer.shadowMap.autoUpdate,
         needsUpdate = renderer.shadowMap.needsUpdate
-      scene.traverse((node) => {
-        if (!(node instanceof THREE.Mesh)) return
-        const material = node.material as THREE.Material | THREE.Material[]
-        restoreMaterials.push(() => {
-          node.material = material
-        })
-        node.material = Array.isArray(material) ? material.map(source) : source(material)
-      })
-      renderer.shadowMap.autoUpdate = false
-      renderer.shadowMap.needsUpdate = false
       try {
+        // Reuse bookkeeping while discovering current meshes/materials, including
+        // theme switches and rebuilt architecture. Read live emission in source().
+        scene.traverse(swapMaterial)
+        renderer.shadowMap.autoUpdate = false
+        renderer.shadowMap.needsUpdate = false
         composer.render(0)
       } finally {
         renderer.shadowMap.autoUpdate = auto
         renderer.shadowMap.needsUpdate = needsUpdate
-        restoreMaterials.forEach((restore) => restore())
+        for (const swap of swaps) swap.mesh.material = swap.original
+        swaps.length = 0
       }
     },
     dispose() {

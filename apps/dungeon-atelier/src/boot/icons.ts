@@ -28,6 +28,7 @@ import {
   matDownload,
   matGridOn,
   matDarkMode,
+  matContentCopy,
 } from '@quasar/extras/material-icons'
 
 const icons: Record<string, string> = {
@@ -60,6 +61,7 @@ const icons: Record<string, string> = {
   download: matDownload,
   grid_on: matGridOn,
   dark_mode: matDarkMode,
+  content_copy: matContentCopy,
 }
 
 export default defineBoot(({ app }) => {

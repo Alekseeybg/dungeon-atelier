@@ -1,5 +1,13 @@
 import type * as THREE from 'three'
 
+/** Preserve fractional refresh time without rendering catch-up frames after a pause. */
+export function advanceFlameFrame(time: number, previous: number): number | null {
+  const interval = 1000 / 30,
+    elapsed = time - previous
+  if (elapsed < interval) return null
+  return Number.isFinite(previous) ? time - (elapsed % interval) : time
+}
+
 /** Nonblocking GPU queries when supported; CPU submission is never presented as GPU time. */
 export function createEffectsTiming(renderer: THREE.WebGLRenderer) {
   const gl = renderer.getContext() as WebGL2RenderingContext,

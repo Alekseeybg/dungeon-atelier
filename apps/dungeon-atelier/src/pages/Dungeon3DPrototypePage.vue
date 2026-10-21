@@ -19,6 +19,18 @@
           />
           <q-btn outline label="Door comparison" to="/dev/dungeon-doors" />
           <q-btn outline label="Torch comparison" to="/dev/dungeon-torches" />
+          <q-btn
+            outline
+            no-caps
+            icon="content_copy"
+            label="Copy debug settings"
+            :disable="busy || !metrics"
+            :loading="copyingSettings"
+            @click="copyDebugSettings"
+          />
+          <span v-if="copySettingsStatus" role="status" class="text-caption">
+            {{ copySettingsStatus }}
+          </span>
           <q-badge outline color="amber-4">Experimental · Three.js</q-badge>
         </div>
         <q-card flat bordered class="q-pa-md q-mb-md">
@@ -284,6 +296,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { copyToClipboard } from 'quasar'
 import * as THREE from 'three'
 import DungeonEffectsPanel from '../experiments/dungeon-3d/DungeonEffectsPanel.vue'
 import {
@@ -312,6 +325,8 @@ import {
 } from '../features/dungeon/rendering/dungeon-renderer'
 
 const effects = ref({ ...BASELINE_EFFECTS }),
+  copyingSettings = ref(false),
+  copySettingsStatus = ref(''),
   effectsOpen = ref(false),
   measuring = ref(false),
   measurement = shallowRef<Awaited<ReturnType<Dungeon3DViewport['measurePerformance']>>>()
@@ -534,6 +549,67 @@ function download() {
   a.href = viewport.png()
   a.download = `dungeon-3d-${floor.value?.seed ?? 'prototype'}.png`
   a.click()
+}
+async function copyDebugSettings() {
+  if (!viewport || busy.value || copyingSettings.value) return
+  copyingSettings.value = true
+  copySettingsStatus.value = ''
+  try {
+    const live = viewport.stats()
+    const snapshot = {
+      format: 'dungeon-atelier/3d-debug-settings',
+      version: 1,
+      scene: {
+        source: sceneKind.value,
+        displayedFloor: {
+          seed: floor.value?.seed,
+          width: floor.value?.width,
+          height: floor.value?.height,
+          floorNumber: floor.value?.floorNumber,
+          generatorVersion: floor.value?.generatorVersion,
+          config: floor.value?.config,
+        },
+        generationInputs: { seed: seed.value, size: size.value },
+        theme: theme.value,
+        inspect: focus.value,
+        compareWithCanvas: compare.value,
+      },
+      camera: {
+        elevationDegrees: live.elevation,
+        rotationDegrees: live.rotation,
+        referenceAzimuthDegrees: DEFAULT_CAMERA.referenceAzimuth,
+        zoom: viewport.camera.zoom,
+        position: viewport.camera.position.toArray(),
+        target: viewport.target(),
+      },
+      architecture: {
+        wallHeightMultiplier: height.value,
+        doorsOpen: doorsOpen.value,
+        doorHeadCutaway: doorHeadCutaway.value,
+        revealSecrets: revealSecrets.value,
+      },
+      rendering: {
+        torchLighting: torchLighting.value,
+        contactAO: contactOcclusion.value,
+        shadows: shadows.value,
+        flameFlicker: flameAnimation.value,
+        wireframe: wireframe.value,
+      },
+      effects: { ...effects.value },
+      environment: {
+        browser: navigator.userAgent,
+        devicePixelRatio: window.devicePixelRatio,
+        viewportCssPixels: { width: host.value?.clientWidth, height: host.value?.clientHeight },
+        backend: viewport.backend(),
+      },
+    }
+    await copyToClipboard(JSON.stringify(snapshot, null, 2))
+    copySettingsStatus.value = 'Settings copied. Ready to paste.'
+  } catch {
+    copySettingsStatus.value = 'Could not copy settings. Allow clipboard access and try again.'
+  } finally {
+    copyingSettings.value = false
+  }
 }
 watch([sceneKind, size], () => {
   void load()

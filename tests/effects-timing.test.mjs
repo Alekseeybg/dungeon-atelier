@@ -1,6 +1,37 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createEffectsTiming } from '../apps/dungeon-atelier/src/experiments/dungeon-3d/effects-timing.ts'
+import {
+  advanceFlameFrame,
+  createEffectsTiming,
+} from '../apps/dungeon-atelier/src/experiments/dungeon-3d/effects-timing.ts'
+
+test('flame pacing averages 30 FPS across display refresh rates without accumulating drift', () => {
+  for (const hz of [60, 75, 144]) {
+    let previous = -Infinity
+    const rendered = []
+    for (let frame = 0; frame < hz * 10; frame++) {
+      const time = (frame * 1000) / hz,
+        next = advanceFlameFrame(time, previous)
+      if (next !== null) {
+        previous = next
+        rendered.push(time)
+      }
+    }
+    assert.ok(Math.abs(rendered.length - 300) <= 1, `${hz} Hz: ${rendered.length} frames`)
+    if (hz === 75) {
+      const intervals = rendered.slice(1).map((time, i) => time - rendered[i])
+      assert.ok(intervals.every((time) => time >= 26 && time <= 41))
+    }
+  }
+})
+
+test('flame pacing starts immediately and skips missed frames after a long pause', () => {
+  assert.equal(advanceFlameFrame(10, -Infinity), 10)
+  assert.equal(advanceFlameFrame(20, 10), null)
+  const resumed = advanceFlameFrame(60010, 10)
+  assert.ok(resumed >= 60010 - 1000 / 30 && resumed <= 60010)
+  assert.equal(advanceFlameFrame(60010, resumed), null)
+})
 
 test('GPU timing releases completed queries and forgets lost-context queries before restoration', () => {
   let lost = false,

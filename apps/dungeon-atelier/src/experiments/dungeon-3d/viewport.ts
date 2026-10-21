@@ -5,7 +5,7 @@ import { BASE_WALL_HEIGHT, planDungeon3D } from './plan'
 import { createDungeon3DMaterials } from './materials'
 import { buildDungeon3D } from './scene'
 import { createContactLighting } from './contact-lighting'
-import { createEffectsTiming } from './effects-timing'
+import { advanceFlameFrame, createEffectsTiming } from './effects-timing'
 import { createEffectsMaterials } from './effects-materials'
 import { BASELINE_EFFECTS, type DungeonEffects } from './effects-settings'
 import { createStairInspection } from './stair-inspection'
@@ -418,9 +418,10 @@ export async function createDungeon3DViewport(
   prototypeLifecycle.activeViewports++
   renderer.setAnimationLoop((time) => {
     if (document.hidden || contextLost) return
-    if (flameAnimation && time - lastFlameFrame >= 1000 / 30) {
+    const flameFrame = flameAnimation ? advanceFlameFrame(time, lastFlameFrame) : null
+    if (flameFrame !== null) {
       materials.flameClock.value = time / 1000
-      lastFlameFrame = time
+      lastFlameFrame = flameFrame
       dirty = true
     }
     if (dirty) render()
